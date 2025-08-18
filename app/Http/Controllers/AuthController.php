@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Mews\Captcha\Captcha;
 
 
-class AuthController
+class AuthController extends Controller
 {
     public function __construct(
         private readonly Captcha $captcha,

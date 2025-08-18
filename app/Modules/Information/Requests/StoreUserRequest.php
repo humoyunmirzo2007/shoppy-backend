@@ -26,7 +26,7 @@ class StoreUserRequest extends MainRequest
                 'min:8',
                 'max:255'
             ],
-            'position' => ['required', Rule::in(['ADMIN', 'MANAGER', 'TRADE_MANAGER'])]
+            'position' => ['required']
         ];
     }
 
@@ -45,7 +45,6 @@ class StoreUserRequest extends MainRequest
             'password.min' => 'Foydalanuvchi paroli kamida 8 ta belgidan iborat bo\'lishi kerak',
             'password.max' => 'Foydalanuvchi paroli 255 ta belgidan oshmasligi kerak',
             'position.required' => 'Foydalanuvchi lavozimini tanlash majburiy',
-            'position.in' => 'Foydalanuvchi lavozimi faqat ADMIN MANAGER yoki TRADE_MANAGER bo\'lishi mumkin',
         ];
     }
 }

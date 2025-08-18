@@ -4,7 +4,7 @@ namespace App\Modules\Information\Requests;
 
 use App\Http\Requests\MainRequest;
 
-class GetUsersRequest extends MainRequest
+class GetCategoriesRequest extends MainRequest
 {
     public function rules(): array
     {
@@ -13,7 +13,6 @@ class GetUsersRequest extends MainRequest
             'sort' => ['nullable', 'array'],
             'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'filters' => ['nullable', 'array'],
         ];
     }
 
