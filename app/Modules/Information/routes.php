@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Modules\Information\Controllers\UserController;
 use App\Modules\Information\Controllers\CategoryController;
 use App\Modules\Information\Controllers\SupplierController;
+use App\Modules\Information\Controllers\CostTypeController;
 
 
 Route::group(['prefix' => 'auth'], function () {
@@ -39,3 +40,10 @@ Route::group(['prefix' => 'suppliers', 'middleware' => ['auth:sanctum']], functi
     Route::put('/invert-active/{id}', [SupplierController::class, 'invertActive']);
 });
 
+Route::group(['prefix' => 'cost-types', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [CostTypeController::class, 'getAll']);
+    Route::get('/all-active', [CostTypeController::class, 'getAllActive'])->middleware('reject_request');
+    Route::post('/create', [CostTypeController::class, 'store']);
+    Route::put('/update/{id}', [CostTypeController::class, 'update']);
+    Route::put('/invert-active/{id}', [CostTypeController::class, 'invertActive']);
+});
