@@ -7,6 +7,8 @@ use App\Modules\Information\Interfaces\SupplierInterface;
 use App\Modules\Information\Interfaces\UserInterface;
 use App\Modules\Information\Repositories\CategoryRepository;
 use App\Modules\Information\Repositories\SupplierRepository;
+use App\Modules\Information\Interfaces\UserInterface;
+use App\Modules\Information\Repositories\CategoryRepository;
 use App\Modules\Information\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(UserInterface::class, UserRepository::class);
         $this->app->singleton(CategoryInterface::class, CategoryRepository::class);
         $this->app->singleton(SupplierInterface::class, SupplierRepository::class);
+
     }
 
     /**

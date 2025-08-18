@@ -5,6 +5,7 @@ use App\Modules\Information\Controllers\UserController;
 use App\Modules\Information\Controllers\CategoryController;
 use App\Modules\Information\Controllers\SupplierController;
 
+
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
