@@ -66,5 +66,11 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
+        DB::table('cost_types')->insert([
+            ['name'=> 'Kommunal to\'lovlar uchun'],
+            ['name'=> 'Do\'kon ijarasi uchun'],
+            ['name'=> 'Tozalik uchun'],
+        ]);
+
     }
 }
