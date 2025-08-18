@@ -37,5 +37,34 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Dazmollar'],
             ['name' => 'Blender va mikserlar'],
         ]);
+
+        DB::table('suppliers')->insert([
+            [
+                'name' => 'Texno World',
+                'phone_number' => '998909001122',
+                'address' => "Toshkent shahar, Chilonzor tumani, Bunyodkor ko‘chasi 15"
+            ],
+            [
+                'name' => 'Smart Electronics',
+                'phone_number' => '998935554433',
+                'address' => "Samarqand shahar, Registon ko‘chasi 21"
+            ],
+            [
+                'name' => 'Mega Technik',
+                'phone_number' => '998977788990',
+                'address' => "Namangan shahar, Bobur shoh ko‘chasi 45"
+            ],
+            [
+                'name' => 'Electro Service',
+                'phone_number' => '998998887766',
+                'address' => "Andijon shahar, Navro‘z ko‘chasi 10"
+            ],
+            [
+                'name' => 'Home Comfort',
+                'phone_number' => '998903212121',
+                'address' => "Buxoro shahar, G‘ijduvon yo‘li 5"
+            ],
+        ]);
+
     }
 }

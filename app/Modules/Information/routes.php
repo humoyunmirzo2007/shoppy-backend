@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Modules\Information\Controllers\UserController;
 use App\Modules\Information\Controllers\CategoryController;
+use App\Modules\Information\Controllers\SupplierController;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
@@ -28,3 +29,12 @@ Route::group(['prefix' => 'categories', 'middleware' => ['auth:sanctum']], funct
     Route::put('/update/{id}', [CategoryController::class, 'update']);
     Route::put('/invert-active/{id}', [CategoryController::class, 'invertActive']);
 });
+
+Route::group(['prefix' => 'suppliers', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [SupplierController::class, 'getAll']);
+    Route::get('/all-active', [SupplierController::class, 'getAllActive'])->middleware('reject_request');
+    Route::post('/create', [SupplierController::class, 'store']);
+    Route::put('/update/{id}', [SupplierController::class, 'update']);
+    Route::put('/invert-active/{id}', [SupplierController::class, 'invertActive']);
+});
+
