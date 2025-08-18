@@ -33,7 +33,7 @@ class UpdateUserRequest extends MainRequest
                 'max:255',
                 'not_in:""'
             ],
-            'position' => ['required', Rule::in(['ADMIN', 'MANAGER' ,'TRADE_MANAGER'])]
+            'position' => ['required']
         ];
     }
 
@@ -51,7 +51,6 @@ class UpdateUserRequest extends MainRequest
             'password.min' => 'Foydalanuvchi paroli kamida 8 ta belgidan iborat bo\'lishi kerak',
             'password.max' => 'Foydalanuvchi paroli 255 ta belgidan oshmasligi kerak',
             'position.required' => 'Foydalanuvchi lavozimini tanlash majburiy',
-            'position.in' => 'Foydalanuvchi lavozimi faqat ADMIN , MANAGER yoki TRADE_MANAGER bo\'lishi mumkin',
             'password.not_in' => 'Foydalanuvchi paroli bo\'sh bo\'lishi mumkin emas',
         ];
     }

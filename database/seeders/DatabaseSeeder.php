@@ -24,5 +24,18 @@ class DatabaseSeeder extends Seeder
           'password'=> Hash::make('password'),
           'is_dev' => true,
        ]);
+
+        DB::table('categories')->insert([
+            ['name' => 'Televizorlar'],
+            ['name' => 'Muzlatkichlar'],
+            ['name' => 'Kir yuvish mashinalari'],
+            ['name' => 'Changyutgichlar'],
+            ['name' => 'Konditsionerlar'],
+            ['name' => 'Gaz plitalari'],
+            ['name' => 'Mikroto‘lqinli pechlar'],
+            ['name' => 'Suv isitgichlar'],
+            ['name' => 'Dazmollar'],
+            ['name' => 'Blender va mikserlar'],
+        ]);
     }
 }
