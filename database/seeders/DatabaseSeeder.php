@@ -72,5 +72,21 @@ class DatabaseSeeder extends Seeder
             ['name'=> 'Tozalik uchun'],
         ]);
 
+        DB::table('products')->insert([
+            ['name' => 'Samsung 55" Smart TV',     'category_id' => 1, 'unit' => 'dona'],
+            ['name' => 'LG 43" LED TV',            'category_id' => 1, 'unit' => 'dona'],
+            ['name' => 'Artel 300L Muzlatkich',    'category_id' => 2, 'unit' => 'dona'],
+            ['name' => 'Samsung NoFrost Muzlatkich','category_id' => 2,'unit' => 'dona'],
+            ['name' => 'LG Avtomat Kir Yuvish',    'category_id' => 3, 'unit' => 'dona'],
+            ['name' => 'Artel Changyutgich 1600W', 'category_id' => 4, 'unit' => 'dona'],
+            ['name' => 'Hisense Konditsioner 24',  'category_id' => 5, 'unit' => 'dona'],
+            ['name' => 'Gefest Gaz Plitasi 4x',    'category_id' => 6, 'unit' => 'dona'],
+            ['name' => 'Samsung Mikroto‘lqinli Pech','category_id' => 7, 'unit' => 'dona'],
+            ['name' => 'Ariston Suv Isitgich 50L', 'category_id' => 8, 'unit' => 'dona'],
+            ['name' => 'Philips Bug‘li Dazmol',    'category_id' => 9, 'unit' => 'dona'],
+            ['name' => 'Bosch Blender 600W',       'category_id' => 10,'unit' => 'dona'],
+            ['name' => 'Kenwood Mikser',           'category_id' => 10,'unit' => 'dona'],
+        ]);
+
     }
 }

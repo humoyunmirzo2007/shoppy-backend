@@ -15,4 +15,9 @@ class Category extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     protected $sortable = ['id', 'name', 'is_active'];
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
 }

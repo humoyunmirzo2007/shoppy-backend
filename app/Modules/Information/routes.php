@@ -5,6 +5,7 @@ use App\Modules\Information\Controllers\UserController;
 use App\Modules\Information\Controllers\CategoryController;
 use App\Modules\Information\Controllers\SupplierController;
 use App\Modules\Information\Controllers\CostTypeController;
+use App\Modules\Information\Controllers\ProductController;
 
 
 Route::group(['prefix' => 'auth'], function () {
@@ -46,4 +47,13 @@ Route::group(['prefix' => 'cost-types', 'middleware' => ['auth:sanctum']], funct
     Route::post('/create', [CostTypeController::class, 'store']);
     Route::put('/update/{id}', [CostTypeController::class, 'update']);
     Route::put('/invert-active/{id}', [CostTypeController::class, 'invertActive']);
+});
+
+Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [ProductController::class, 'getAll']);
+    Route::post('/create', [ProductController::class, 'store']);
+    Route::put('/update/{id}', [ProductController::class, 'update']);
+    Route::put('/invert-active/{id}', [ProductController::class, 'invertActive']);
+    Route::get('/download-template', [ProductController::class, 'downloadTemplate']);
+    Route::post('/import', [ProductController::class, 'import']);
 });
