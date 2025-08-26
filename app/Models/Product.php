@@ -19,6 +19,11 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function productResidue(): HasOne
+    {
+        return $this->hasOne(ProductResidue::class);
+    }
+
     protected $hidden = ['created_at', 'updated_at'];
 
     protected $sortable = ['id', 'name', 'unit', 'category_id', 'is_active'];

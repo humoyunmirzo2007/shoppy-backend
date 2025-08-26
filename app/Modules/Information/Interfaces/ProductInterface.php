@@ -13,4 +13,5 @@ interface ProductInterface
     public function invertActive(int $id);
     public function import(array $insertProducts, array $updateProducts);
     public function findByName(string $name);
+    public function getForCheckResidue(array $ids);
 }

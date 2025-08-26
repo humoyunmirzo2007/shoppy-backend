@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('suppliers', function (Blueprint $table) {
+        Schema::create('supplier_calculations', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('phone_number', 12)->unique();
-            $table->string('address', 500);
-            $table->decimal('debt', 10, 2)->default(0);
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('type');
+            $table->decimal('value', 10, 2);
+            $table->date('date');
+            $table->decimal('debt_after_calculation', 10, 2);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('suppliers');
+        Schema::dropIfExists('supplier_calculations');
     }
 };
