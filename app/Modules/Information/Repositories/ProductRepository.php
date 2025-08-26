@@ -94,4 +94,13 @@ class ProductRepository implements ProductInterface
         return $this->product->where('name', $name)->first();
     }
 
+    public function getForCheckResidue(array $ids)
+    {
+        return $this->product
+            ->whereIn('id', $ids)
+            ->select('id', 'residue')
+            ->get()
+            ->keyBy('id')
+            ;
+    }
 }

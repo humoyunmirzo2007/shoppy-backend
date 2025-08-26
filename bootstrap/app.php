@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             foreach (
                 [
                     'Information',
+                    'Warehouse'
                 ] as $module
             ) {
                 $routeFile = base_path("app/Modules/{$module}/routes.php");

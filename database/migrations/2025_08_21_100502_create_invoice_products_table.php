@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('suppliers', function (Blueprint $table) {
+        Schema::create('invoice_products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('phone_number', 12)->unique();
-            $table->string('address', 500);
-            $table->decimal('debt', 10, 2)->default(0);
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->restrictOnDelete();
+            $table->decimal('price', 10, 2);
+            $table->decimal('total_price', 10, 2);
+            $table->decimal('count', 10, 1);
+            $table->date('date');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+
+            $table->index('invoice_id');
         });
     }
 
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('suppliers');
+        Schema::dropIfExists('invoice_products');
     }
 };

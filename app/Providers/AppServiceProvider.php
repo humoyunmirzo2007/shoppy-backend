@@ -12,6 +12,10 @@ use App\Modules\Information\Repositories\CostTypeRepository;
 use App\Modules\Information\Repositories\ProductRepository;
 use App\Modules\Information\Repositories\SupplierRepository;
 use App\Modules\Information\Repositories\UserRepository;
+use App\Modules\Warehouse\Interfaces\InvoiceInterface;
+use App\Modules\Warehouse\Interfaces\InvoiceProductInterface;
+use App\Modules\Warehouse\Repositories\InvoiceProductRepository;
+use App\Modules\Warehouse\Repositories\InvoiceRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(SupplierInterface::class, SupplierRepository::class);
         $this->app->singleton(CostTypeInterface::class, CostTypeRepository::class);
         $this->app->singleton(ProductInterface::class, ProductRepository::class);
+        $this->app->singleton(InvoiceInterface::class, InvoiceRepository::class);
+        $this->app->singleton(InvoiceProductInterface::class, InvoiceProductRepository::class);
     }
 
     /**
