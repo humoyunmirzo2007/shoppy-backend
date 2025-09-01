@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Modules\Information\Controllers\UserController;
 use App\Modules\Information\Controllers\CategoryController;
 use App\Modules\Information\Controllers\SupplierController;
+use App\Modules\Information\Controllers\ClientController;
 use App\Modules\Information\Controllers\CostTypeController;
 use App\Modules\Information\Controllers\ProductController;
 use App\Modules\Information\Controllers\OtherSourceController;
@@ -41,6 +42,14 @@ Route::group(['prefix' => 'suppliers', 'middleware' => ['auth:sanctum']], functi
     Route::post('/create', [SupplierController::class, 'store']);
     Route::put('/update/{id}', [SupplierController::class, 'update']);
     Route::put('/invert-active/{id}', [SupplierController::class, 'invertActive']);
+});
+
+Route::group(['prefix' => 'clients', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [ClientController::class, 'getAll']);
+    Route::get('/all-active', [ClientController::class, 'getAllActive'])->middleware('reject_request');
+    Route::post('/create', [ClientController::class, 'store']);
+    Route::put('/update/{id}', [ClientController::class, 'update']);
+    Route::put('/invert-active/{id}', [ClientController::class, 'invertActive']);
 });
 
 Route::group(['prefix' => 'cost-types', 'middleware' => ['auth:sanctum']], function () {
