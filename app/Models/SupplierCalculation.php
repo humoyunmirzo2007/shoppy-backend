@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Traits\Sortable;
+use App\Modules\Warehouse\Enums\SupplierCalculationTypesEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Invoice;
 
 class SupplierCalculation extends Model
 {
@@ -24,6 +26,11 @@ class SupplierCalculation extends Model
         return $this->belongsTo(Supplier::class);
     }
 
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
     protected $hidden = ['created_at'];
 
     protected $sortable = ['id'];
@@ -40,5 +47,6 @@ class SupplierCalculation extends Model
             ->format('d.m.Y, H:i:s');
     }
     protected $casts = [
+        'type' => SupplierCalculationTypesEnum::class,
     ];
 }

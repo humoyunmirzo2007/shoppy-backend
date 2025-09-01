@@ -32,6 +32,7 @@ BEGIN
         INSERT INTO supplier_calculations (
             supplier_id,
             user_id,
+            invoice_id,
             type,
             value,
             date,
@@ -41,6 +42,7 @@ BEGIN
         ) VALUES (
             NEW.supplier_id,
             NEW.user_id,
+            NEW.id,
             NEW.type,
             calculation_value,
             NEW.date,

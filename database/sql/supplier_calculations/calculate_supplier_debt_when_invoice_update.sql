@@ -51,24 +51,25 @@ BEGIN
         -- Update or insert calculation record
         IF EXISTS (
             SELECT 1 FROM supplier_calculations 
-            WHERE supplier_id = NEW.supplier_id 
-            AND type = NEW.type 
-            AND date = NEW.date
+            WHERE invoice_id = NEW.id
         ) THEN
             -- Update existing record
             UPDATE supplier_calculations
             SET 
+                supplier_id = NEW.supplier_id,
+                user_id = NEW.user_id,
+                type = NEW.type,
                 value = new_calculation_value,
+                date = NEW.date,
                 debt_after_calculation = current_debt + new_calculation_value,
                 updated_at = NOW()
-            WHERE supplier_id = NEW.supplier_id 
-            AND type = NEW.type 
-            AND date = NEW.date;
+            WHERE invoice_id = NEW.id;
         ELSE
             -- Insert new record
             INSERT INTO supplier_calculations (
                 supplier_id,
                 user_id,
+                invoice_id,
                 type,
                 value,
                 date,
@@ -78,6 +79,7 @@ BEGIN
             ) VALUES (
                 NEW.supplier_id,
                 NEW.user_id,
+                NEW.id,
                 NEW.type,
                 new_calculation_value,
                 NEW.date,
