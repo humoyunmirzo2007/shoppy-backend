@@ -142,20 +142,20 @@ class InvoiceService
 
         $savableProducts = array_merge($normalProducts, $productsForInsert, $productsForUpdate);
 
-        if ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value) {
-            $residueNotEnough = $this->checkProductResidues($savableProducts);
-
-            if ($residueNotEnough) {
-                return [
-                    'status' => 'error',
-                    'message' => $residueNotEnough
-                ];
-            }
-
-            $productsForInsert = $this->makeProductCountsNegative($productsForInsert);
-            $productsForUpdate = $this->makeProductCountsNegative($productsForUpdate);
-        }
-
+//        if ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value) {
+//            $residueNotEnough = $this->checkProductResidues($savableProducts);
+//
+//            if ($residueNotEnough) {
+//                return [
+//                    'status' => 'error',
+//                    'message' => $residueNotEnough
+//                ];
+//            }
+//
+//
+//        }
+        $productsForInsert = $this->makeProductCountsNegative($productsForInsert);
+        $productsForUpdate = $this->makeProductCountsNegative($productsForUpdate);
         $allHaveAction = collect($products)->every(function ($product) {
             return array_key_exists('action', $product);
         });
