@@ -110,5 +110,68 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Kafolat to\'lovlari', 'type' => 'PAYMENT', 'is_active' => false],
             ['name' => 'Boshqa daromadlar', 'type' => 'INVOICE', 'is_active' => true],
         ]);
+
+        DB::table('clients')->insert([
+            [
+                'name' => 'Aziz Karimov',
+                'phone_number' => '998901234567',
+                'debt' => 0,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Malika Yusupova',
+                'phone_number' => '998902345678',
+                'debt' => 0,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Jamshid Toshmatov',
+                'phone_number' => '998903456789',
+                'debt' => 0,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Dilfuza Rahimova',
+                'phone_number' => '998904567890',
+                'debt' => 0,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Bekzod Mirzayev',
+                'phone_number' => '998905678901',
+                'debt' => 0,
+                'is_active' => false,
+            ],
+            [
+                'name' => 'Gulnora Karimova',
+                'phone_number' => '998906789012',
+                'debt' => 0,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Rustam Sobirov',
+                'phone_number' => '998907890123',
+                'debt' => 0,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Zarina Abdurahimova',
+                'phone_number' => '998908901234',
+                'debt' => 0,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Shahzod Umarov',
+                'phone_number' => '998909012345',
+                'debt' => 0,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Maftuna Jalilova',
+                'phone_number' => '998900123456',
+                'debt' => 0,
+                'is_active' => true,
+            ],
+        ]);
     }
 }
