@@ -1,42 +1,40 @@
 <?php
 
-namespace App\Modules\Warehouse\Services;
+namespace App\Modules\Trade\Services;
 
 use App\Modules\Information\Interfaces\ProductInterface;
-use App\Modules\Warehouse\Enums\InvoiceTypesEnum;
-use App\Modules\Warehouse\Interfaces\InvoiceInterface;
-use App\Modules\Warehouse\Repositories\InvoiceProductRepository;
+use App\Modules\Trade\Enums\TradeTypesEnum;
+use App\Modules\Trade\Interfaces\TradeInterface;
+use App\Modules\Trade\Repositories\TradeProductRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class InvoiceService
+class TradeService
 {
     public function __construct(
-        protected InvoiceInterface $invoiceRepository,
-        protected InvoiceProductRepository $invoiceProductRepository,
+        protected TradeInterface $tradeRepository,
+        protected TradeProductRepository $tradeProductRepository,
         protected ProductInterface $productRepository
     ) {}
 
     public function getByType(string $type, array $data)
     {
-        return $this->invoiceRepository->getByType($type, $data);
+        return $this->tradeRepository->getByType($type, $data);
     }
 
     public function getByIdWithProducts(int $id)
     {
-        return $this->invoiceRepository->getByIdWithProducts($id);
+        return $this->tradeRepository->getByIdWithProducts($id);
     }
 
     public function store(array $data)
     {
         $type = $data['type'];
         switch ($type) {
-            case InvoiceTypesEnum::SUPPLIER_INPUT->value:
-            case InvoiceTypesEnum::SUPPLIER_OUTPUT->value:
-            case InvoiceTypesEnum::OTHER_INPUT->value:
-            case InvoiceTypesEnum::OTHER_OUTPUT->value:
-                return $this->storeInvoice($data);
+            case TradeTypesEnum::TRADE->value:
+            case TradeTypesEnum::RETURN_PRODUCT->value:
+                return $this->storeTrade($data);
             default:
                 return [
                     'status' => 'error',
@@ -49,11 +47,9 @@ class InvoiceService
     {
         $type = $data['type'];
         switch ($type) {
-            case InvoiceTypesEnum::SUPPLIER_INPUT->value:
-            case InvoiceTypesEnum::SUPPLIER_OUTPUT->value:
-            case InvoiceTypesEnum::OTHER_INPUT->value:
-            case InvoiceTypesEnum::OTHER_OUTPUT->value:
-                return $this->updateInvoice($id, $data);
+            case TradeTypesEnum::TRADE->value:
+            case TradeTypesEnum::RETURN_PRODUCT->value:
+                return $this->updateTrade($id, $data);
             default:
                 return [
                     'status' => 'error',
@@ -64,24 +60,24 @@ class InvoiceService
 
     public function delete(int $id)
     {
-        $invoice = $this->invoiceRepository->findById($id);
+        $trade = $this->tradeRepository->findById($id);
 
-        $result = $this->invoiceRepository->delete($invoice);
+        $result = $this->tradeRepository->delete($trade);
 
         if (!$result) {
             return [
                 'status' => 'error',
-                'message' => 'Fakturani o\'chirishda xatolik yuz berdi'
+                'message' => 'Savdoni o\'chirishda xatolik yuz berdi'
             ];
         }
 
         return [
             'status' => 'success',
-            'message' => 'Faktura muvaffaqiyatli o\'chirildi'
+            'message' => 'Savdo muvaffaqiyatli o\'chirildi'
         ];
     }
 
-    private function storeInvoice(array $data)
+    private function storeTrade(array $data)
     {
         try {
             DB::beginTransaction();
@@ -89,7 +85,7 @@ class InvoiceService
             $type = $data['type'];
             $products = $data['products'];
 
-            if ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value || $type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
+            if ($type === TradeTypesEnum::TRADE->value) {
                 $residueNotEnough = $this->checkProductResidues($products);
                 if ($residueNotEnough) {
                     return [
@@ -98,43 +94,43 @@ class InvoiceService
                     ];
                 }
 
-                $products = $this->makeProductCountsNegative($products);;
+                $products = $this->makeProductCountsNegative($products);
             }
 
             $data['products_count'] = array_sum(array_column($products, 'count'));
-            $data['total_price'] =  $this->getTotalPrice($products);
+            $data['total_price'] = $this->getTotalPrice($products);
 
-            $invoice = $this->invoiceRepository->store($data);
+            $trade = $this->tradeRepository->store($data);
 
-            $this->invoiceProductRepository->store($this->cleanAndPrepareTradeProducts($products, $invoice->id));
+            $this->tradeProductRepository->store($this->cleanAndPrepareTradeProducts($products, $trade->id));
+
             DB::commit();
 
             return [
                 'status' => 'success',
-                'message' => 'Faktura muvaffaqiyatli qo\'shildi',
-                'data' => $invoice
+                'message' => 'Savdo muvaffaqiyatli qo\'shildi',
+                'data' => $trade
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
             return [
                 'status' => 'error',
-                'message' => 'Faktura yaratishda xatolik yuz berdi'
+                'message' => 'Savdo yaratishda xatolik yuz berdi'
             ];
         }
     }
 
-    private function updateInvoice(int $id, array $data)
+    private function updateTrade(int $id, array $data)
     {
-
         $type = $data['type'];
         $products = $data['products'];
 
-        $invoice = $this->invoiceRepository->findById($id);
+        $trade = $this->tradeRepository->findById($id);
 
-        if (!$invoice) {
+        if (!$trade) {
             return [
                 'status' => 'error',
-                'message' => 'Ushbu faktura topilmadi',
+                'message' => 'Ushbu savdo topilmadi',
                 'status_code' => 404
             ];
         }
@@ -146,11 +142,11 @@ class InvoiceService
 
         $savableProducts = array_merge($normalProducts, $productsForInsert, $productsForUpdate);
 
-        // OUTPUT bo'lsa, count manfiy qilish kerak va qoldiq tekshirish
-        if ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value || $type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
+        // TRADE bo'lsa, count manfiy qilish kerak
+        if ($type === TradeTypesEnum::TRADE->value) {
             // Qoldiq tekshirish (update uchun maxsus hisoblash)
             if (count($productsForUpdate) > 0) {
-                $residueNotEnough = $this->checkProductResiduesForUpdate($invoice->id, $productsForUpdate);
+                $residueNotEnough = $this->checkProductResiduesForUpdate($trade->id, $productsForUpdate);
                 if ($residueNotEnough) {
                     return [
                         'status' => 'error',
@@ -191,91 +187,63 @@ class InvoiceService
             ->values()
             ->toArray();
 
-        $someIdMissed = $this->validateInvoiceProductsIsExist($invoice->id, $productIds);
+        $someIdMissed = $this->validateTradeProductsIsExist($trade->id, $productIds);
 
         if ($someIdMissed) {
             return $someIdMissed;
         }
 
         $data['products_count'] = array_sum(array_column($savableProducts, 'count'));
-        $data['total_price']  =  $this->getTotalPrice($savableProducts);
-
+        $data['total_price'] = $this->getTotalPrice($savableProducts);
 
         DB::beginTransaction();
 
         try {
-            $updatedInvoice = $this->invoiceRepository->update($invoice, [
+            $updatedTrade = $this->tradeRepository->update($trade, [
                 'date' => Carbon::now()->format('Y-m-d'),
-                'supplier_id' => $data['supplier_id'] ?? null,
-                'other_source_id' => $data['other_source_id'] ?? null,
-                'products_count' =>  abs($data['products_count']),
+                'client_id' => $data['client_id'],
+                'products_count' => abs($data['products_count']),
                 'total_price' => abs($data['total_price']),
                 'user_id' => Auth::id(),
                 'type' => $data['type'],
                 'commentary' => $data['commentary'] ?? null
             ]);
 
-            if (!$updatedInvoice) {
+            if (!$updatedTrade) {
                 DB::rollBack();
                 return [
                     'status' => 'error',
-                    'message' => 'Fakturani tahrirlashda muammo yuz berdi'
+                    'message' => 'Savdoni tahrirlashda muammo yuz berdi'
                 ];
             }
 
             if (count($productsForInsert) > 0) {
-                $this->invoiceProductRepository->store($this->cleanAndPrepareTradeProducts($productsForInsert, $invoice->id));
+                $this->tradeProductRepository->store($this->cleanAndPrepareTradeProducts($productsForInsert, $trade->id));
             }
 
             if (count($productsForUpdate) > 0) {
-                $this->invoiceProductRepository->update($this->cleanAndPrepareTradeProducts($productsForUpdate, $invoice->id, true));
+                $this->tradeProductRepository->update($this->cleanAndPrepareTradeProducts($productsForUpdate, $trade->id, true));
             }
 
             if (count($productIdsForDelete) > 0) {
-                $this->invoiceProductRepository->deleteByIds($productIdsForDelete);
+                $this->tradeProductRepository->deleteByIds($productIdsForDelete);
             }
 
             DB::commit();
 
             return [
                 'status' => 'success',
-                'message' => 'Faktura muvaffaqiyatli tahrirlandi',
-                'data' => $updatedInvoice
+                'message' => 'Savdo muvaffaqiyatli tahrirlandi',
+                'data' => $updatedTrade
             ];
         } catch (\Throwable $e) {
+            dd($e);
             DB::rollBack();
             return [
                 'status' => 'error',
-                'message' => 'Fakturani tahrirlashda xatolik yuz berdi',
+                'message' => 'Savdoni tahrirlashda xatolik yuz berdi',
             ];
         }
-    }
-
-    private function checkProductResiduesForUpdate(int $invoiceId, array $products): string|null
-    {
-        // Eski invoice_products ni olish
-        $oldInvoiceProducts = $this->invoiceProductRepository->getByInvoiceId($invoiceId);
-        $oldProductsMap = collect($oldInvoiceProducts)->keyBy('product_id');
-
-        // Hozirgi product qoldiqlarini olish
-        $productIds = collect($products)->pluck('product_id')->toArray();
-        $residues = $this->productRepository->getForCheckResidue($productIds);
-
-        foreach ($products as $product) {
-            $productId = $product['product_id'];
-            $newCount = abs($product['count']); // Yangi count (musbat)
-            $oldCount = abs($oldProductsMap->get($productId)->count ?? 0); // Eski count (musbat)
-            $currentResidue = $residues[$productId]->residue ?? 0;
-
-            // Qo'shimcha chiqariladigan miqdor
-            $additionalCount = $newCount - $oldCount;
-
-            if ($additionalCount > 0 && $additionalCount > $currentResidue) {
-                return "{$productId} - ID li mahsulot uchun yetarli qoldiq mavjud emas. Qo'shimcha {$additionalCount} ta kerak, lekin {$currentResidue} ta mavjud.";
-            }
-        }
-
-        return null;
     }
 
     private function checkProductResidues(array $products): string|null
@@ -292,9 +260,36 @@ class InvoiceService
         return null;
     }
 
-    private function validateInvoiceProductsIsExist(int $invoiceId, array $productIds): ?array
+    private function checkProductResiduesForUpdate(int $tradeId, array $products): string|null
     {
-        $someIdMissed = array_diff($this->invoiceProductRepository->findMissingIds($invoiceId, $productIds), $productIds);
+        // Eski trade_products ni olish
+        $oldTradeProducts = $this->tradeProductRepository->getByTradeId($tradeId);
+        $oldProductsMap = collect($oldTradeProducts)->keyBy('product_id');
+
+        // Hozirgi product qoldiqlarini olish
+        $productIds = collect($products)->pluck('product_id')->toArray();
+        $residues = $this->productRepository->getForCheckResidue($productIds);
+
+        foreach ($products as $product) {
+            $productId = $product['product_id'];
+            $newCount = abs($product['count']); // Yangi count (musbat)
+            $oldCount = abs($oldProductsMap->get($productId)->count ?? 0); // Eski count (musbat)
+            $currentResidue = $residues[$productId]->residue ?? 0;
+
+            // Qo'shimcha sotiladigan miqdor
+            $additionalCount = $newCount - $oldCount;
+
+            if ($additionalCount > 0 && $additionalCount > $currentResidue) {
+                return "{$productId} - ID li mahsulot uchun yetarli qoldiq mavjud emas. Qo'shimcha {$additionalCount} ta kerak, lekin {$currentResidue} ta mavjud.";
+            }
+        }
+
+        return null;
+    }
+
+    private function validateTradeProductsIsExist(int $tradeId, array $productIds): ?array
+    {
+        $someIdMissed = array_diff($this->tradeProductRepository->findMissingIds($tradeId, $productIds), $productIds);
         if ($someIdMissed) {
             return [
                 'status' => 'error',
@@ -320,18 +315,18 @@ class InvoiceService
         }, 0);
     }
 
-    public function cleanAndPrepareTradeProducts(array $products, int $invoiceId, bool $withId = false): array
+    public function cleanAndPrepareTradeProducts(array $products, int $tradeId, bool $withId = false): array
     {
-        return array_map(function ($product) use ($invoiceId, $withId) {
+        return array_map(function ($product) use ($tradeId, $withId) {
             $data = [
-                'invoice_id'  => $invoiceId,
-                'product_id'  => $product['product_id'],
-                'count'    => $product['count'],
-                'price'       => $product['price'],
+                'trade_id' => $tradeId,
+                'product_id' => $product['product_id'],
+                'count' => $product['count'],
+                'price' => $product['price'],
                 'total_price' => abs($product['price'] * $product['count']),
                 'date' => Carbon::now()->format('Y-m-d'),
-                'created_at'  => now(),
-                'updated_at'  => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
             if (!empty($withId)) {
                 $data['id'] = $product['id'];

@@ -1,6 +1,7 @@
 <?php
-use Illuminate\Support\Facades\Route;
+
 use App\Modules\Warehouse\Controllers\InvoiceController;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'invoices', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/get-supplier-inputs', [InvoiceController::class, 'getSupplierInputs']);

@@ -22,7 +22,6 @@ class InvoiceProductRepository implements InvoiceProductInterface
             ['id'],
             ['invoice_id', 'product_id', 'count', 'price', 'total_price', 'date', 'updated_at']
         );
-
     }
 
 
@@ -45,6 +44,13 @@ class InvoiceProductRepository implements InvoiceProductInterface
     }
 
 
+    public function getByInvoiceId(int $invoiceId)
+    {
+        return $this->invoiceProduct
+            ->where('invoice_id', $invoiceId)
+            ->get();
+    }
+
     public function getById(int $invoiceId)
     {
         return $this->invoiceProduct
@@ -52,5 +58,4 @@ class InvoiceProductRepository implements InvoiceProductInterface
             ->where('invoice_id', $invoiceId)
             ->get();
     }
-
 }
