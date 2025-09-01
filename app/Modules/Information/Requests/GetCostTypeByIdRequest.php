@@ -9,7 +9,7 @@ class GetCostTypeByIdRequest extends MainRequest
     public function rules()
     {
         return [
-            'cost_type_id' => ['required', 'integer', 'exists:brands,id']
+            'cost_type_id' => ['required', 'integer', 'exists:cost_types,id']
         ];
     }
 
