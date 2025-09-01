@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->foreignId('supplier_id')->constrained()->restrictOnDelete();
+            $table->foreignId('supplier_id')->nullable()->constrained()->restrictOnDelete();
             $table->decimal('total_price', 10, 2);
             $table->decimal('products_count', 10, 1);
             $table->foreignId('user_id')->constrained()->restrictOnDelete();

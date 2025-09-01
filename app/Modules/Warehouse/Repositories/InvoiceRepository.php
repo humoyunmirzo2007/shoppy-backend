@@ -19,9 +19,10 @@ class InvoiceRepository implements InvoiceInterface
         $filters = $data['filters'] ?? [];
 
         return $this->invoice->query()
-            ->select('id', 'date', 'total_price', 'supplier_id', 'products_count', 'user_id',  'updated_at')
+            ->select('id', 'date', 'total_price', 'supplier_id', 'other_source_id', 'products_count', 'user_id',  'updated_at')
             ->with([
                 'supplier:id,name',
+                'otherSource:id,name',
                 'user:id,full_name',
             ])
             ->where('type', $type)
@@ -61,9 +62,10 @@ class InvoiceRepository implements InvoiceInterface
     public function getByIdWithProducts(int $id)
     {
         return $this->invoice
-            ->select('id', 'supplier_id',  'commentary', 'user_id', 'updated_at', 'date')
+            ->select('id', 'supplier_id', 'other_source_id', 'commentary', 'user_id', 'updated_at', 'date')
             ->with([
                 'supplier:id,name',
+                'otherSource:id,name',
                 'user:id,full_name',
                 'invoiceProducts:id,invoice_id,product_id,price,count,total_price',
                 'invoiceProducts.product:id,name,category_id,residue',
@@ -83,7 +85,8 @@ class InvoiceRepository implements InvoiceInterface
         $invoice = $this->invoice->create(
             [
                 'date' => Carbon::now()->format('Y-m-d'),
-                'supplier_id' => $data['supplier_id'],
+                'supplier_id' => $data['supplier_id'] ?? null,
+                'other_source_id' => $data['other_source_id'] ?? null,
                 'products_count' => abs($data['products_count']),
                 'total_price' => abs($data['total_price']),
                 'user_id' => Auth::id(),
@@ -92,19 +95,18 @@ class InvoiceRepository implements InvoiceInterface
             ]
         );
 
-        return $invoice->load(['supplier:id,name', 'user:id,full_name']);
+        return $invoice->load(['supplier:id,name', 'otherSource:id,name', 'user:id,full_name']);
     }
 
     public function update(Invoice $invoice, array $data)
     {
         $invoice->update($data);
 
-        return $invoice->load(['supplier:id,name', 'user:id,full_name']);
+        return $invoice->load(['supplier:id,name', 'otherSource:id,name', 'user:id,full_name']);
     }
 
     public function delete(Invoice $invoice)
     {
         return $invoice->delete();
     }
-
 }

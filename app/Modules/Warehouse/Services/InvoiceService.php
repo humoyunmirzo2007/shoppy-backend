@@ -34,7 +34,9 @@ class InvoiceService
         switch ($type) {
             case InvoiceTypesEnum::SUPPLIER_INPUT->value:
             case InvoiceTypesEnum::SUPPLIER_OUTPUT->value:
-                return $this->storeSupplierInvoice($data);
+            case InvoiceTypesEnum::OTHER_INPUT->value:
+            case InvoiceTypesEnum::OTHER_OUTPUT->value:
+                return $this->storeInvoice($data);
             default:
                 return [
                     'status' => 'error',
@@ -49,7 +51,9 @@ class InvoiceService
         switch ($type) {
             case InvoiceTypesEnum::SUPPLIER_INPUT->value:
             case InvoiceTypesEnum::SUPPLIER_OUTPUT->value:
-                return $this->updateSupplierInvoice($id, $data);
+            case InvoiceTypesEnum::OTHER_INPUT->value:
+            case InvoiceTypesEnum::OTHER_OUTPUT->value:
+                return $this->updateInvoice($id, $data);
             default:
                 return [
                     'status' => 'error',
@@ -77,7 +81,7 @@ class InvoiceService
         ];
     }
 
-    private function storeSupplierInvoice(array $data)
+    private function storeInvoice(array $data)
     {
         try {
             DB::beginTransaction();
@@ -85,7 +89,7 @@ class InvoiceService
             $type = $data['type'];
             $products = $data['products'];
 
-            if ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value) {
+            if ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value || $type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
                 $residueNotEnough = $this->checkProductResidues($products);
                 if ($residueNotEnough) {
                     return [
@@ -119,7 +123,7 @@ class InvoiceService
         }
     }
 
-    private function updateSupplierInvoice(int $id, array $data)
+    private function updateInvoice(int $id, array $data)
     {
 
         $type = $data['type'];
@@ -142,18 +146,6 @@ class InvoiceService
 
         $savableProducts = array_merge($normalProducts, $productsForInsert, $productsForUpdate);
 
-//        if ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value) {
-//            $residueNotEnough = $this->checkProductResidues($savableProducts);
-//
-//            if ($residueNotEnough) {
-//                return [
-//                    'status' => 'error',
-//                    'message' => $residueNotEnough
-//                ];
-//            }
-//
-//
-//        }
         $productsForInsert = $this->makeProductCountsNegative($productsForInsert);
         $productsForUpdate = $this->makeProductCountsNegative($productsForUpdate);
         $allHaveAction = collect($products)->every(function ($product) {
@@ -189,7 +181,8 @@ class InvoiceService
         try {
             $updatedInvoice = $this->invoiceRepository->update($invoice, [
                 'date' => Carbon::now()->format('Y-m-d'),
-                'supplier_id' => $data['supplier_id'],
+                'supplier_id' => $data['supplier_id'] ?? null,
+                'other_source_id' => $data['other_source_id'] ?? null,
                 'products_count' =>  abs($data['products_count']),
                 'total_price' => abs($data['total_price']),
                 'user_id' => Auth::id(),
