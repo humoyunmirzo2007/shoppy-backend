@@ -18,6 +18,10 @@ use App\Modules\Information\Repositories\PaymentTypeRepository;
 use App\Modules\Information\Repositories\ProductRepository;
 use App\Modules\Information\Repositories\SupplierRepository;
 use App\Modules\Information\Repositories\UserRepository;
+use App\Modules\Trade\Interfaces\TradeInterface;
+use App\Modules\Trade\Interfaces\TradeProductInterface;
+use App\Modules\Trade\Repositories\TradeProductRepository;
+use App\Modules\Trade\Repositories\TradeRepository;
 use App\Modules\Warehouse\Interfaces\InvoiceInterface;
 use App\Modules\Warehouse\Interfaces\InvoiceProductInterface;
 use App\Modules\Warehouse\Repositories\InvoiceProductRepository;
@@ -41,6 +45,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PaymentTypeInterface::class, PaymentTypeRepository::class);
         $this->app->singleton(InvoiceInterface::class, InvoiceRepository::class);
         $this->app->singleton(InvoiceProductInterface::class, InvoiceProductRepository::class);
+        $this->app->singleton(TradeInterface::class, TradeRepository::class);
+        $this->app->singleton(TradeProductInterface::class, TradeProductRepository::class);
     }
 
     /**
