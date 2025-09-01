@@ -9,6 +9,7 @@ use App\Modules\Information\Controllers\ClientController;
 use App\Modules\Information\Controllers\CostTypeController;
 use App\Modules\Information\Controllers\ProductController;
 use App\Modules\Information\Controllers\OtherSourceController;
+use App\Modules\Information\Controllers\PaymentTypeController;
 
 
 Route::group(['prefix' => 'auth'], function () {
@@ -75,4 +76,12 @@ Route::group(['prefix' => 'other-sources', 'middleware' => ['auth:sanctum']], fu
     Route::post('/create', [OtherSourceController::class, 'store']);
     Route::put('/update/{id}', [OtherSourceController::class, 'update']);
     Route::put('/invert-active/{id}', [OtherSourceController::class, 'invertActive']);
+});
+
+Route::group(['prefix' => 'payment-types', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [PaymentTypeController::class, 'index']);
+    Route::get('/all-active', [PaymentTypeController::class, 'getAllActive'])->middleware('reject_request');
+    Route::post('/create', [PaymentTypeController::class, 'store']);
+    Route::put('/update/{id}', [PaymentTypeController::class, 'update']);
+    Route::put('/invert-active/{id}', [PaymentTypeController::class, 'invertActive']);
 });

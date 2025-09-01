@@ -6,6 +6,7 @@ use App\Modules\Information\Interfaces\CategoryInterface;
 use App\Modules\Information\Interfaces\ClientInterface;
 use App\Modules\Information\Interfaces\CostTypeInterface;
 use App\Modules\Information\Interfaces\OtherSourceInterface;
+use App\Modules\Information\Interfaces\PaymentTypeInterface;
 use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Information\Interfaces\SupplierInterface;
 use App\Modules\Information\Interfaces\UserInterface;
@@ -13,6 +14,7 @@ use App\Modules\Information\Repositories\CategoryRepository;
 use App\Modules\Information\Repositories\ClientRepository;
 use App\Modules\Information\Repositories\CostTypeRepository;
 use App\Modules\Information\Repositories\OtherSourceRepository;
+use App\Modules\Information\Repositories\PaymentTypeRepository;
 use App\Modules\Information\Repositories\ProductRepository;
 use App\Modules\Information\Repositories\SupplierRepository;
 use App\Modules\Information\Repositories\UserRepository;
@@ -36,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(CostTypeInterface::class, CostTypeRepository::class);
         $this->app->singleton(ProductInterface::class, ProductRepository::class);
         $this->app->singleton(OtherSourceInterface::class, OtherSourceRepository::class);
+        $this->app->singleton(PaymentTypeInterface::class, PaymentTypeRepository::class);
         $this->app->singleton(InvoiceInterface::class, InvoiceRepository::class);
         $this->app->singleton(InvoiceProductInterface::class, InvoiceProductRepository::class);
     }

@@ -24,9 +24,7 @@ BEGIN
         
         -- Delete calculation record
         DELETE FROM supplier_calculations
-        WHERE supplier_id = OLD.supplier_id 
-        AND type = OLD.type 
-        AND date = OLD.date;
+        WHERE invoice_id = OLD.id;
     END IF;
     
     RETURN OLD;

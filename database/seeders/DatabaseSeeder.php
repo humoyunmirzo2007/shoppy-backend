@@ -173,5 +173,58 @@ class DatabaseSeeder extends Seeder
                 'is_active' => true,
             ],
         ]);
+
+        DB::table('payment_types')->insert([
+            [
+                'name' => 'Naqd pul',
+                'currency' => 'UZS',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Plastik karta',
+                'currency' => 'UZS',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Bank o\'tkazmasi',
+                'currency' => 'UZS',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Click',
+                'currency' => 'UZS',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Payme',
+                'currency' => 'UZS',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Uzcard',
+                'currency' => 'UZS',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Humo',
+                'currency' => 'UZS',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'USD naqd pul',
+                'currency' => 'USD',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'USD bank o\'tkazmasi',
+                'currency' => 'USD',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Chegirma',
+                'currency' => 'UZS',
+                'is_active' => false,
+            ],
+        ]);
     }
 }
