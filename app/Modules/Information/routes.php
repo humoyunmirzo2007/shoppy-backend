@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Modules\Information\Controllers\UserController;
@@ -6,6 +7,7 @@ use App\Modules\Information\Controllers\CategoryController;
 use App\Modules\Information\Controllers\SupplierController;
 use App\Modules\Information\Controllers\CostTypeController;
 use App\Modules\Information\Controllers\ProductController;
+use App\Modules\Information\Controllers\OtherSourceController;
 
 
 Route::group(['prefix' => 'auth'], function () {
@@ -56,4 +58,12 @@ Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], functio
     Route::put('/invert-active/{id}', [ProductController::class, 'invertActive']);
     Route::get('/download-template', [ProductController::class, 'downloadTemplate']);
     Route::post('/import', [ProductController::class, 'import']);
+});
+
+Route::group(['prefix' => 'other-sources', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [OtherSourceController::class, 'getAll']);
+    Route::get('/by-type-active', [OtherSourceController::class, 'getByTypeAllActive']);
+    Route::post('/create', [OtherSourceController::class, 'store']);
+    Route::put('/update/{id}', [OtherSourceController::class, 'update']);
+    Route::put('/invert-active/{id}', [OtherSourceController::class, 'invertActive']);
 });
