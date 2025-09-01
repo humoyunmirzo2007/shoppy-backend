@@ -14,8 +14,7 @@ class Invoice extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-    ];
+    protected $casts = [];
 
     public function invoiceProducts(): HasMany
     {
@@ -25,6 +24,11 @@ class Invoice extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function otherSource(): BelongsTo
+    {
+        return $this->belongsTo(OtherSource::class);
     }
 
     public function user(): BelongsTo

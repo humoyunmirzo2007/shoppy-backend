@@ -9,9 +9,10 @@ class StoreInvoiceRequest extends MainRequest
     public function rules(): array
     {
         return [
-            'supplier_id' => ['required', 'numeric', 'exists:suppliers,id'],
+            'supplier_id' => ['nullable', 'numeric', 'exists:suppliers,id'],
+            'other_source_id' => ['nullable', 'numeric', 'exists:other_sources,id'],
             'commentary' => ['nullable', 'max:200'],
-            'type' => ['required', 'in:SUPPLIER_INPUT,SUPPLIER_OUTPUT'],
+            'type' => ['required', 'in:SUPPLIER_INPUT,SUPPLIER_OUTPUT,OTHER_INPUT,OTHER_OUTPUT'],
             'products' => ['required', 'array', 'min:1'],
             'products.*.product_id' => ['required', 'integer', 'exists:products,id'],
             'products.*.count' => ['required', 'numeric', 'gt:0'],
@@ -19,12 +20,40 @@ class StoreInvoiceRequest extends MainRequest
         ];
     }
 
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $supplierId = $this->input('supplier_id');
+            $otherSourceId = $this->input('other_source_id');
+            $type = $this->input('type');
+
+            if (!$supplierId && !$otherSourceId) {
+                $validator->errors()->add('supplier_id', 'Ta\'minotchi yoki boshqa manba tanlanishi shart');
+            }
+
+            if ($supplierId && $otherSourceId) {
+                $validator->errors()->add('supplier_id', 'Faqat ta\'minotchi yoki faqat boshqa manba tanlanishi mumkin');
+            }
+
+            // Supplier bo'lsa, type SUPPLIER_ bo'lishi kerak
+            if ($supplierId && !str_starts_with($type, 'SUPPLIER_')) {
+                $validator->errors()->add('type', 'Ta\'minotchi tanlanganda faqat SUPPLIER_INPUT yoki SUPPLIER_OUTPUT turini tanlashingiz mumkin');
+            }
+
+            // Other source bo'lsa, type OTHER_ bo'lishi kerak
+            if ($otherSourceId && !str_starts_with($type, 'OTHER_')) {
+                $validator->errors()->add('type', 'Boshqa manba tanlanganda faqat OTHER_INPUT yoki OTHER_OUTPUT turini tanlashingiz mumkin');
+            }
+        });
+    }
+
     public function messages(): array
     {
         return [
-            'supplier_id.required' => 'Ta\'minotchi tanlanmagan',
             'supplier_id.numeric' => 'Ta\'minotchi ID noto\'g\'ri formatda',
             'supplier_id.exists' => 'Bunday Ta\'minotchi mavjud emas',
+            'other_source_id.numeric' => 'Boshqa manba ID noto\'g\'ri formatda',
+            'other_source_id.exists' => 'Bunday boshqa manba mavjud emas',
             'commentary.max' => 'Izoh 200 ta belgidan oshmasligi kerak',
             'type.required' => 'Faktura turini tanlash shart',
             'type.in' => 'Faktura turini noto\'g\'ri',
