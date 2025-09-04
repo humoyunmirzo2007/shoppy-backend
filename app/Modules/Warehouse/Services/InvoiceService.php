@@ -104,6 +104,9 @@ class InvoiceService
             $data['products_count'] = array_sum(array_column($products, 'count'));
             $data['total_price'] =  $this->getTotalPrice($products);
 
+            // Date formatini o'zgartirish (dd.mm.yyyy -> Y-m-d)
+            $data['date'] = Carbon::createFromFormat('d.m.Y', $data['date'])->format('Y-m-d');
+
             $invoice = $this->invoiceRepository->store($data);
 
             $this->invoiceProductRepository->store($this->cleanAndPrepareTradeProducts($products, $invoice->id));
@@ -205,7 +208,7 @@ class InvoiceService
 
         try {
             $updatedInvoice = $this->invoiceRepository->update($invoice, [
-                'date' => Carbon::now()->format('Y-m-d'),
+                'date' => \Carbon\Carbon::createFromFormat('d.m.Y', $data['date'])->format('Y-m-d'),
                 'supplier_id' => $data['supplier_id'] ?? null,
                 'other_source_id' => $data['other_source_id'] ?? null,
                 'products_count' =>  abs($data['products_count']),

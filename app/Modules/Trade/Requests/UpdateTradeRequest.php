@@ -12,6 +12,7 @@ class UpdateTradeRequest extends MainRequest
             'client_id' => ['required', 'numeric', 'exists:clients,id'],
             'commentary' => ['nullable', 'max:200'],
             'type' => ['required', 'in:TRADE,RETURN_PRODUCT'],
+            'date' => ['required', 'date_format:d.m.Y'],
             'products' => ['required', 'array', 'min:1'],
             'products.*.product_id' => ['required', 'integer', 'exists:products,id'],
             'products.*.count' => ['required', 'numeric', 'gt:0'],
@@ -46,6 +47,8 @@ class UpdateTradeRequest extends MainRequest
             'products.*.action.string' => 'Mahsulot actioni string bo\'lishi kerak',
             'products.*.action.in' => 'Mahsulot actioni faqat normal, add, edit yoki delete bo\'lishi kerak',
             'products.*.id.required' => 'Savdo mahsulot idsi bo\'lishi shart',
+            'date.required' => 'Sana kiritilishi shart',
+            'date.date_format' => 'Sana dd.mm.yyyy formatida bo\'lishi kerak',
         ];
     }
 }
