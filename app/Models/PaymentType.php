@@ -13,5 +13,5 @@ class PaymentType extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    protected $sortable = ['id', 'name', 'currency', 'is_active'];
+    protected $sortable = ['id', 'name',  'is_active'];
 }

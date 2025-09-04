@@ -99,16 +99,16 @@ class DatabaseSeeder extends Seeder
         ]);
 
         DB::table('other_sources')->insert([
-            ['name' => 'Faktura to\'lovlari', 'type' => 'INVOICE', 'is_active' => true],
+            ['name' => 'Faktura to\'lovlari', 'type' => 'PRODUCT', 'is_active' => true],
             ['name' => 'Naqd pul to\'lovlari', 'type' => 'PAYMENT', 'is_active' => true],
             ['name' => 'Bank orqali to\'lovlar', 'type' => 'PAYMENT', 'is_active' => true],
             ['name' => 'Kredit to\'lovlari', 'type' => 'PAYMENT', 'is_active' => true],
-            ['name' => 'Chegirmalar', 'type' => 'INVOICE', 'is_active' => true],
-            ['name' => 'Qaytarilgan tovarlar', 'type' => 'INVOICE', 'is_active' => false],
+            ['name' => 'Chegirmalar', 'type' => 'PRODUCT', 'is_active' => true],
+            ['name' => 'Qaytarilgan tovarlar', 'type' => 'PRODUCT', 'is_active' => false],
             ['name' => 'Komissiya to\'lovlari', 'type' => 'PAYMENT', 'is_active' => true],
             ['name' => 'Yetkazib berish xizmati', 'type' => 'PAYMENT', 'is_active' => true],
             ['name' => 'Kafolat to\'lovlari', 'type' => 'PAYMENT', 'is_active' => false],
-            ['name' => 'Boshqa daromadlar', 'type' => 'INVOICE', 'is_active' => true],
+            ['name' => 'Boshqa daromadlar', 'type' => 'PRODUCT', 'is_active' => true],
         ]);
 
         DB::table('clients')->insert([
@@ -177,52 +177,42 @@ class DatabaseSeeder extends Seeder
         DB::table('payment_types')->insert([
             [
                 'name' => 'Naqd pul',
-                'currency' => 'UZS',
                 'is_active' => true,
             ],
             [
                 'name' => 'Plastik karta',
-                'currency' => 'UZS',
                 'is_active' => true,
             ],
             [
                 'name' => 'Bank o\'tkazmasi',
-                'currency' => 'UZS',
                 'is_active' => true,
             ],
             [
                 'name' => 'Click',
-                'currency' => 'UZS',
                 'is_active' => true,
             ],
             [
                 'name' => 'Payme',
-                'currency' => 'UZS',
                 'is_active' => true,
             ],
             [
                 'name' => 'Uzcard',
-                'currency' => 'UZS',
                 'is_active' => true,
             ],
             [
                 'name' => 'Humo',
-                'currency' => 'UZS',
                 'is_active' => true,
             ],
             [
                 'name' => 'USD naqd pul',
-                'currency' => 'USD',
                 'is_active' => true,
             ],
             [
                 'name' => 'USD bank o\'tkazmasi',
-                'currency' => 'USD',
                 'is_active' => true,
             ],
             [
                 'name' => 'Chegirma',
-                'currency' => 'UZS',
                 'is_active' => false,
             ],
         ]);

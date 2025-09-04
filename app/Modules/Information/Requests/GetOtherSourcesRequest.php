@@ -14,7 +14,7 @@ class GetOtherSourcesRequest extends MainRequest
             'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
             'page' => ['nullable', 'integer', 'min:1'],
             'filters' => ['nullable', 'array'],
-            'filters.type' => ['nullable', 'string', 'in:INVOICE,PAYMENT'],
+            'filters.type' => ['nullable', 'string', 'in:PRODUCT,PAYMENT'],
             'filters.is_active' => ['nullable', 'boolean'],
         ];
     }
@@ -29,7 +29,7 @@ class GetOtherSourcesRequest extends MainRequest
             'page.integer' => 'Page son bo\'lishi kerak',
             'page.min' => 'Page kamida 1 bo\'lishi kerak',
             'filters.type.string' => 'Turi matn bo\'lishi kerak',
-            'filters.type.in' => 'Turi INVOICE yoki PAYMENT bo\'lishi kerak',
+            'filters.type.in' => 'Turi PRODUCT yoki PAYMENT bo\'lishi kerak',
             'filters.is_active.boolean' => 'Faol holat mantiqiy qiymat bo\'lishi kerak'
         ];
     }

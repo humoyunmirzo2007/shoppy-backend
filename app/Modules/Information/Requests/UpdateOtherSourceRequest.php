@@ -20,7 +20,7 @@ class UpdateOtherSourceRequest extends MainRequest
             'type' => [
                 'required',
                 'string',
-                'in:INVOICE,PAYMENT'
+                'in:PRODUCT,PAYMENT'
             ],
             'is_active' => [
                 'nullable',
@@ -39,7 +39,7 @@ class UpdateOtherSourceRequest extends MainRequest
 
             'type.required' => 'Manba turini tanlash majburiy',
             'type.string' => 'Manba turi matn bo\'lishi kerak',
-            'type.in' => 'Manba turi INVOICE yoki PAYMENT bo\'lishi kerak',
+            'type.in' => 'Manba turi PRODUCT yoki PAYMENT bo\'lishi kerak',
 
             'is_active.boolean' => 'Faol holat mantiqiy qiymat bo\'lishi kerak',
         ];

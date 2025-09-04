@@ -4,6 +4,6 @@ namespace App\Modules\Information\Enums;
 
 enum OtherSourceTypesEnum: string
 {
-    case INVOICE = 'INVOICE';
+    case PRODUCT = 'PRODUCT';
     case PAYMENT = 'PAYMENT';
 }
