@@ -80,7 +80,7 @@ class TradeRepository implements TradeInterface
     {
         $trade = $this->trade->create(
             [
-                'date' => Carbon::now()->format('Y-m-d'),
+                'date' => $data['date'],
                 'client_id' => $data['client_id'],
                 'products_count' => abs($data['products_count']),
                 'total_price' => abs($data['total_price']),

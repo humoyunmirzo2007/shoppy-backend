@@ -100,6 +100,9 @@ class TradeService
             $data['products_count'] = array_sum(array_column($products, 'count'));
             $data['total_price'] = $this->getTotalPrice($products);
 
+            // Date formatini o'zgartirish (dd.mm.yyyy -> Y-m-d)
+            $data['date'] = Carbon::createFromFormat('d.m.Y', $data['date'])->format('Y-m-d');
+
             $trade = $this->tradeRepository->store($data);
 
             $this->tradeProductRepository->store($this->cleanAndPrepareTradeProducts($products, $trade->id));
@@ -200,7 +203,7 @@ class TradeService
 
         try {
             $updatedTrade = $this->tradeRepository->update($trade, [
-                'date' => Carbon::now()->format('Y-m-d'),
+                'date' => \Carbon\Carbon::createFromFormat('d.m.Y', $data['date'])->format('Y-m-d'),
                 'client_id' => $data['client_id'],
                 'products_count' => abs($data['products_count']),
                 'total_price' => abs($data['total_price']),

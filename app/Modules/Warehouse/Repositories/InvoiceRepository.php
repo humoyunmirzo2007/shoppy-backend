@@ -84,7 +84,7 @@ class InvoiceRepository implements InvoiceInterface
     {
         $invoice = $this->invoice->create(
             [
-                'date' => Carbon::now()->format('Y-m-d'),
+                'date' => $data['date'],
                 'supplier_id' => $data['supplier_id'] ?? null,
                 'other_source_id' => $data['other_source_id'] ?? null,
                 'products_count' => abs($data['products_count']),

@@ -12,6 +12,7 @@ class StoreTradeRequest extends MainRequest
             'client_id' => ['required', 'numeric', 'exists:clients,id'],
             'commentary' => ['nullable', 'max:200'],
             'type' => ['required', 'in:TRADE,RETURN_PRODUCT'],
+            'date' => ['required', 'date_format:d.m.Y'],
             'products' => ['required', 'array', 'min:1'],
             'products.*.product_id' => ['required', 'integer', 'exists:products,id'],
             'products.*.count' => ['required', 'numeric', 'gt:0'],
@@ -40,6 +41,8 @@ class StoreTradeRequest extends MainRequest
             'products.*.price.required' => 'Mahsulot narxi kiritilishi kerak',
             'products.*.price.numeric' => 'Mahsulot narxi raqam bo\'lishi kerak',
             'products.*.price.gte' => 'Mahsulot narxi musbat bo\'lishi kerak',
+            'date.required' => 'Sana kiritilishi shart',
+            'date.date_format' => 'Sana dd.mm.yyyy formatida bo\'lishi kerak',
         ];
     }
 }
