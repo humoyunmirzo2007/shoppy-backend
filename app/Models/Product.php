@@ -6,7 +6,6 @@ use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
 {
@@ -14,17 +13,27 @@ class Product extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'price' => 'decimal:2'
+    ];
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function productResidue(): HasOne
+
+    public function tradeProducts(): HasMany
     {
-        return $this->hasOne(ProductResidue::class);
+        return $this->hasMany(TradeProduct::class);
+    }
+
+    public function invoiceProducts(): HasMany
+    {
+        return $this->hasMany(InvoiceProduct::class);
     }
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    protected $sortable = ['id', 'name', 'unit', 'category_id', 'is_active'];
+    protected $sortable = ['id', 'name', 'unit', 'category_id', 'is_active', 'price'];
 }

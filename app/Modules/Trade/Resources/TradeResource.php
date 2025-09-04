@@ -12,14 +12,14 @@ class TradeResource extends JsonResource
         return [
             'id' => $this->id,
             'date' => $this->date,
-            'client' => [
+            'client' => $this->client ? [
                 'id' => $this->client->id,
                 'name' => $this->client->name,
-            ],
-            'user' => [
+            ] : null,
+            'user' => $this->user ? [
                 'id' => $this->user->id,
                 'full_name' => $this->user->full_name,
-            ],
+            ] : null,
             'commentary' => $this->commentary,
             'products_count' => $this->products_count,
             'total_price' => $this->total_price,
@@ -32,15 +32,15 @@ class TradeResource extends JsonResource
                         'count' => $tradeProduct->count,
                         'price' => $tradeProduct->price,
                         'total_price' => $tradeProduct->total_price,
-                        'product' => [
+                        'product' => $tradeProduct->product ? [
                             'id' => $tradeProduct->product->id,
                             'name' => $tradeProduct->product->name,
                             'residue' => $tradeProduct->product->residue,
-                            'category' => [
+                            'category' => $tradeProduct->product->category ? [
                                 'id' => $tradeProduct->product->category->id,
                                 'name' => $tradeProduct->product->category->name,
-                            ],
-                        ],
+                            ] : null,
+                        ] : null,
                     ];
                 });
             }),

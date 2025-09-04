@@ -13,20 +13,21 @@ class InvoiceResource extends JsonResource
         return [
             'id' => $this->id,
             'supplier_id' => $this->supplier_id,
+            'other_source_id' => $this->other_source_id,
             'commentary' => $this->commentary,
             'updated_at' => $this->updated_at,
-            'supplier' => [
+            'supplier' => $this->supplier ? [
                 'id' => $this->supplier->id,
                 'name' => $this->supplier->name,
-            ],
-            'other_source' => [
+            ] : null,
+            'other_source' => $this->otherSource ? [
                 'id' => $this->otherSource->id,
                 'name' => $this->otherSource->name,
-            ],
-            'user' => [
+            ] : null,
+            'user' => $this->user ? [
                 'id' => $this->user->id,
                 'full_name' => $this->user->full_name,
-            ],
+            ] : null,
             'invoice_products' => InvoiceProductResource::collection($this->invoiceProducts),
         ];
     }
