@@ -9,7 +9,7 @@ class GetOtherSourcesByTypeRequest extends MainRequest
     public function rules(): array
     {
         return [
-            'type' => ['required', 'string', 'in:INVOICE,PAYMENT'],
+            'type' => ['required', 'string', 'in:PRODUCT,PAYMENT'],
         ];
     }
 
@@ -18,7 +18,7 @@ class GetOtherSourcesByTypeRequest extends MainRequest
         return [
             'type.required' => 'Manba turini kiritish majburiy',
             'type.string' => 'Manba turi matn bo\'lishi kerak',
-            'type.in' => 'Manba turi INVOICE yoki PAYMENT bo\'lishi kerak',
+            'type.in' => 'Manba turi PRODUCT yoki PAYMENT bo\'lishi kerak',
         ];
     }
 }

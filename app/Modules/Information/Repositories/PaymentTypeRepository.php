@@ -17,14 +17,13 @@ class PaymentTypeRepository implements PaymentTypeInterface
         $sort = $data['sort'] ?? ['id' => 'desc'];
 
         return $this->paymentType->query()
-            ->select('id', 'name', 'currency', 'is_active')
+            ->select('id', 'name', 'is_active')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {
                         $query->where('id', $search);
                     }
-                    $query->orWhere('name', 'ilike', "%$search%")
-                        ->orWhere('currency', 'ilike', "%$search%");
+                    $query->orWhere('name', 'ilike', "%$search%");
                 });
             })
             ->sortable($sort)
@@ -34,7 +33,7 @@ class PaymentTypeRepository implements PaymentTypeInterface
     public function getAllActive()
     {
         return $this->paymentType->query()
-            ->select('id', 'name', 'currency')
+            ->select('id', 'name')
             ->where('is_active', true)
             ->get();
     }
