@@ -19,7 +19,7 @@ class ProductRepository implements ProductInterface
         $filters = $data['filters'] ?? [];
 
         return $this->product->query()
-            ->select('id', 'name', 'unit', 'is_active', 'category_id')
+            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'residue', 'price')
             ->with(['category:id,name'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
@@ -39,8 +39,8 @@ class ProductRepository implements ProductInterface
     public function getById(int $id)
     {
         return $this->product->query()
-            ->select('id', 'name', 'unit', 'is_active',  'category_id')
-            ->with([ 'category:id,name'])
+            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'price')
+            ->with(['category:id,name'])
             ->findOrFail($id);
     }
 
@@ -49,7 +49,7 @@ class ProductRepository implements ProductInterface
         $product = $this->product->create($data);
 
         return $this->product->with(['category:id,name'])
-            ->select('id', 'name', 'unit', 'is_active', 'category_id')
+            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'price')
             ->find($product->id);
     }
 
@@ -58,7 +58,7 @@ class ProductRepository implements ProductInterface
         $product->update($data);
 
         return $this->product->with(['category:id,name'])
-            ->select('id', 'name', 'unit',  'is_active', 'category_id')
+            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'price')
             ->find($product->id);
     }
 
@@ -68,8 +68,8 @@ class ProductRepository implements ProductInterface
         $product->is_active = !$product->is_active;
         $product->save();
 
-        return $this->product->with([ 'category:id,name'])
-            ->select('id', 'name', 'unit',  'is_active', 'category_id')
+        return $this->product->with(['category:id,name'])
+            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'price')
             ->find($id);
     }
     public function import(array $insertProducts, array $updateProducts): void
@@ -101,6 +101,6 @@ class ProductRepository implements ProductInterface
             ->select('id', 'residue')
             ->get()
             ->keyBy('id')
-            ;
+        ;
     }
 }

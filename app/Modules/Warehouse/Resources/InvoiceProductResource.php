@@ -18,19 +18,15 @@ class InvoiceProductResource extends JsonResource
             'count' => $this->count,
             'total_price' => $this->total_price,
             'product_id' => $this->product_id,
-            'product' => [
+            'product' => $product ? [
                 'id' => $product->id,
                 'name' => $product->name,
-                'brand' => [
-                    'id' => $product->brand->id ?? null,
-                    'name' => $product->brand->name ?? null,
-                ],
-                'category' => [
-                    'id' => $product->category->id ?? null,
-                    'name' => $product->category->name ?? null,
-                ],
+                'category' => $product->category ? [
+                    'id' => $product->category->id,
+                    'name' => $product->category->name,
+                ] : null,
                 'residue' => $product->residue ?? null,
-            ],
+            ] : null,
         ];
     }
 }
