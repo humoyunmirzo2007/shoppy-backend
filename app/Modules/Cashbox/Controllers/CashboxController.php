@@ -13,12 +13,7 @@ use Illuminate\Http\JsonResponse;
 
 class CashboxController extends Controller
 {
-    protected CashboxService $cashboxService;
-
-    public function __construct(CashboxService $cashboxService)
-    {
-        $this->cashboxService = $cashboxService;
-    }
+    public function __construct(protected CashboxService $cashboxService) {}
 
     public function index(GetCashboxesRequest $request): JsonResponse
     {
