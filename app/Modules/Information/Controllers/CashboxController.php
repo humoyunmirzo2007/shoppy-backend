@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Information\Requests\GetCashboxesRequest;
 use App\Modules\Information\Requests\GetCashboxByIdRequest;
 use App\Modules\Information\Requests\StoreCashboxRequest;
-use App\Modules\Information\Requests\UpdateCashboxRequest;
+
 use App\Modules\Information\Resources\CashboxResource;
 use App\Modules\Information\Services\CashboxService;
 use App\Helpers\Response;
@@ -64,34 +64,7 @@ class CashboxController extends Controller
         );
     }
 
-    public function update(UpdateCashboxRequest $request): JsonResponse
-    {
-        $data = $request->validated();
-        $id = $data['id'];
-        unset($data['id']);
 
-        $result = $this->cashboxService->updateCashbox($id, $data);
-
-        if (!$result['success']) {
-            return Response::error([], $result['message']);
-        }
-
-        return Response::success(
-            new CashboxResource($result['data']),
-            $result['message']
-        );
-    }
-
-    public function destroy(GetCashboxByIdRequest $request): JsonResponse
-    {
-        $result = $this->cashboxService->deleteCashbox($request->validated()['id']);
-
-        if (!$result['success']) {
-            return Response::error([], $result['message']);
-        }
-
-        return Response::success([], $result['message']);
-    }
 
     public function toggleActive(GetCashboxByIdRequest $request): JsonResponse
     {

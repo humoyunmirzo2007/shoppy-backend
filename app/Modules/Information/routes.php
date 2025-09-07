@@ -93,7 +93,5 @@ Route::group(['prefix' => 'cashboxes', 'middleware' => ['auth:sanctum']], functi
     Route::get('/', [CashboxController::class, 'index']);
     Route::get('/{id}', [CashboxController::class, 'show']);
     Route::post('/create', [CashboxController::class, 'store']);
-    Route::put('/update/{id}', [CashboxController::class, 'update']);
-    Route::delete('/delete/{id}', [CashboxController::class, 'destroy']);
     Route::put('/toggle-active/{id}', [CashboxController::class, 'toggleActive']);
 });

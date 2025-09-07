@@ -90,54 +90,7 @@ class CashboxService
         }
     }
 
-    public function updateCashbox(int $id, array $data): array
-    {
-        try {
-            $cashbox = $this->cashboxRepository->update($id, $data);
 
-            if (!$cashbox) {
-                return [
-                    'success' => false,
-                    'message' => 'Kassa topilmadi'
-                ];
-            }
-
-            return [
-                'success' => true,
-                'data' => $cashbox,
-                'message' => 'Kassa muvaffaqiyatli yangilandi'
-            ];
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Kassa yangilashda xatolik yuz berdi: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    public function deleteCashbox(int $id): array
-    {
-        try {
-            $deleted = $this->cashboxRepository->delete($id);
-
-            if (!$deleted) {
-                return [
-                    'success' => false,
-                    'message' => 'Kassa topilmadi yoki o\'chirishda xatolik yuz berdi'
-                ];
-            }
-
-            return [
-                'success' => true,
-                'message' => 'Kassa muvaffaqiyatli o\'chirildi'
-            ];
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Kassa o\'chirishda xatolik yuz berdi: ' . $e->getMessage()
-            ];
-        }
-    }
 
     public function toggleCashboxActive(int $id): array
     {

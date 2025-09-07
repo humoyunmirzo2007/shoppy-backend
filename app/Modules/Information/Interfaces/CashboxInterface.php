@@ -13,9 +13,7 @@ interface CashboxInterface
 
     public function create(array $data): Cashbox;
 
-    public function update(int $id, array $data): ?Cashbox;
 
-    public function delete(int $id): bool;
 
     public function toggleActive(int $id): ?Cashbox;
 }

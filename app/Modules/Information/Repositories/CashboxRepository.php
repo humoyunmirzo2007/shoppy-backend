@@ -49,29 +49,7 @@ class CashboxRepository implements CashboxInterface
         return Cashbox::create($createData);
     }
 
-    public function update(int $id, array $data): ?Cashbox
-    {
-        $cashbox = $this->getById($id);
 
-        if (!$cashbox) {
-            return null;
-        }
-
-        $cashbox->update($data);
-
-        return $cashbox->fresh(['user', 'paymentType']);
-    }
-
-    public function delete(int $id): bool
-    {
-        $cashbox = $this->getById($id);
-
-        if (!$cashbox) {
-            return false;
-        }
-
-        return $cashbox->delete();
-    }
 
     public function toggleActive(int $id): ?Cashbox
     {
