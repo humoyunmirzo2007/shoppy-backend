@@ -18,10 +18,7 @@ class Payment extends Model
         'type' => PaymentTypesEnum::class,
     ];
 
-    public function cashbox(): BelongsTo
-    {
-        return $this->belongsTo(Cashbox::class);
-    }
+
 
     public function user(): BelongsTo
     {

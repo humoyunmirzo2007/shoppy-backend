@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cashbox_id')->constrained('cashboxes');
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('payment_type_id')->constrained('payment_types');
             $table->foreignId('client_id')->nullable()->constrained('clients');
