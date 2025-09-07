@@ -19,7 +19,6 @@ class GetCostsRequest extends MainRequest
             'client_id' => 'sometimes|integer|exists:clients,id',
             'supplier_id' => 'sometimes|integer|exists:suppliers,id',
             'cost_type_id' => 'sometimes|integer|exists:cost_types,id',
-            'status' => 'sometimes|string',
             'date_from' => 'sometimes|date',
             'date_to' => 'sometimes|date|after_or_equal:date_from',
         ];
@@ -43,7 +42,6 @@ class GetCostsRequest extends MainRequest
             'supplier_id.exists' => 'Bunday ta\'minotchi mavjud emas',
             'cost_type_id.integer' => 'Xarajat turi ID si butun son bo\'lishi kerak',
             'cost_type_id.exists' => 'Bunday xarajat turi mavjud emas',
-            'status.string' => 'Xarajat holati matn ko\'rinishida bo\'lishi kerak',
             'date_from.date' => 'Boshlanish sanasi to\'g\'ri formatda bo\'lishi kerak (YYYY-MM-DD)',
             'date_to.date' => 'Tugash sanasi to\'g\'ri formatda bo\'lishi kerak (YYYY-MM-DD)',
             'date_to.after_or_equal' => 'Tugash sanasi boshlanish sanasidan kech yoki teng bo\'lishi kerak',

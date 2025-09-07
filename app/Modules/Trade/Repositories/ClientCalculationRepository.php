@@ -52,4 +52,9 @@ class ClientCalculationRepository implements ClientCalculationInterface
     {
         return $this->clientCalculation->where('trade_id', $tradeId)->first();
     }
+
+    public function getByPaymentId(int $paymentId)
+    {
+        return $this->clientCalculation->where('payment_id', $paymentId)->first();
+    }
 }

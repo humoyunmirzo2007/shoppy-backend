@@ -12,14 +12,13 @@ class UpdatePaymentRequest extends MainRequest
     {
         return [
             'id' => 'required|integer|exists:payments,id',
-            'user_id' => 'sometimes|integer|exists:users,id',
-            'payment_type_id' => 'sometimes|integer|exists:payment_types,id',
+            'user_id' => 'required|integer|exists:users,id',
+            'payment_type_id' => 'required|integer|exists:payment_types,id',
             'client_id' => 'nullable|integer|exists:clients,id',
             'supplier_id' => 'nullable|integer|exists:suppliers,id',
-            'amount' => 'sometimes|numeric|min:0',
+            'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string|max:255',
-            'status' => 'sometimes|string|max:50',
-            'type' => ['sometimes', Rule::enum(PaymentTypesEnum::class)],
+            'type' => ['required', Rule::enum(PaymentTypesEnum::class)],
         ];
     }
 

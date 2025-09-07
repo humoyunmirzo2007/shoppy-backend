@@ -52,4 +52,9 @@ class SupplierCalculationRepository implements SupplierCalculationInterface
     {
         return $this->supplierCalculation->where('invoice_id', $invoiceId)->first();
     }
+
+    public function getByPaymentId(int $paymentId)
+    {
+        return $this->supplierCalculation->where('payment_id', $paymentId)->first();
+    }
 }

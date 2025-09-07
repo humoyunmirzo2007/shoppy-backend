@@ -35,7 +35,6 @@ class PaymentRepository implements PaymentInterface
             ->when(!empty($data['client_id']), fn($q) => $q->where('client_id', $data['client_id']))
             ->when(!empty($data['supplier_id']), fn($q) => $q->where('supplier_id', $data['supplier_id']))
             ->when(!empty($data['payment_type_id']), fn($q) => $q->where('payment_type_id', $data['payment_type_id']))
-            ->when(!empty($data['status']), fn($q) => $q->where('status', $data['status']))
             ->when(!empty($data['date_from']), fn($q) => $q->whereDate('created_at', '>=', $data['date_from']))
             ->when(!empty($data['date_to']), fn($q) => $q->whereDate('created_at', '<=', $data['date_to']))
             ->sortable($sort)

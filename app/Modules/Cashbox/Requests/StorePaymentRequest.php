@@ -17,7 +17,6 @@ class StorePaymentRequest extends MainRequest
             'supplier_id' => 'nullable|integer|exists:suppliers,id',
             'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string|max:255',
-            'status' => 'required|string|max:50',
             'type' => ['required', Rule::enum(PaymentTypesEnum::class)],
         ];
     }
