@@ -9,4 +9,5 @@ interface ClientCalculationInterface
     public function update(int $id, array $data);
     public function delete(int $id);
     public function getByTradeId(int $tradeId);
+    public function getByPaymentId(int $paymentId);
 }

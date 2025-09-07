@@ -10,4 +10,5 @@ interface SupplierCalculationInterface
     public function update(int $id, array $data);
     public function delete(int $id);
     public function getByInvoiceId(int $invoiceId);
+    public function getByPaymentId(int $paymentId);
 }

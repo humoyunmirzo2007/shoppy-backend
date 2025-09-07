@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers');
             $table->decimal('amount', 10, 2);
             $table->string('description')->nullable();
-            $table->string('status');
             $table->string('type');
             $table->timestamps();
         });

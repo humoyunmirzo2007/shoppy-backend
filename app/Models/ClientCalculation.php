@@ -13,7 +13,9 @@ class ClientCalculation extends Model
 
     protected $fillable = [
         'client_id',
+        'user_id',
         'trade_id',
+        'payment_id',
         'type',
         'value',
         'date'
@@ -30,8 +32,18 @@ class ClientCalculation extends Model
         return $this->belongsTo(Client::class);
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function trade(): BelongsTo
     {
         return $this->belongsTo(Trade::class);
+    }
+
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
     }
 }

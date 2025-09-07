@@ -31,6 +31,11 @@ class SupplierCalculation extends Model
         return $this->belongsTo(Invoice::class);
     }
 
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
+    }
+
     protected $hidden = ['created_at'];
 
     protected $sortable = ['id'];
