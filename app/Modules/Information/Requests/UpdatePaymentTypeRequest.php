@@ -16,6 +16,11 @@ class UpdatePaymentTypeRequest extends MainRequest
                 'max:255',
                 Rule::unique('payment_types')->ignore($paymentTypeId),
             ],
+            'residue' => [
+                'required',
+                'numeric',
+                'min:0',
+            ],
         ];
     }
 
@@ -25,6 +30,9 @@ class UpdatePaymentTypeRequest extends MainRequest
             'name.required' => 'To\'lov turi nomini kiritish majburiy',
             'name.unique' => 'Bu to\'lov turi nomi allaqachon ro\'yxatdan o\'tgan',
             'name.max' => 'To\'lov turi nomi 255 ta belgidan oshmasligi kerak',
+            'residue.required' => 'Qoldiq miqdorini kiritish majburiy',
+            'residue.numeric' => 'Qoldiq miqdori raqam bo\'lishi kerak',
+            'residue.min' => 'Qoldiq miqdori manfiy bo\'lmasligi kerak',
         ];
     }
 }

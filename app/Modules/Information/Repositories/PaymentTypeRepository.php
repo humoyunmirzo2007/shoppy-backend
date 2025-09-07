@@ -17,7 +17,7 @@ class PaymentTypeRepository implements PaymentTypeInterface
         $sort = $data['sort'] ?? ['id' => 'desc'];
 
         return $this->paymentType->query()
-            ->select('id', 'name', 'is_active')
+            ->select('id', 'name', 'residue', 'is_active')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {
@@ -33,7 +33,7 @@ class PaymentTypeRepository implements PaymentTypeInterface
     public function getAllActive()
     {
         return $this->paymentType->query()
-            ->select('id', 'name')
+            ->select('id', 'name', 'residue')
             ->where('is_active', true)
             ->get();
     }
@@ -46,7 +46,8 @@ class PaymentTypeRepository implements PaymentTypeInterface
     public function store(array $data)
     {
         $paymentType = $this->paymentType->create([
-            ...$data,
+            'name' => $data['name'],
+            'residue' => $data['residue'] ?? 0,
             'is_active' => true,
         ]);
 
@@ -55,7 +56,10 @@ class PaymentTypeRepository implements PaymentTypeInterface
 
     public function update(PaymentType $paymentType, array $data)
     {
-        $paymentType->update($data);
+        $paymentType->update([
+            'name' => $data['name'],
+            'residue' => $data['residue'] ?? $paymentType->residue,
+        ]);
 
         return $paymentType;
     }

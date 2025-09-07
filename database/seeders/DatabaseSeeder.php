@@ -188,42 +188,52 @@ class DatabaseSeeder extends Seeder
         DB::table('payment_types')->insert([
             [
                 'name' => 'Naqd pul',
+                'residue' => 0,
                 'is_active' => true,
             ],
             [
                 'name' => 'Plastik karta',
+                'residue' => 0,
                 'is_active' => true,
             ],
             [
                 'name' => 'Bank o\'tkazmasi',
+                'residue' => 0,
                 'is_active' => true,
             ],
             [
                 'name' => 'Click',
+                'residue' => 0,
                 'is_active' => true,
             ],
             [
                 'name' => 'Payme',
+                'residue' => 0,
                 'is_active' => true,
             ],
             [
                 'name' => 'Uzcard',
+                'residue' => 0,
                 'is_active' => true,
             ],
             [
                 'name' => 'Humo',
+                'residue' => 0,
                 'is_active' => true,
             ],
             [
                 'name' => 'USD naqd pul',
+                'residue' => 0,
                 'is_active' => true,
             ],
             [
                 'name' => 'USD bank o\'tkazmasi',
+                'residue' => 0,
                 'is_active' => true,
             ],
             [
                 'name' => 'Chegirma',
+                'residue' => 0,
                 'is_active' => false,
             ],
         ]);
