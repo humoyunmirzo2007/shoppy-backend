@@ -18,9 +18,10 @@ return new class extends Migration
             $table->decimal('residue', 20, 2)->default(0);
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('payment_type_id')->constrained('payment_types');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
-            $table->unique(['name', 'user_id', 'payment_type_id']);
+            $table->unique(['user_id', 'payment_type_id']);
         });
     }
 

@@ -10,6 +10,7 @@ use App\Modules\Information\Controllers\CostTypeController;
 use App\Modules\Information\Controllers\ProductController;
 use App\Modules\Information\Controllers\OtherSourceController;
 use App\Modules\Information\Controllers\PaymentTypeController;
+use App\Modules\Information\Controllers\CashboxController;
 
 
 Route::group(['prefix' => 'auth'], function () {
@@ -86,4 +87,13 @@ Route::group(['prefix' => 'payment-types', 'middleware' => ['auth:sanctum']], fu
     Route::post('/create', [PaymentTypeController::class, 'store']);
     Route::put('/update/{id}', [PaymentTypeController::class, 'update']);
     Route::put('/invert-active/{id}', [PaymentTypeController::class, 'invertActive']);
+});
+
+Route::group(['prefix' => 'cashboxes', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [CashboxController::class, 'index']);
+    Route::get('/{id}', [CashboxController::class, 'show']);
+    Route::post('/create', [CashboxController::class, 'store']);
+    Route::put('/update/{id}', [CashboxController::class, 'update']);
+    Route::delete('/delete/{id}', [CashboxController::class, 'destroy']);
+    Route::put('/toggle-active/{id}', [CashboxController::class, 'toggleActive']);
 });
