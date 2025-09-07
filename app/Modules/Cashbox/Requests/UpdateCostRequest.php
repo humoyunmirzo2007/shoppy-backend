@@ -14,6 +14,7 @@ class UpdateCostRequest extends MainRequest
             'id' => 'required|integer|exists:costs,id',
             'user_id' => 'required|integer|exists:users,id',
             'cost_type_id' => 'required|integer|exists:cost_types,id',
+            'payment_type_id' => 'required|integer|exists:payment_types,id',
             'client_id' => 'nullable|integer|exists:clients,id',
             'supplier_id' => 'nullable|integer|exists:suppliers,id',
             'amount' => 'required|numeric|min:0',

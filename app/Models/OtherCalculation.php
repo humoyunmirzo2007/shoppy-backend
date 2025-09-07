@@ -16,6 +16,7 @@ class OtherCalculation extends Model
     protected $fillable = [
         'user_id',
         'payment_id',
+        'cost_id',
         'type',
         'value',
         'date'
@@ -39,6 +40,11 @@ class OtherCalculation extends Model
     public function payment(): BelongsTo
     {
         return $this->belongsTo(Payment::class);
+    }
+
+    public function cost(): BelongsTo
+    {
+        return $this->belongsTo(Cost::class);
     }
 
     public function getValueAttribute($value)
