@@ -16,7 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 [
                     'Information',
                     'Warehouse',
-                    'Trade'
+                    'Trade',
+                    'Cashbox'
                 ] as $module
             ) {
                 $routeFile = base_path("app/Modules/{$module}/routes.php");

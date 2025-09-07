@@ -16,13 +16,24 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         DB::table('users')->insert([
-            'id' => 0,
-            'full_name' => 'Developer',
-            'position' => 'Developer',
-            'username' => 'developer',
-            'phone_number' => '0123456789',
-            'password' => Hash::make('password'),
-            'is_dev' => true,
+            [
+                'id' => 0,
+                'full_name' => 'Developer',
+                'position' => 'Developer',
+                'username' => 'developer',
+                'phone_number' => '0123456789',
+                'password' => Hash::make('password'),
+                'is_dev' => true,
+            ],
+            [
+                'id' => 1,
+                'full_name' => 'User',
+                'position' => 'User',
+                'username' => 'user',
+                'phone_number' => '9876543210',
+                'password' => Hash::make('password'),
+                'is_dev' => false,
+            ],
         ]);
 
         DB::table('categories')->insert([
@@ -214,6 +225,44 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Chegirma',
                 'is_active' => false,
+            ],
+        ]);
+
+        DB::table('cashboxes')->insert([
+            [
+                'name' => 'Naqd pul',
+                'is_active' => true,
+                'residue' => 0,
+                'user_id' => 0,
+                'payment_type_id' => 1,
+            ],
+            [
+                'name' => 'Plastik karta',
+                'is_active' => true,
+                'residue' => 0,
+                'user_id' => 0,
+                'payment_type_id' => 2,
+            ],
+            [
+                'name' => 'Bank o\'tkazmasi',
+                'is_active' => true,
+                'residue' => 0,
+                'user_id' => 0,
+                'payment_type_id' => 3,
+            ],
+            [
+                'name' => 'Click',
+                'is_active' => true,
+                'residue' => 0,
+                'user_id' => 1,
+                'payment_type_id' => 4,
+            ],
+            [
+                'name' => 'Payme',
+                'is_active' => true,
+                'residue' => 0,
+                'user_id' => 1,
+                'payment_type_id' => 5,
             ],
         ]);
     }

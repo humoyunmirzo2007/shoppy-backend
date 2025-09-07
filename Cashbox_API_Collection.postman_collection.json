@@ -1,0 +1,277 @@
+{
+    "info": {
+        "_postman_id": "cashbox-api-collection",
+        "name": "Kassa API To'plami",
+        "description": "Kassa CRUD operatsiyalari uchun API endpointlari",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Autentifikatsiya",
+            "item": [
+                {
+                    "name": "Kirish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"developer\",\n    \"password\": \"password\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mening Ma'lumotlarim",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/me",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "auth", "me"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Kassalar",
+            "item": [
+                {
+                    "name": "Barcha Kassalarni Olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/cashboxes",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "cashboxes"]
+                        }
+                    }
+                },
+                {
+                    "name": "Filtr Bilan Kassalarni Olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/cashboxes?is_active=true&user_id=0&payment_type_id=1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "cashboxes"],
+                            "query": [
+                                {
+                                    "key": "is_active",
+                                    "value": "true",
+                                    "description": "Faollik holati bo'yicha filtrlash"
+                                },
+                                {
+                                    "key": "user_id",
+                                    "value": "0",
+                                    "description": "Foydalanuvchi ID bo'yicha filtrlash"
+                                },
+                                {
+                                    "key": "payment_type_id",
+                                    "value": "1",
+                                    "description": "To'lov turi ID bo'yicha filtrlash"
+                                },
+                                {
+                                    "key": "name",
+                                    "value": "Naqd",
+                                    "description": "Nom bo'yicha filtrlash (qisman mos kelish)",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "ID Orqali Kassa Olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/cashboxes/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "cashboxes", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Kassa Yaratish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Kassa\",\n    \"user_id\": 0,\n    \"payment_type_id\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/cashboxes/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "cashboxes", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Kassa Faollik Holatini O'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/cashboxes/toggle-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "cashboxes", "toggle-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Yordamchi Endpointlar",
+            "item": [
+                {
+                    "name": "Barcha Foydalanuvchilarni Olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/users/get-all",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "users", "get-all"]
+                        }
+                    }
+                },
+                {
+                    "name": "Barcha Faol To'lov Turlarini Olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/payment-types/all-active",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "payment-types", "all-active"]
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "access_token",
+            "value": "",
+            "type": "string"
+        }
+    ]
+}
