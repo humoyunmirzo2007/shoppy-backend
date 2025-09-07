@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('users')->insert(
+        DB::table('users')->insert([
             [
                 'id' => 0,
                 'full_name' => 'Developer',
@@ -30,11 +30,11 @@ class DatabaseSeeder extends Seeder
                 'full_name' => 'User',
                 'position' => 'User',
                 'username' => 'user',
-                'phone_number' => '0123456789',
+                'phone_number' => '9876543210',
                 'password' => Hash::make('password'),
                 'is_dev' => false,
             ],
-        );
+        ]);
 
         DB::table('categories')->insert([
             ['name' => 'Televizorlar'],
