@@ -4,6 +4,7 @@ namespace App\Modules\Trade\Services;
 
 use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Trade\Enums\TradeTypesEnum;
+use App\Modules\Trade\Interfaces\ClientCalculationInterface;
 use App\Modules\Trade\Interfaces\TradeInterface;
 use App\Modules\Trade\Repositories\TradeProductRepository;
 use Carbon\Carbon;
@@ -15,7 +16,8 @@ class TradeService
     public function __construct(
         protected TradeInterface $tradeRepository,
         protected TradeProductRepository $tradeProductRepository,
-        protected ProductInterface $productRepository
+        protected ProductInterface $productRepository,
+        protected ClientCalculationInterface $clientCalculationRepository
     ) {}
 
     public function getByType(string $type, array $data)
@@ -60,21 +62,37 @@ class TradeService
 
     public function delete(int $id)
     {
-        $trade = $this->tradeRepository->findById($id);
+        try {
+            DB::beginTransaction();
 
-        $result = $this->tradeRepository->delete($trade);
+            $trade = $this->tradeRepository->findById($id);
 
-        if (!$result) {
+            // Delete client calculation first
+            $this->deleteClientCalculation($id);
+
+            $result = $this->tradeRepository->delete($trade);
+
+            if (!$result) {
+                DB::rollBack();
+                return [
+                    'status' => 'error',
+                    'message' => 'Savdoni o\'chirishda xatolik yuz berdi'
+                ];
+            }
+
+            DB::commit();
+
+            return [
+                'status' => 'success',
+                'message' => 'Savdo muvaffaqiyatli o\'chirildi'
+            ];
+        } catch (\Throwable $e) {
+            DB::rollBack();
             return [
                 'status' => 'error',
                 'message' => 'Savdoni o\'chirishda xatolik yuz berdi'
             ];
         }
-
-        return [
-            'status' => 'success',
-            'message' => 'Savdo muvaffaqiyatli o\'chirildi'
-        ];
     }
 
     private function storeTrade(array $data)
@@ -106,6 +124,11 @@ class TradeService
             $trade = $this->tradeRepository->store($data);
 
             $this->tradeProductRepository->store($this->cleanAndPrepareTradeProducts($products, $trade->id));
+
+            // Create client calculation if client_id exists
+            if (!empty($data['client_id'])) {
+                $this->createClientCalculation($trade, $data);
+            }
 
             DB::commit();
 
@@ -232,6 +255,14 @@ class TradeService
                 $this->tradeProductRepository->deleteByIds($productIdsForDelete);
             }
 
+            // Update client calculation if client_id exists
+            if (!empty($data['client_id'])) {
+                $this->updateClientCalculation($updatedTrade, $data);
+            } else {
+                // Delete calculation if client_id is null
+                $this->deleteClientCalculation($updatedTrade->id);
+            }
+
             DB::commit();
 
             return [
@@ -240,7 +271,6 @@ class TradeService
                 'data' => $updatedTrade
             ];
         } catch (\Throwable $e) {
-            dd($e);
             DB::rollBack();
             return [
                 'status' => 'error',
@@ -336,5 +366,63 @@ class TradeService
             }
             return $data;
         }, $products);
+    }
+
+    private function createClientCalculation($trade, $data)
+    {
+        $calculationValue = $this->getClientCalculationValue($trade->type, $trade->total_price);
+
+        if ($calculationValue !== null) {
+            $this->clientCalculationRepository->create([
+                'client_id' => $data['client_id'],
+                'user_id' => $trade->user_id,
+                'trade_id' => $trade->id,
+                'type' => $trade->type->value, // Convert enum to string value
+                'value' => $calculationValue,
+                'date' => $trade->date,
+            ]);
+        }
+    }
+
+    private function updateClientCalculation($trade, $data)
+    {
+        $existingCalculation = $this->clientCalculationRepository->getByTradeId($trade->id);
+        $calculationValue = $this->getClientCalculationValue($trade->type, $trade->total_price);
+
+        if ($calculationValue !== null && $existingCalculation) {
+            $this->clientCalculationRepository->update($existingCalculation->id, [
+                'client_id' => $data['client_id'],
+                'user_id' => $trade->user_id,
+                'type' => $trade->type->value, // Convert enum to string value
+                'value' => $calculationValue,
+                'date' => $trade->date,
+            ]);
+        } elseif ($calculationValue !== null && !$existingCalculation) {
+            // Create new calculation if it doesn't exist
+            $this->createClientCalculation($trade, $data);
+        } elseif ($calculationValue === null && $existingCalculation) {
+            // Delete calculation if no longer needed
+            $this->clientCalculationRepository->delete($existingCalculation->id);
+        }
+    }
+
+    private function deleteClientCalculation($tradeId)
+    {
+        $existingCalculation = $this->clientCalculationRepository->getByTradeId($tradeId);
+
+        if ($existingCalculation) {
+            $this->clientCalculationRepository->delete($existingCalculation->id);
+        }
+    }
+
+    private function getClientCalculationValue($type, $totalPrice)
+    {
+        if ($type === TradeTypesEnum::TRADE) {
+            return $totalPrice; // Positive for trade (client owes money)
+        } elseif ($type === TradeTypesEnum::RETURN_PRODUCT) {
+            return -$totalPrice; // Negative for return (reduce client debt)
+        }
+
+        return null; // No calculation for other types
     }
 }

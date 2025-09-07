@@ -5,6 +5,7 @@ namespace App\Modules\Warehouse\Services;
 use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Warehouse\Enums\InvoiceTypesEnum;
 use App\Modules\Warehouse\Interfaces\InvoiceInterface;
+use App\Modules\Warehouse\Interfaces\SupplierCalculationInterface;
 use App\Modules\Warehouse\Repositories\InvoiceProductRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,8 @@ class InvoiceService
     public function __construct(
         protected InvoiceInterface $invoiceRepository,
         protected InvoiceProductRepository $invoiceProductRepository,
-        protected ProductInterface $productRepository
+        protected ProductInterface $productRepository,
+        protected SupplierCalculationInterface $supplierCalculationRepository
     ) {}
 
     public function getByTypes(array $types, array $data)
@@ -64,21 +66,38 @@ class InvoiceService
 
     public function delete(int $id)
     {
-        $invoice = $this->invoiceRepository->findById($id);
+        try {
+            DB::beginTransaction();
 
-        $result = $this->invoiceRepository->delete($invoice);
+            $invoice = $this->invoiceRepository->findById($id);
 
-        if (!$result) {
+            // Delete supplier calculation first
+            $this->deleteSupplierCalculation($id);
+
+            $result = $this->invoiceRepository->delete($invoice);
+
+            if (!$result) {
+                DB::rollBack();
+                return [
+                    'status' => 'error',
+                    'message' => 'Fakturani o\'chirishda xatolik yuz berdi'
+                ];
+            }
+
+            DB::commit();
+
+            return [
+                'status' => 'success',
+                'message' => 'Faktura muvaffaqiyatli o\'chirildi'
+            ];
+        } catch (\Throwable $e) {
+            dd($e);
+            DB::rollBack();
             return [
                 'status' => 'error',
                 'message' => 'Fakturani o\'chirishda xatolik yuz berdi'
             ];
         }
-
-        return [
-            'status' => 'success',
-            'message' => 'Faktura muvaffaqiyatli o\'chirildi'
-        ];
     }
 
     private function storeInvoice(array $data)
@@ -110,6 +129,12 @@ class InvoiceService
             $invoice = $this->invoiceRepository->store($data);
 
             $this->invoiceProductRepository->store($this->cleanAndPrepareTradeProducts($products, $invoice->id));
+
+            // Create supplier calculation if supplier_id exists
+            if (!empty($data['supplier_id'])) {
+                $this->createSupplierCalculation($invoice, $data);
+            }
+
             DB::commit();
 
             return [
@@ -238,6 +263,14 @@ class InvoiceService
                 $this->invoiceProductRepository->deleteByIds($productIdsForDelete);
             }
 
+            // Update supplier calculation if supplier_id exists
+            if (!empty($data['supplier_id'])) {
+                $this->updateSupplierCalculation($updatedInvoice, $data);
+            } else {
+                // Delete calculation if supplier_id is null
+                $this->deleteSupplierCalculation($updatedInvoice->id);
+            }
+
             DB::commit();
 
             return [
@@ -341,5 +374,63 @@ class InvoiceService
             }
             return $data;
         }, $products);
+    }
+
+    private function createSupplierCalculation($invoice, $data)
+    {
+        $calculationValue = $this->getSupplierCalculationValue($invoice->type, $invoice->total_price);
+
+        if ($calculationValue !== null) {
+            $this->supplierCalculationRepository->create([
+                'supplier_id' => $data['supplier_id'],
+                'user_id' => $invoice->user_id,
+                'invoice_id' => $invoice->id,
+                'type' => $invoice->type,
+                'value' => $calculationValue,
+                'date' => $invoice->date,
+            ]);
+        }
+    }
+
+    private function updateSupplierCalculation($invoice, $data)
+    {
+        $existingCalculation = $this->supplierCalculationRepository->getByInvoiceId($invoice->id);
+        $calculationValue = $this->getSupplierCalculationValue($invoice->type, $invoice->total_price);
+
+        if ($calculationValue !== null && $existingCalculation) {
+            $this->supplierCalculationRepository->update($existingCalculation->id, [
+                'supplier_id' => $data['supplier_id'],
+                'user_id' => $invoice->user_id,
+                'type' => $invoice->type,
+                'value' => $calculationValue,
+                'date' => $invoice->date,
+            ]);
+        } elseif ($calculationValue !== null && !$existingCalculation) {
+            // Create new calculation if it doesn't exist
+            $this->createSupplierCalculation($invoice, $data);
+        } elseif ($calculationValue === null && $existingCalculation) {
+            // Delete calculation if no longer needed
+            $this->supplierCalculationRepository->delete($existingCalculation->id);
+        }
+    }
+
+    private function deleteSupplierCalculation($invoiceId)
+    {
+        $existingCalculation = $this->supplierCalculationRepository->getByInvoiceId($invoiceId);
+
+        if ($existingCalculation) {
+            $this->supplierCalculationRepository->delete($existingCalculation->id);
+        }
+    }
+
+    private function getSupplierCalculationValue($type, $totalPrice)
+    {
+        if ($type === InvoiceTypesEnum::SUPPLIER_INPUT->value) {
+            return -$totalPrice; // Negative for supplier input
+        } elseif ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value) {
+            return $totalPrice; // Positive for supplier output
+        }
+
+        return null; // No calculation for other types
     }
 }

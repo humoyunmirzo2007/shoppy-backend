@@ -29,4 +29,27 @@ class ClientCalculationRepository implements ClientCalculationInterface
             ->orderBy('id', 'desc')
             ->simplePaginate($limit);
     }
+
+    public function create(array $data)
+    {
+        return $this->clientCalculation->create($data);
+    }
+
+    public function update(int $id, array $data)
+    {
+        $calculation = $this->clientCalculation->findOrFail($id);
+        $calculation->update($data);
+        return $calculation->fresh();
+    }
+
+    public function delete(int $id)
+    {
+        $calculation = $this->clientCalculation->findOrFail($id);
+        return $calculation->delete();
+    }
+
+    public function getByTradeId(int $tradeId)
+    {
+        return $this->clientCalculation->where('trade_id', $tradeId)->first();
+    }
 }

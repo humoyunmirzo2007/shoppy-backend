@@ -29,4 +29,27 @@ class SupplierCalculationRepository implements SupplierCalculationInterface
             ->orderBy('id', 'desc')
             ->simplePaginate($limit);
     }
+
+    public function create(array $data)
+    {
+        return $this->supplierCalculation->create($data);
+    }
+
+    public function update(int $id, array $data)
+    {
+        $calculation = $this->supplierCalculation->findOrFail($id);
+        $calculation->update($data);
+        return $calculation->fresh();
+    }
+
+    public function delete(int $id)
+    {
+        $calculation = $this->supplierCalculation->findOrFail($id);
+        return $calculation->delete();
+    }
+
+    public function getByInvoiceId(int $invoiceId)
+    {
+        return $this->supplierCalculation->where('invoice_id', $invoiceId)->first();
+    }
 }
