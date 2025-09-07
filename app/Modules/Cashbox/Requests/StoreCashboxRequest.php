@@ -11,7 +11,12 @@ class StoreCashboxRequest extends MainRequest
         return [
             'name' => 'required|string|max:255',
             'user_id' => 'required|integer|exists:users,id',
-            'payment_type_id' => 'required|integer|exists:payment_types,id',
+            'payment_type_id' => [
+                'required',
+                'integer',
+                'exists:payment_types,id',
+                'unique:cashboxes,payment_type_id,NULL,id,user_id,' . $this->user_id
+            ],
         ];
     }
 
@@ -27,6 +32,7 @@ class StoreCashboxRequest extends MainRequest
             'payment_type_id.required' => 'To\'lov turi majburiy',
             'payment_type_id.integer' => 'To\'lov turi ID raqam bo\'lishi kerak',
             'payment_type_id.exists' => 'Bunday to\'lov turi mavjud emas',
+            'payment_type_id.unique' => 'Bu foydalanuvchi uchun ushbu to\'lov turi bilan kassa allaqachon mavjud',
         ];
     }
 }

@@ -61,9 +61,8 @@ class CashboxService
     public function createCashbox(array $data): array
     {
         try {
-            // Check if cashbox with same name, user_id and payment_type_id already exists
+            // Check if cashbox with same user_id and payment_type_id already exists
             $existing = $this->cashboxRepository->getAll([
-                'name' => $data['name'],
                 'user_id' => $data['user_id'],
                 'payment_type_id' => $data['payment_type_id']
             ]);
@@ -71,7 +70,7 @@ class CashboxService
             if ($existing->isNotEmpty()) {
                 return [
                     'success' => false,
-                    'message' => 'Bu nom, foydalanuvchi va to\'lov turi bilan kassa allaqachon mavjud'
+                    'message' => 'Bu foydalanuvchi uchun ushbu to\'lov turi bilan kassa allaqachon mavjud'
                 ];
             }
 
