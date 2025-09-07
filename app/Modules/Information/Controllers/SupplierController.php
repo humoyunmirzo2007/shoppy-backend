@@ -8,6 +8,7 @@ use App\Modules\Information\Requests\GetSupplierByIdRequest;
 use App\Modules\Information\Requests\GetSuppliersRequest;
 use App\Modules\Information\Requests\StoreSupplierRequest;
 use App\Modules\Information\Requests\UpdateSupplierRequest;
+use App\Modules\Information\Resources\SupplierWithDebtResource;
 use App\Modules\Information\Services\SupplierService;
 
 class SupplierController
@@ -26,6 +27,13 @@ class SupplierController
         $data = $this->supplierService->getAllActive();
 
         return DefaultResource::collection($data);
+    }
+
+    public function getAllWithDebt()
+    {
+        $data = $this->supplierService->getAllWithDebt();
+
+        return SupplierWithDebtResource::collection($data);
     }
 
     public function store(StoreSupplierRequest $request)
