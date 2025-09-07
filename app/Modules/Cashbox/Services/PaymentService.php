@@ -9,10 +9,10 @@ class PaymentService
 {
     public function __construct(protected PaymentInterface $paymentRepository) {}
 
-    public function getAllPayments(array $filters = []): array
+    public function getAllPayments(array $data = []): array
     {
         try {
-            $payments = $this->paymentRepository->getAll($filters);
+            $payments = $this->paymentRepository->getAll($data);
             return ['success' => true, 'data' => $payments];
         } catch (Exception $e) {
             return ['success' => false, 'message' => 'To\'lovlarni olishda xatolik yuz berdi: ' . $e->getMessage()];
