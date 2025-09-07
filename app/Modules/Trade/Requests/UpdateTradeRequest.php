@@ -18,8 +18,25 @@ class UpdateTradeRequest extends MainRequest
             'products.*.count' => ['required', 'numeric', 'gt:0'],
             'products.*.price' => ['required', 'numeric', 'gte:0'],
             'products.*.action' => ['required', 'string', 'in:normal,add,edit,delete'],
-            'products.*.id' => ['required', 'numeric'],
+            'products.*.id' => ['nullable', 'numeric'],
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $products = $this->input('products', []);
+
+            // ID majburiy bo'lishi kerak, faqat action "add" bo'lsa ixtiyoriy
+            foreach ($products as $index => $product) {
+                $action = $product['action'] ?? '';
+                $id = $product['id'] ?? null;
+
+                if ($action !== 'add' && !$id) {
+                    $validator->errors()->add("products.{$index}.id", 'Savdo mahsulot idsi bo\'lishi shart');
+                }
+            }
+        });
     }
 
     public function messages(): array

@@ -18,9 +18,9 @@ class InvoiceService
         protected ProductInterface $productRepository
     ) {}
 
-    public function getByType(string $type, array $data)
+    public function getByTypes(array $types, array $data)
     {
-        return $this->invoiceRepository->getByType($type, $data);
+        return $this->invoiceRepository->getByTypes($types, $data);
     }
 
     public function getByIdWithProducts(int $id)
