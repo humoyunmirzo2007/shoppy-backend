@@ -8,32 +8,22 @@ use Illuminate\Database\Eloquent\Collection;
 
 class CashboxRepository implements CashboxInterface
 {
+    public function __construct(protected Cashbox $cashbox) {}
+
     public function getAll(array $filters = []): Collection
     {
-        $query = Cashbox::with(['user', 'paymentType']);
-
-        if (isset($filters['is_active'])) {
-            $query->where('is_active', $filters['is_active']);
-        }
-
-        if (isset($filters['user_id'])) {
-            $query->where('user_id', $filters['user_id']);
-        }
-
-        if (isset($filters['payment_type_id'])) {
-            $query->where('payment_type_id', $filters['payment_type_id']);
-        }
-
-        if (isset($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
-        }
-
-        return $query->get();
+        return $this->cashbox->query()
+            ->with(['user', 'paymentType'])
+            ->when(!empty($filters['is_active']), fn($q) => $q->where('is_active', $filters['is_active']))
+            ->when(!empty($filters['user_id']), fn($q) => $q->where('user_id', $filters['user_id']))
+            ->when(!empty($filters['payment_type_id']), fn($q) => $q->where('payment_type_id', $filters['payment_type_id']))
+            ->when(!empty($filters['name']), fn($q) => $q->where('name', 'like', '%' . $filters['name'] . '%'))
+            ->get();
     }
 
     public function getById(int $id): ?Cashbox
     {
-        return Cashbox::with(['user', 'paymentType'])->find($id);
+        return $this->cashbox->with(['user', 'paymentType'])->find($id);
     }
 
     public function create(array $data): Cashbox
@@ -46,7 +36,7 @@ class CashboxRepository implements CashboxInterface
             'is_active' => true, // Default to active when creating
         ];
 
-        return Cashbox::create($createData);
+        return $this->cashbox->create($createData);
     }
 
     public function toggleActive(int $id): ?Cashbox

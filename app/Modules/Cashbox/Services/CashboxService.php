@@ -8,12 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class CashboxService
 {
-    protected CashboxInterface $cashboxRepository;
-
-    public function __construct(CashboxInterface $cashboxRepository)
-    {
-        $this->cashboxRepository = $cashboxRepository;
-    }
+    public function __construct(protected CashboxInterface $cashboxRepository) {}
 
     public function getAllCashboxes(array $filters = []): array
     {

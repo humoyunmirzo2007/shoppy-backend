@@ -11,6 +11,7 @@ use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Information\Interfaces\SupplierInterface;
 use App\Modules\Information\Interfaces\UserInterface;
 use App\Modules\Cashbox\Interfaces\CashboxInterface;
+use App\Modules\Cashbox\Interfaces\PaymentInterface;
 use App\Modules\Information\Repositories\CategoryRepository;
 use App\Modules\Information\Repositories\ClientRepository;
 use App\Modules\Information\Repositories\CostTypeRepository;
@@ -20,6 +21,7 @@ use App\Modules\Information\Repositories\ProductRepository;
 use App\Modules\Information\Repositories\SupplierRepository;
 use App\Modules\Information\Repositories\UserRepository;
 use App\Modules\Cashbox\Repositories\CashboxRepository;
+use App\Modules\Cashbox\Repositories\PaymentRepository;
 use App\Modules\Trade\Interfaces\TradeInterface;
 use App\Modules\Trade\Interfaces\ClientCalculationInterface;
 use App\Modules\Trade\Interfaces\TradeProductInterface;
@@ -56,6 +58,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(TradeProductInterface::class, TradeProductRepository::class);
         $this->app->singleton(ClientCalculationInterface::class, ClientCalculationRepository::class);
         $this->app->singleton(SupplierCalculationInterface::class, SupplierCalculationRepository::class);
+        $this->app->singleton(PaymentInterface::class, PaymentRepository::class);
     }
 
     /**
