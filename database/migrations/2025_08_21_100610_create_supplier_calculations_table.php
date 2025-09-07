@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('type');
             $table->decimal('value', 10, 2);
             $table->date('date');
-            $table->decimal('debt_after_calculation', 10, 2);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
