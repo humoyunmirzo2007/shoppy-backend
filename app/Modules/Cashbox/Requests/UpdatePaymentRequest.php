@@ -12,7 +12,6 @@ class UpdatePaymentRequest extends MainRequest
     {
         return [
             'id' => 'required|integer|exists:payments,id',
-            'cashbox_id' => 'sometimes|integer|exists:cashboxes,id',
             'user_id' => 'sometimes|integer|exists:users,id',
             'payment_type_id' => 'sometimes|integer|exists:payment_types,id',
             'client_id' => 'nullable|integer|exists:clients,id',

@@ -13,9 +13,8 @@ class PaymentRepository implements PaymentInterface
     public function getAll(array $filters = []): Collection
     {
         return $this->payment->query()
-            ->with(['cashbox:id,name', 'user:id,full_name', 'paymentType:id,name', 'client:id,name', 'supplier:id,name'])
+            ->with(['user:id,full_name', 'paymentType:id,name', 'client:id,name', 'supplier:id,name'])
             ->when(!empty($filters['type']), fn($q) => $q->where('type', $filters['type']))
-            ->when(!empty($filters['cashbox_id']), fn($q) => $q->where('cashbox_id', $filters['cashbox_id']))
             ->when(!empty($filters['client_id']), fn($q) => $q->where('client_id', $filters['client_id']))
             ->when(!empty($filters['supplier_id']), fn($q) => $q->where('supplier_id', $filters['supplier_id']))
             ->when(!empty($filters['payment_type_id']), fn($q) => $q->where('payment_type_id', $filters['payment_type_id']))
@@ -28,7 +27,7 @@ class PaymentRepository implements PaymentInterface
 
     public function getById(int $id): ?Payment
     {
-        return $this->payment->with(['cashbox:id,name', 'user:id,full_name', 'paymentType:id,name', 'client:id,name', 'supplier:id,name'])->find($id);
+        return $this->payment->with(['user:id,full_name', 'paymentType:id,name', 'client:id,name', 'supplier:id,name'])->find($id);
     }
 
     public function store(array $data): Payment
