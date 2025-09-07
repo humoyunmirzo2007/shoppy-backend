@@ -39,6 +39,14 @@ class SupplierRepository implements SupplierInterface
             ->get();
     }
 
+    public function getAllWithDebt()
+    {
+        return $this->supplier->query()
+            ->select('id', 'name', 'debt')
+            ->orderBy('debt', 'desc')
+            ->get();
+    }
+
     public function getById(int $id)
     {
         return $this->supplier->find($id);

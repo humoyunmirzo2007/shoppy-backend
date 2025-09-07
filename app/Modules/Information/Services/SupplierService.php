@@ -18,6 +18,11 @@ class SupplierService
         return $this->supplierRepository->getAllActive();
     }
 
+    public function getAllWithDebt()
+    {
+        return $this->supplierRepository->getAllWithDebt();
+    }
+
     public function store(array $data)
     {
         $supplier = $this->supplierRepository->store($data);

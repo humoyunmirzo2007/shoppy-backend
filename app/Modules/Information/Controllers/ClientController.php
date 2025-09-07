@@ -8,6 +8,7 @@ use App\Modules\Information\Requests\GetClientByIdRequest;
 use App\Modules\Information\Requests\GetClientsRequest;
 use App\Modules\Information\Requests\StoreClientRequest;
 use App\Modules\Information\Requests\UpdateClientRequest;
+use App\Modules\Information\Resources\ClientWithDebtResource;
 use App\Modules\Information\Services\ClientService;
 
 class ClientController
@@ -26,6 +27,13 @@ class ClientController
         $data = $this->clientService->getAllActive();
 
         return DefaultResource::collection($data);
+    }
+
+    public function getAllWithDebt()
+    {
+        $data = $this->clientService->getAllWithDebt();
+
+        return ClientWithDebtResource::collection($data);
     }
 
     public function store(StoreClientRequest $request)

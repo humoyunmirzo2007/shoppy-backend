@@ -18,6 +18,11 @@ class ClientService
         return $this->clientRepository->getAllActive();
     }
 
+    public function getAllWithDebt()
+    {
+        return $this->clientRepository->getAllWithDebt();
+    }
+
     public function store(array $data)
     {
         $client = $this->clientRepository->store($data);
