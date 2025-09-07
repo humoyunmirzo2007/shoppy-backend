@@ -19,7 +19,7 @@ class UpdateInvoiceRequest extends MainRequest
             'products.*.count' => ['required', 'numeric', 'gt:0'],
             'products.*.price' => ['required', 'numeric', 'gte:0'],
             'products.*.action' => ['required', 'string', 'in:normal,add,edit,delete'],
-            'products.*.id' => ['required', 'numeric'],
+            'products.*.id' => ['nullable', 'numeric'],
         ];
     }
 
@@ -29,6 +29,7 @@ class UpdateInvoiceRequest extends MainRequest
             $supplierId = $this->input('supplier_id');
             $otherSourceId = $this->input('other_source_id');
             $type = $this->input('type');
+            $products = $this->input('products', []);
 
             if (!$supplierId && !$otherSourceId) {
                 $validator->errors()->add('supplier_id', 'Ta\'minotchi yoki boshqa manba tanlanishi shart');
@@ -46,6 +47,16 @@ class UpdateInvoiceRequest extends MainRequest
             // Other source bo'lsa, type OTHER_ bo'lishi kerak
             if ($otherSourceId && !str_starts_with($type, 'OTHER_')) {
                 $validator->errors()->add('type', 'Boshqa manba tanlanganda faqat OTHER_INPUT yoki OTHER_OUTPUT turini tanlashingiz mumkin');
+            }
+
+            // ID majburiy bo'lishi kerak, faqat action "add" bo'lsa ixtiyoriy
+            foreach ($products as $index => $product) {
+                $action = $product['action'] ?? '';
+                $id = $product['id'] ?? null;
+                
+                if ($action !== 'add' && !$id) {
+                    $validator->errors()->add("products.{$index}.id", 'Faktura mahsulot idsi bo\'lishi shart');
+                }
             }
         });
     }

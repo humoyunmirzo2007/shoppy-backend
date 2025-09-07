@@ -11,7 +11,7 @@ class InvoiceRepository implements InvoiceInterface
 {
     public function __construct(protected Invoice $invoice) {}
 
-    public function getByType(string $type, array $data)
+    public function getByTypes(array $types, array $data)
     {
         $search = $data['search'] ?? null;
         $limit = $data['limit'] ?? 15;
@@ -25,7 +25,7 @@ class InvoiceRepository implements InvoiceInterface
                 'otherSource:id,name',
                 'user:id,full_name',
             ])
-            ->where('type', $type)
+            ->whereIn('type', $types)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {

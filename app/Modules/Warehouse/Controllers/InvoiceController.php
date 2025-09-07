@@ -17,16 +17,18 @@ class InvoiceController extends Controller
 {
     public function __construct(protected InvoiceService $invoiceService) {}
 
-    public function getSupplierInputs(GetInvoicesRequest $request)
+    public function getInputs(GetInvoicesRequest $request)
     {
-        $data = $this->invoiceService->getByType(InvoiceTypesEnum::SUPPLIER_INPUT->value, $request->validated());
+        $types = [InvoiceTypesEnum::SUPPLIER_INPUT->value, InvoiceTypesEnum::OTHER_INPUT->value];
+        $data = $this->invoiceService->getByTypes($types, $request->validated());
 
         return DefaultResource::collection($data);
     }
 
-    public function getSupplierOutputs(GetInvoicesRequest $request)
+    public function getOutputs(GetInvoicesRequest $request)
     {
-        $data = $this->invoiceService->getByType(InvoiceTypesEnum::SUPPLIER_OUTPUT->value, $request->validated());
+        $types = [InvoiceTypesEnum::SUPPLIER_OUTPUT->value, InvoiceTypesEnum::OTHER_OUTPUT->value];
+        $data = $this->invoiceService->getByTypes($types, $request->validated());
 
         return DefaultResource::collection($data);
     }
