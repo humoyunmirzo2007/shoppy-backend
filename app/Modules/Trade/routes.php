@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Trade\Controllers\TradeController;
+use App\Modules\Trade\Controllers\ClientCalculationController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'trades', 'middleware' => ['auth:sanctum']], function () {
@@ -10,4 +11,8 @@ Route::group(['prefix' => 'trades', 'middleware' => ['auth:sanctum']], function 
     Route::post('/create', [TradeController::class, 'store']);
     Route::put('/update/{id}', [TradeController::class, 'update']);
     Route::delete('/delete/{id}', [TradeController::class, 'delete']);
+});
+
+Route::group(['prefix' => 'client-calculations', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/get-by-client/{clientId}', [ClientCalculationController::class, 'getByClientId']);
 });

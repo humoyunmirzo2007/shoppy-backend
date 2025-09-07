@@ -19,13 +19,17 @@ use App\Modules\Information\Repositories\ProductRepository;
 use App\Modules\Information\Repositories\SupplierRepository;
 use App\Modules\Information\Repositories\UserRepository;
 use App\Modules\Trade\Interfaces\TradeInterface;
+use App\Modules\Trade\Interfaces\ClientCalculationInterface;
 use App\Modules\Trade\Interfaces\TradeProductInterface;
 use App\Modules\Trade\Repositories\TradeProductRepository;
 use App\Modules\Trade\Repositories\TradeRepository;
+use App\Modules\Trade\Repositories\ClientCalculationRepository;
 use App\Modules\Warehouse\Interfaces\InvoiceInterface;
+use App\Modules\Warehouse\Interfaces\SupplierCalculationInterface;
 use App\Modules\Warehouse\Interfaces\InvoiceProductInterface;
 use App\Modules\Warehouse\Repositories\InvoiceProductRepository;
 use App\Modules\Warehouse\Repositories\InvoiceRepository;
+use App\Modules\Warehouse\Repositories\SupplierCalculationRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -47,6 +51,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(InvoiceProductInterface::class, InvoiceProductRepository::class);
         $this->app->singleton(TradeInterface::class, TradeRepository::class);
         $this->app->singleton(TradeProductInterface::class, TradeProductRepository::class);
+        $this->app->singleton(ClientCalculationInterface::class, ClientCalculationRepository::class);
+        $this->app->singleton(SupplierCalculationInterface::class, SupplierCalculationRepository::class);
     }
 
     /**
