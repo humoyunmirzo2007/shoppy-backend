@@ -4,6 +4,7 @@ namespace App\Modules\Cashbox\Services;
 
 use App\Modules\Cashbox\Interfaces\PaymentInterface;
 use App\Modules\Cashbox\Enums\PaymentTypesEnum;
+use App\Modules\Cashbox\Interfaces\OtherCalculationInterface;
 use App\Modules\Trade\Interfaces\ClientCalculationInterface;
 use App\Modules\Warehouse\Interfaces\SupplierCalculationInterface;
 use Carbon\Carbon;
@@ -15,7 +16,8 @@ class PaymentService
     public function __construct(
         protected PaymentInterface $paymentRepository,
         protected ClientCalculationInterface $clientCalculationRepository,
-        protected SupplierCalculationInterface $supplierCalculationRepository
+        protected SupplierCalculationInterface $supplierCalculationRepository,
+        protected OtherCalculationInterface $otherCalculationRepository
     ) {}
 
     public function getAllPayments(array $data = []): array
@@ -108,9 +110,7 @@ class PaymentService
 
             DB::beginTransaction();
 
-            // Delete calculations before deleting payment
-            $this->deletePaymentCalculation($payment);
-
+            // Calculations will be deleted automatically via cascade delete
             $deleted = $this->paymentRepository->delete($id);
 
             if ($deleted) {
@@ -150,22 +150,36 @@ class PaymentService
                 'value' => $calculationValue,
                 'date' => $payment->date ?? now()->format('Y-m-d'),
             ]);
+        } elseif ($payment->type === PaymentTypesEnum::OTHER_PAYMENT) {
+            $calculationValue = -$payment->amount; // Negative value for other payment
+
+            $this->otherCalculationRepository->create([
+                'user_id' => $payment->user_id,
+                'payment_id' => $payment->id,
+                'type' => 'OTHER_PAYMENT',
+                'value' => $calculationValue,
+                'date' => $payment->date ?? now()->format('Y-m-d'),
+            ]);
         }
     }
 
     private function updatePaymentCalculation($payment, $data)
     {
-        // First, check for existing calculations of both types
+        // First, check for existing calculations of all types
         $existingSupplierCalculation = $this->supplierCalculationRepository->getByPaymentId($payment->id);
         $existingClientCalculation = $this->clientCalculationRepository->getByPaymentId($payment->id);
+        $existingOtherCalculation = $this->otherCalculationRepository->getByPaymentId($payment->id);
 
         // Handle SUPPLIER_PAYMENT
         if ($payment->type === PaymentTypesEnum::SUPPLIER_PAYMENT && !empty($payment->supplier_id)) {
             $calculationValue = -$payment->amount; // Negative value for supplier payment
 
-            // Delete any existing client calculation (if payment type changed)
+            // Delete any existing client or other calculations (if payment type changed)
             if ($existingClientCalculation) {
                 $this->clientCalculationRepository->delete($existingClientCalculation->id);
+            }
+            if ($existingOtherCalculation) {
+                $this->otherCalculationRepository->delete($existingOtherCalculation->id);
             }
 
             // Update or create supplier calculation
@@ -192,9 +206,12 @@ class PaymentService
         elseif ($payment->type === PaymentTypesEnum::CLIENT_PAYMENT && !empty($payment->client_id)) {
             $calculationValue = -$payment->amount; // Negative value for client payment
 
-            // Delete any existing supplier calculation (if payment type changed)
+            // Delete any existing supplier or other calculations (if payment type changed)
             if ($existingSupplierCalculation) {
                 $this->supplierCalculationRepository->delete($existingSupplierCalculation->id);
+            }
+            if ($existingOtherCalculation) {
+                $this->otherCalculationRepository->delete($existingOtherCalculation->id);
             }
 
             // Update or create client calculation
@@ -217,28 +234,34 @@ class PaymentService
                 ]);
             }
         }
-        // Handle OTHER_PAYMENT - delete all existing calculations
+        // Handle OTHER_PAYMENT
         elseif ($payment->type === PaymentTypesEnum::OTHER_PAYMENT) {
+            $calculationValue = -$payment->amount; // Negative value for other payment
+
+            // Delete any existing supplier or client calculations (if payment type changed)
             if ($existingSupplierCalculation) {
                 $this->supplierCalculationRepository->delete($existingSupplierCalculation->id);
             }
             if ($existingClientCalculation) {
                 $this->clientCalculationRepository->delete($existingClientCalculation->id);
             }
-        }
-    }
 
-    private function deletePaymentCalculation($payment)
-    {
-        if ($payment->type === PaymentTypesEnum::SUPPLIER_PAYMENT) {
-            $existingCalculation = $this->supplierCalculationRepository->getByPaymentId($payment->id);
-            if ($existingCalculation) {
-                $this->supplierCalculationRepository->delete($existingCalculation->id);
-            }
-        } elseif ($payment->type === PaymentTypesEnum::CLIENT_PAYMENT) {
-            $existingCalculation = $this->clientCalculationRepository->getByPaymentId($payment->id);
-            if ($existingCalculation) {
-                $this->clientCalculationRepository->delete($existingCalculation->id);
+            // Update or create other calculation
+            if ($existingOtherCalculation) {
+                $this->otherCalculationRepository->update($existingOtherCalculation->id, [
+                    'user_id' => $payment->user_id,
+                    'type' => 'OTHER_PAYMENT',
+                    'value' => $calculationValue,
+                    'date' => $payment->date ?? now()->format('Y-m-d'),
+                ]);
+            } else {
+                $this->otherCalculationRepository->create([
+                    'user_id' => $payment->user_id,
+                    'payment_id' => $payment->id,
+                    'type' => 'OTHER_PAYMENT',
+                    'value' => $calculationValue,
+                    'date' => $payment->date ?? now()->format('Y-m-d'),
+                ]);
             }
         }
     }
