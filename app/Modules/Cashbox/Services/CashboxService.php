@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Modules\Information\Services;
+namespace App\Modules\Cashbox\Services;
 
-use App\Modules\Information\Interfaces\CashboxInterface;
+use App\Modules\Cashbox\Interfaces\CashboxInterface;
 use App\Models\Cashbox;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -89,8 +89,6 @@ class CashboxService
             ];
         }
     }
-
-
 
     public function toggleCashboxActive(int $id): array
     {

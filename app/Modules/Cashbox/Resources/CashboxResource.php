@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Information\Resources;
+namespace App\Modules\Cashbox\Resources;
 
 use App\Http\Resources\DefaultResource;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\Information\Repositories;
+namespace App\Modules\Cashbox\Repositories;
 
 use App\Models\Cashbox;
-use App\Modules\Information\Interfaces\CashboxInterface;
+use App\Modules\Cashbox\Interfaces\CashboxInterface;
 use Illuminate\Database\Eloquent\Collection;
 
 class CashboxRepository implements CashboxInterface
@@ -48,8 +48,6 @@ class CashboxRepository implements CashboxInterface
 
         return Cashbox::create($createData);
     }
-
-
 
     public function toggleActive(int $id): ?Cashbox
     {

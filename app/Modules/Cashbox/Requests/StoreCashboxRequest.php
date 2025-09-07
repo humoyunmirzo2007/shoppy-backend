@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Information\Requests;
+namespace App\Modules\Cashbox\Requests;
 
 use App\Http\Requests\MainRequest;
 

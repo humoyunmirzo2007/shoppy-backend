@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Modules\Information\Controllers;
+namespace App\Modules\Cashbox\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Information\Requests\GetCashboxesRequest;
-use App\Modules\Information\Requests\GetCashboxByIdRequest;
-use App\Modules\Information\Requests\StoreCashboxRequest;
-
-use App\Modules\Information\Resources\CashboxResource;
-use App\Modules\Information\Services\CashboxService;
+use App\Modules\Cashbox\Requests\GetCashboxesRequest;
+use App\Modules\Cashbox\Requests\GetCashboxByIdRequest;
+use App\Modules\Cashbox\Requests\StoreCashboxRequest;
+use App\Modules\Cashbox\Resources\CashboxResource;
+use App\Modules\Cashbox\Services\CashboxService;
 use App\Helpers\Response;
 use Illuminate\Http\JsonResponse;
 
@@ -63,8 +62,6 @@ class CashboxController extends Controller
             201
         );
     }
-
-
 
     public function toggleActive(GetCashboxByIdRequest $request): JsonResponse
     {
