@@ -28,6 +28,11 @@ class Cost extends Model
         return $this->belongsTo(CostType::class);
     }
 
+    public function paymentType(): BelongsTo
+    {
+        return $this->belongsTo(PaymentType::class);
+    }
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
@@ -36,5 +41,11 @@ class Cost extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function otherCalculation()
+    {
+        return $this->hasOne(OtherCalculation::class, 'cost_id')
+            ->where('type', \App\Modules\Cashbox\Enums\OtherCalculationTypesEnum::OTHER_COST->value);
     }
 }
