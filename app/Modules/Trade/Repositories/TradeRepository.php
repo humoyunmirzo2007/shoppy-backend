@@ -60,7 +60,7 @@ class TradeRepository implements TradeInterface
     public function getByIdWithProducts(int $id)
     {
         return $this->trade
-            ->select('id', 'client_id', 'commentary', 'user_id', 'updated_at', 'date')
+            ->select('id', 'client_id', 'commentary', 'user_id', 'updated_at', 'date', 'type')
             ->with([
                 'client:id,name',
                 'user:id,full_name',

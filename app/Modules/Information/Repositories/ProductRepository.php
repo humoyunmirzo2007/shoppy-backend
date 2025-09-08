@@ -36,12 +36,16 @@ class ProductRepository implements ProductInterface
             ->simplePaginate($limit);
     }
 
-    public function getById(int $id)
+    public function getById(int $id, array $fields = ['*'])
     {
-        return $this->product->query()
-            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'price')
-            ->with(['category:id,name'])
-            ->findOrFail($id);
+        $query = $this->product->query()->select($fields);
+
+        // Add category relationship if needed fields include category data
+        if (in_array('*', $fields) || in_array('category_id', $fields)) {
+            $query->with(['category:id,name']);
+        }
+
+        return $query->findOrFail($id);
     }
 
     public function store(array $data)

@@ -18,5 +18,5 @@ interface OtherSourceInterface
 
     public function invertActive(OtherSource $otherSource);
 
-    public function findById(int $id);
+    public function findById(int $id, array $fields = ['*']);
 }

@@ -29,6 +29,8 @@ class InvoiceResource extends JsonResource
                 'full_name' => $this->user->full_name,
             ] : null,
             'invoice_products' => InvoiceProductResource::collection($this->invoiceProducts),
+            'date' => $this->date,
+            'type' => $this->type,
         ];
     }
 }
