@@ -530,7 +530,7 @@ class InvoiceService
         foreach ($productChanges['added'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
-            $description .= 'a@#' . $product['product_id'] . '- ' . $productName . ': ' . abs($product['count']) . ', ' . $product['price'] . ';';
+            $description .= 'a@#' . $product['product_id'] . '- ' . $productName . ': ' . number_format(abs($product['count']), 0, '.', ' ') . ', ' . number_format($product['price'], 0, '.', ' ') . ';';
         }
 
         // Updated products
@@ -538,15 +538,15 @@ class InvoiceService
             $productModel = $this->productRepository->getById($change['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
             $description .= 'u@#' . $change['product_id'] . '- ' . $productName . ': ' .
-                abs($change['old_count']) . ' → ' . abs($change['new_count']) . ', ' .
-                $change['old_price'] . ' → ' . $change['new_price'] . ';';
+                number_format(abs($change['old_count']), 0, '.', ' ') . '→' . number_format(abs($change['new_count']), 0, '.', ' ') . ', ' .
+                number_format($change['old_price'], 0, '.', ' ') . '→' . number_format($change['new_price'], 0, '.', ' ') . ';';
         }
 
         // Removed products
         foreach ($productChanges['removed'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
-            $description .= 'r@#' . $product['product_id'] . '- ' . $productName . ': ' . abs($product['count']) . ', ' . $product['price'] . ';';
+            $description .= 'r@#' . $product['product_id'] . '- ' . $productName . ': ' . number_format(abs($product['count']), 0, '.', ' ') . ', ' . number_format($product['price'], 0, '.', ' ') . ';';
         }
 
         return $description;
