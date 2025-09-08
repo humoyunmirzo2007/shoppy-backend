@@ -24,6 +24,8 @@ class TradeResource extends JsonResource
             'products_count' => $this->products_count,
             'total_price' => $this->total_price,
             'updated_at' => $this->updated_at,
+            'date' => $this->date,
+            'type' => $this->type,
             'trade_products' => $this->whenLoaded('tradeProducts', function () {
                 return $this->tradeProducts->map(function ($tradeProduct) {
                     return [

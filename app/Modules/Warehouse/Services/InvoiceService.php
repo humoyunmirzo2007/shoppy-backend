@@ -3,6 +3,8 @@
 namespace App\Modules\Warehouse\Services;
 
 use App\Modules\Information\Interfaces\ProductInterface;
+use App\Modules\Information\Interfaces\SupplierInterface;
+use App\Modules\Information\Interfaces\OtherSourceInterface;
 use App\Modules\Warehouse\Enums\InvoiceTypesEnum;
 use App\Modules\Warehouse\Interfaces\InvoiceInterface;
 use App\Modules\Warehouse\Interfaces\SupplierCalculationInterface;
@@ -17,7 +19,9 @@ class InvoiceService
         protected InvoiceInterface $invoiceRepository,
         protected InvoiceProductRepository $invoiceProductRepository,
         protected ProductInterface $productRepository,
-        protected SupplierCalculationInterface $supplierCalculationRepository
+        protected SupplierCalculationInterface $supplierCalculationRepository,
+        protected SupplierInterface $supplierRepository,
+        protected OtherSourceInterface $otherSourceRepository
     ) {}
 
     public function getByTypes(array $types, array $data)
@@ -229,6 +233,16 @@ class InvoiceService
         $data['total_price']  =  $this->getTotalPrice($savableProducts);
 
 
+        // Generate history entry before updating
+        $productChanges = $this->getProductChanges($invoice->id, $products);
+        $historyEntry = $this->generateHistoryEntry($invoice, $data, $productChanges);
+
+        // Get current history and add new entry only if there are changes
+        $currentHistory = $invoice->history ?? [];
+        if (!empty($historyEntry['description'])) {
+            $currentHistory[] = $historyEntry;
+        }
+
         DB::beginTransaction();
 
         try {
@@ -240,7 +254,8 @@ class InvoiceService
                 'total_price' => abs($data['total_price']),
                 'user_id' => Auth::id(),
                 'type' => $data['type'],
-                'commentary' => $data['commentary'] ?? null
+                'commentary' => $data['commentary'] ?? null,
+                'history' => $currentHistory
             ]);
 
             if (!$updatedInvoice) {
@@ -406,10 +421,8 @@ class InvoiceService
                 'date' => $invoice->date,
             ]);
         } elseif ($calculationValue !== null && !$existingCalculation) {
-            // Create new calculation if it doesn't exist
             $this->createSupplierCalculation($invoice, $data);
         } elseif ($calculationValue === null && $existingCalculation) {
-            // Delete calculation if no longer needed
             $this->supplierCalculationRepository->delete($existingCalculation->id);
         }
     }
@@ -432,5 +445,156 @@ class InvoiceService
         }
 
         return null; // No calculation for other types
+    }
+
+    private function generateHistoryEntry($oldInvoice, $newData, $productChanges)
+    {
+        $user = Auth::user();
+        $description = '';
+
+        // Check supplier/other_source changes
+        $sourceChange = $this->getSourceChangeDescription($oldInvoice, $newData);
+        if ($sourceChange) {
+            $description .= $sourceChange;
+        }
+
+        // Check date changes
+        $dateChange = $this->getDateChangeDescription($oldInvoice, $newData);
+        if ($dateChange) {
+            $description .= $dateChange;
+        }
+
+        // Check product changes
+        $productChangeDesc = $this->getProductChangesDescription($productChanges);
+        if ($productChangeDesc) {
+            $description .= $productChangeDesc;
+        }
+
+        return [
+            'user_full_name' => $user->full_name,
+            'date' => Carbon::now()->format('d.m.Y, H:i:s'),
+            'description' => rtrim($description, ';')
+        ];
+    }
+
+    private function getSourceChangeDescription($oldInvoice, $newData)
+    {
+        $oldSupplierId = $oldInvoice->supplier_id;
+        $oldOtherSourceId = $oldInvoice->other_source_id;
+        $newSupplierId = $newData['supplier_id'] ?? null;
+        $newOtherSourceId = $newData['other_source_id'] ?? null;
+
+        // No changes - check if both sources remain the same
+        if ($oldSupplierId == $newSupplierId && $oldOtherSourceId == $newOtherSourceId) {
+            return '';
+        }
+
+
+        $oldSourceName = $this->getSourceName($oldSupplierId, $oldOtherSourceId);
+        $newSourceName = $this->getSourceName($newSupplierId, $newOtherSourceId);
+
+        return $oldSourceName . ' → ' . $newSourceName . ';';
+    }
+
+    private function getSourceName($supplierId, $otherSourceId)
+    {
+        if ($supplierId) {
+            $supplier = $this->supplierRepository->getById($supplierId, ['name']);
+            return 's@' . ($supplier?->name ?? 'Unknown');
+        } elseif ($otherSourceId) {
+            $otherSource = $this->otherSourceRepository->findById($otherSourceId, ['name']);
+            return 'o@' . ($otherSource?->name ?? 'Unknown');
+        }
+
+        // Handle null case (no source selected)
+        return 'null';
+    }
+
+    private function getDateChangeDescription($oldInvoice, $newData)
+    {
+        $oldDate = Carbon::parse($oldInvoice->date)->format('d.m.Y');
+        $newDate = Carbon::createFromFormat('d.m.Y', $newData['date'])->format('d.m.Y');
+
+        if ($oldDate !== $newDate) {
+            return 'd@' . $oldDate . ' → d@' . $newDate . ';';
+        }
+
+        return '';
+    }
+
+    private function getProductChangesDescription($productChanges)
+    {
+        $description = '';
+
+        // Added products
+        foreach ($productChanges['added'] as $product) {
+            $productModel = $this->productRepository->getById($product['product_id'], ['name']);
+            $productName = $productModel?->name ?? 'Unknown';
+            $description .= 'a@#' . $product['product_id'] . '- ' . $productName . ': ' . abs($product['count']) . ', ' . $product['price'] . ';';
+        }
+
+        // Updated products
+        foreach ($productChanges['updated'] as $change) {
+            $productModel = $this->productRepository->getById($change['product_id'], ['name']);
+            $productName = $productModel?->name ?? 'Unknown';
+            $description .= 'u@#' . $change['product_id'] . '- ' . $productName . ': ' .
+                abs($change['old_count']) . '→' . abs($change['new_count']) . ', ' .
+                $change['old_price'] . '→' . $change['new_price'] . ';';
+        }
+
+        // Removed products
+        foreach ($productChanges['removed'] as $product) {
+            $productModel = $this->productRepository->getById($product['product_id'], ['name']);
+            $productName = $productModel?->name ?? 'Unknown';
+            $description .= 'r@#' . $product['product_id'] . '- ' . $productName . ': ' . abs($product['count']) . ', ' . $product['price'] . ';';
+        }
+
+        return $description;
+    }
+
+    private function getProductChanges($invoiceId, $products)
+    {
+        // Get old products
+        $oldProducts = $this->invoiceProductRepository->getByInvoiceId($invoiceId);
+        $oldProductsMap = collect($oldProducts)->keyBy('product_id');
+        $oldProductsMapById = collect($oldProducts)->keyBy('id');
+
+        $added = [];
+        $updated = [];
+        $removed = [];
+
+        // Process current products
+        foreach ($products as $product) {
+            if ($product['action'] === 'add') {
+                $added[] = $product;
+            } elseif ($product['action'] === 'edit') {
+                $oldProduct = $oldProductsMap->get($product['product_id']);
+                if ($oldProduct) {
+                    $updated[] = [
+                        'product_id' => $product['product_id'],
+                        'old_count' => $oldProduct->count,
+                        'new_count' => $product['count'],
+                        'old_price' => $oldProduct->price,
+                        'new_price' => $product['price']
+                    ];
+                }
+            } elseif ($product['action'] === 'delete') {
+                // For delete action, we have invoice_product ID, not product_id
+                $oldProduct = $oldProductsMapById->get($product['id']);
+                if ($oldProduct) {
+                    $removed[] = [
+                        'product_id' => $oldProduct->product_id,
+                        'count' => $oldProduct->count,
+                        'price' => $oldProduct->price
+                    ];
+                }
+            }
+        }
+
+        return [
+            'added' => $added,
+            'updated' => $updated,
+            'removed' => $removed
+        ];
     }
 }

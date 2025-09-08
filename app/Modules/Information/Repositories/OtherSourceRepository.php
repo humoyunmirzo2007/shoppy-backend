@@ -54,8 +54,8 @@ class OtherSourceRepository implements OtherSourceInterface
         return $otherSource;
     }
 
-    public function findById(int $id)
+    public function findById(int $id, array $fields = ['*'])
     {
-        return $this->otherSource->find($id);
+        return $this->otherSource->select($fields)->find($id);
     }
 }

@@ -47,9 +47,9 @@ class SupplierRepository implements SupplierInterface
             ->get();
     }
 
-    public function getById(int $id)
+    public function getById(int $id, array $fields = ['*'])
     {
-        return $this->supplier->find($id);
+        return $this->supplier->select($fields)->find($id);
     }
 
     public function store(array $data)
@@ -68,6 +68,8 @@ class SupplierRepository implements SupplierInterface
 
         return $supplier;
     }
+
+
 
     public function invertActive(int $id)
     {
