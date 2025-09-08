@@ -62,7 +62,7 @@ class InvoiceRepository implements InvoiceInterface
     public function getByIdWithProducts(int $id)
     {
         return $this->invoice
-            ->select('id', 'supplier_id', 'other_source_id', 'commentary', 'user_id', 'updated_at', 'date', 'type')
+            ->select('id', 'supplier_id', 'other_source_id', 'commentary', 'user_id', 'updated_at', 'date', 'type', 'history')
             ->with([
                 'supplier:id,name',
                 'otherSource:id,name',

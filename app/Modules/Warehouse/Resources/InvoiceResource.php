@@ -31,6 +31,7 @@ class InvoiceResource extends JsonResource
             'invoice_products' => InvoiceProductResource::collection($this->invoiceProducts),
             'date' => $this->date,
             'type' => $this->type,
+            'history' => $this->history,
         ];
     }
 }

@@ -489,11 +489,13 @@ class InvoiceService
             return '';
         }
 
+        // Determine the prefix based on source types
+        $prefix = $this->getSourceChangePrefix($oldSupplierId, $oldOtherSourceId, $newSupplierId, $newOtherSourceId);
 
-        $oldSourceName = $this->getSourceName($oldSupplierId, $oldOtherSourceId);
-        $newSourceName = $this->getSourceName($newSupplierId, $newOtherSourceId);
+        $oldSourceName = $this->getSourceNameOnly($oldSupplierId, $oldOtherSourceId);
+        $newSourceName = $this->getSourceNameOnly($newSupplierId, $newOtherSourceId);
 
-        return $oldSourceName . ' → ' . $newSourceName . ';';
+        return $prefix . $oldSourceName . ' → ' . $newSourceName . ';';
     }
 
     private function getSourceName($supplierId, $otherSourceId)
@@ -504,6 +506,43 @@ class InvoiceService
         } elseif ($otherSourceId) {
             $otherSource = $this->otherSourceRepository->findById($otherSourceId, ['name']);
             return 'o@' . ($otherSource?->name ?? 'Unknown');
+        }
+
+        // Handle null case (no source selected)
+        return 'null';
+    }
+
+    private function getSourceChangePrefix($oldSupplierId, $oldOtherSourceId, $newSupplierId, $newOtherSourceId)
+    {
+        // Determine old source type
+        $oldIsSupplier = !empty($oldSupplierId);
+        $oldIsOther = !empty($oldOtherSourceId);
+
+        // Determine new source type
+        $newIsSupplier = !empty($newSupplierId);
+        $newIsOther = !empty($newOtherSourceId);
+
+        if ($oldIsSupplier && $newIsSupplier) {
+            return 's@'; // supplier to supplier
+        } elseif ($oldIsSupplier && $newIsOther) {
+            return 'so@'; // supplier to other
+        } elseif ($oldIsOther && $newIsOther) {
+            return 'o@'; // other to other
+        } elseif ($oldIsOther && $newIsSupplier) {
+            return 'os@'; // other to supplier
+        }
+
+        return ''; // fallback
+    }
+
+    private function getSourceNameOnly($supplierId, $otherSourceId)
+    {
+        if ($supplierId) {
+            $supplier = $this->supplierRepository->getById($supplierId, ['name']);
+            return $supplier?->name ?? 'Unknown';
+        } elseif ($otherSourceId) {
+            $otherSource = $this->otherSourceRepository->findById($otherSourceId, ['name']);
+            return $otherSource?->name ?? 'Unknown';
         }
 
         // Handle null case (no source selected)
@@ -538,8 +577,8 @@ class InvoiceService
             $productModel = $this->productRepository->getById($change['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
             $description .= 'u@#' . $change['product_id'] . '- ' . $productName . ': ' .
-                number_format(abs($change['old_count']), 0, '.', ' ') . '→' . number_format(abs($change['new_count']), 0, '.', ' ') . ', ' .
-                number_format($change['old_price'], 0, '.', ' ') . '→' . number_format($change['new_price'], 0, '.', ' ') . ';';
+                number_format(abs($change['old_count']), 0, '.', ' ') . ' → ' . number_format(abs($change['new_count']), 0, '.', ' ') . ', ' .
+                number_format($change['old_price'], 0, '.', ' ') . ' → ' . number_format($change['new_price'], 0, '.', ' ') . ';';
         }
 
         // Removed products
