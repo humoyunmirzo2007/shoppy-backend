@@ -538,8 +538,8 @@ class InvoiceService
             $productModel = $this->productRepository->getById($change['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
             $description .= 'u@#' . $change['product_id'] . '- ' . $productName . ': ' .
-                abs($change['old_count']) . '→' . abs($change['new_count']) . ', ' .
-                $change['old_price'] . '→' . $change['new_price'] . ';';
+                abs($change['old_count']) . ' → ' . abs($change['new_count']) . ', ' .
+                $change['old_price'] . ' → ' . $change['new_price'] . ';';
         }
 
         // Removed products
