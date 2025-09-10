@@ -31,4 +31,9 @@ class OtherCalculationRepository implements OtherCalculationInterface
     {
         return $this->otherCalculation->where('payment_id', $paymentId)->first();
     }
+
+    public function getByInvoiceId(int $invoiceId)
+    {
+        return $this->otherCalculation->where('invoice_id', $invoiceId)->first();
+    }
 }
