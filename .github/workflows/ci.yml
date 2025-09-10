@@ -24,7 +24,8 @@ jobs:
             ./deploy-backend.sh
   migrate:
     runs-on: ubuntu-latest
-    if: true
+    needs: deploy
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Migrate Database
         uses: appleboy/ssh-action@v0.1.6
