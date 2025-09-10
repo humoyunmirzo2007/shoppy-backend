@@ -24,7 +24,7 @@ jobs:
             ./deploy-backend.sh
   migrate:
     runs-on: ubuntu-latest
-    if: false
+    if: true
     steps:
       - name: Migrate Database
         uses: appleboy/ssh-action@v0.1.6
