@@ -8,4 +8,5 @@ interface OtherCalculationInterface
     public function update(int $id, array $data);
     public function delete(int $id);
     public function getByPaymentId(int $paymentId);
+    public function getByInvoiceId(int $invoiceId);
 }

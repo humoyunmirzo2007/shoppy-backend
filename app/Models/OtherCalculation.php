@@ -17,6 +17,7 @@ class OtherCalculation extends Model
         'user_id',
         'payment_id',
         'cost_id',
+        'invoice_id',
         'type',
         'value',
         'date'
@@ -45,6 +46,11 @@ class OtherCalculation extends Model
     public function cost(): BelongsTo
     {
         return $this->belongsTo(Cost::class);
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
     }
 
     public function getValueAttribute($value)

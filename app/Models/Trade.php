@@ -16,7 +16,8 @@ class Trade extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'type' => TradeTypesEnum::class
+        'type' => TradeTypesEnum::class,
+        'history' => 'array'
     ];
 
     public function tradeProducts(): HasMany

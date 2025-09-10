@@ -39,19 +39,19 @@ class UpdateCostRequest extends MainRequest
             $clientId = $this->input('client_id');
             $supplierId = $this->input('supplier_id');
 
-            if ($type && $type === CostTypesEnum::CLIENT_COST->value && !$clientId) {
+            if ($type && $type === CostTypesEnum::CLIENT_PAYMET_OUTPUT->value && !$clientId) {
                 $validator->errors()->add('client_id', 'Mijoz xarajati uchun mijoz tanlanishi kerak');
             }
 
-            if ($type && $type === CostTypesEnum::SUPPLIER_COST->value && !$supplierId) {
+            if ($type && $type === CostTypesEnum::SUPPLIER_PAYMET_OUTPUT->value && !$supplierId) {
                 $validator->errors()->add('supplier_id', 'Ta\'minotchi xarajati uchun ta\'minotchi tanlanishi kerak');
             }
 
-            if ($type && $type === CostTypesEnum::CLIENT_COST->value && $supplierId) {
+            if ($type && $type === CostTypesEnum::CLIENT_PAYMET_OUTPUT->value && $supplierId) {
                 $validator->errors()->add('supplier_id', 'Mijoz xarajati uchun ta\'minotchi tanlanmasligi kerak');
             }
 
-            if ($type && $type === CostTypesEnum::SUPPLIER_COST->value && $clientId) {
+            if ($type && $type === CostTypesEnum::SUPPLIER_PAYMET_OUTPUT->value && $clientId) {
                 $validator->errors()->add('client_id', 'Ta\'minotchi xarajati uchun mijoz tanlanmasligi kerak');
             }
         });

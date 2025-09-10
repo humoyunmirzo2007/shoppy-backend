@@ -9,6 +9,8 @@ use App\Modules\Warehouse\Enums\InvoiceTypesEnum;
 use App\Modules\Warehouse\Interfaces\InvoiceInterface;
 use App\Modules\Warehouse\Interfaces\SupplierCalculationInterface;
 use App\Modules\Warehouse\Repositories\InvoiceProductRepository;
+use App\Modules\Cashbox\Interfaces\OtherCalculationInterface;
+use App\Modules\Cashbox\Enums\OtherCalculationTypesEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +23,8 @@ class InvoiceService
         protected ProductInterface $productRepository,
         protected SupplierCalculationInterface $supplierCalculationRepository,
         protected SupplierInterface $supplierRepository,
-        protected OtherSourceInterface $otherSourceRepository
+        protected OtherSourceInterface $otherSourceRepository,
+        protected OtherCalculationInterface $otherCalculationRepository
     ) {}
 
     public function getByTypes(array $types, array $data)
@@ -77,6 +80,9 @@ class InvoiceService
 
             // Delete supplier calculation first
             $this->deleteSupplierCalculation($id);
+
+            // Delete other calculation if exists
+            $this->deleteOtherCalculation($id);
 
             $result = $this->invoiceRepository->delete($invoice);
 
@@ -137,6 +143,11 @@ class InvoiceService
             // Create supplier calculation if supplier_id exists
             if (!empty($data['supplier_id'])) {
                 $this->createSupplierCalculation($invoice, $data);
+            }
+
+            // Create other calculation if invoice type is OTHER_INPUT or OTHER_OUTPUT
+            if ($invoice->type === InvoiceTypesEnum::OTHER_INPUT->value || $invoice->type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
+                $this->createOtherCalculation($invoice, $data);
             }
 
             DB::commit();
@@ -284,6 +295,14 @@ class InvoiceService
             } else {
                 // Delete calculation if supplier_id is null
                 $this->deleteSupplierCalculation($updatedInvoice->id);
+            }
+
+            // Update other calculation for OTHER_INPUT or OTHER_OUTPUT types
+            if ($updatedInvoice->type === InvoiceTypesEnum::OTHER_INPUT->value || $updatedInvoice->type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
+                $this->updateOtherCalculation($updatedInvoice, $data);
+            } else {
+                // Delete other calculation if type is not OTHER_INPUT or OTHER_OUTPUT
+                $this->deleteOtherCalculation($updatedInvoice->id);
             }
 
             DB::commit();
@@ -434,6 +453,75 @@ class InvoiceService
         if ($existingCalculation) {
             $this->supplierCalculationRepository->delete($existingCalculation->id);
         }
+    }
+
+    private function createOtherCalculation($invoice, $data)
+    {
+        $calculationValue = $this->getOtherCalculationValue($invoice->type, $invoice->total_price);
+        $calculationType = $this->getOtherCalculationType($invoice->type);
+
+        if ($calculationValue !== null && $calculationType !== null) {
+            $this->otherCalculationRepository->create([
+                'user_id' => $invoice->user_id,
+                'payment_id' => null, // Not linked to payment
+                'cost_id' => null, // Not linked to cost
+                'invoice_id' => $invoice->id, // Link to the invoice
+                'type' => $calculationType,
+                'value' => $calculationValue,
+                'date' => $invoice->date,
+            ]);
+        }
+    }
+
+    private function updateOtherCalculation($invoice, $data)
+    {
+        $existingCalculation = $this->otherCalculationRepository->getByInvoiceId($invoice->id);
+        $calculationValue = $this->getOtherCalculationValue($invoice->type, $invoice->total_price);
+        $calculationType = $this->getOtherCalculationType($invoice->type);
+
+        if ($calculationValue !== null && $calculationType !== null && $existingCalculation) {
+            $this->otherCalculationRepository->update($existingCalculation->id, [
+                'user_id' => $invoice->user_id,
+                'type' => $calculationType,
+                'value' => $calculationValue,
+                'date' => $invoice->date,
+            ]);
+        } elseif ($calculationValue !== null && $calculationType !== null && !$existingCalculation) {
+            $this->createOtherCalculation($invoice, $data);
+        } elseif (($calculationValue === null || $calculationType === null) && $existingCalculation) {
+            $this->otherCalculationRepository->delete($existingCalculation->id);
+        }
+    }
+
+    private function deleteOtherCalculation($invoiceId)
+    {
+        $existingCalculation = $this->otherCalculationRepository->getByInvoiceId($invoiceId);
+
+        if ($existingCalculation) {
+            $this->otherCalculationRepository->delete($existingCalculation->id);
+        }
+    }
+
+    private function getOtherCalculationValue($type, $totalPrice)
+    {
+        if ($type === InvoiceTypesEnum::OTHER_INPUT->value) {
+            return $totalPrice; // Positive for other input (kirim)
+        } elseif ($type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
+            return -$totalPrice; // Negative for other output (chiqim)
+        }
+
+        return null; // No calculation for other types
+    }
+
+    private function getOtherCalculationType($type)
+    {
+        if ($type === InvoiceTypesEnum::OTHER_INPUT->value) {
+            return OtherCalculationTypesEnum::OTHER_PRODUCT_INPUT->value;
+        } elseif ($type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
+            return OtherCalculationTypesEnum::OTHER_PRODUCT_OUTPUT->value;
+        }
+
+        return null;
     }
 
     private function getSupplierCalculationValue($type, $totalPrice)
