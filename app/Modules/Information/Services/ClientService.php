@@ -18,9 +18,9 @@ class ClientService
         return $this->clientRepository->getAllActive();
     }
 
-    public function getAllWithDebt()
+    public function getAllWithDebt(array $data = [])
     {
-        return $this->clientRepository->getAllWithDebt();
+        return $this->clientRepository->getAllWithDebt($data);
     }
 
     public function store(array $data)

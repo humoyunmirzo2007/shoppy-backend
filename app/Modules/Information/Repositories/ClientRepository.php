@@ -37,12 +37,24 @@ class ClientRepository implements ClientInterface
             ->get();
     }
 
-    public function getAllWithDebt()
+    public function getAllWithDebt(array $data = [])
     {
+        $search = $data['search'] ?? null;
+        $sort = $data['sort'] ?? ['debt' => 'desc'];
+        $limit = $data['limit'] ?? 15;
+
         return $this->client->query()
             ->select('id', 'name', 'debt')
-            ->orderBy('debt', 'desc')
-            ->get();
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    if (is_numeric($search)) {
+                        $query->where('id', $search);
+                    }
+                    $query->orWhere('name', 'ilike', "%{$search}%");
+                });
+            })
+            ->sortable($sort)
+            ->simplePaginate($limit);
     }
 
     public function getById(int $id)

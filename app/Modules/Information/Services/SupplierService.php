@@ -18,9 +18,9 @@ class SupplierService
         return $this->supplierRepository->getAllActive();
     }
 
-    public function getAllWithDebt()
+    public function getAllWithDebt(array $data = [])
     {
-        return $this->supplierRepository->getAllWithDebt();
+        return $this->supplierRepository->getAllWithDebt($data);
     }
 
     public function store(array $data)

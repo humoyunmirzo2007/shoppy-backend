@@ -41,7 +41,7 @@ Route::group(['prefix' => 'categories', 'middleware' => ['auth:sanctum']], funct
 Route::group(['prefix' => 'suppliers', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [SupplierController::class, 'getAll']);
     Route::get('/all-active', [SupplierController::class, 'getAllActive'])->middleware('reject_request');
-    Route::get('/all-with-debt', [SupplierController::class, 'getAllWithDebt'])->middleware('reject_request');
+    Route::get('/all-with-debt', [SupplierController::class, 'getAllWithDebt']);
     Route::post('/create', [SupplierController::class, 'store']);
     Route::put('/update/{id}', [SupplierController::class, 'update']);
     Route::put('/invert-active/{id}', [SupplierController::class, 'invertActive']);
@@ -50,7 +50,7 @@ Route::group(['prefix' => 'suppliers', 'middleware' => ['auth:sanctum']], functi
 Route::group(['prefix' => 'clients', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [ClientController::class, 'getAll']);
     Route::get('/all-active', [ClientController::class, 'getAllActive'])->middleware('reject_request');
-    Route::get('/all-with-debt', [ClientController::class, 'getAllWithDebt'])->middleware('reject_request');
+    Route::get('/all-with-debt', [ClientController::class, 'getAllWithDebt']);
     Route::post('/create', [ClientController::class, 'store']);
     Route::put('/update/{id}', [ClientController::class, 'update']);
     Route::put('/invert-active/{id}', [ClientController::class, 'invertActive']);

@@ -12,5 +12,5 @@ interface SupplierInterface
     public function store(array $data);
     public function update(Supplier $supplier, array $data);
     public function invertActive(int $id);
-    public function getAllWithDebt();
+    public function getAllWithDebt(array $data = []);
 }

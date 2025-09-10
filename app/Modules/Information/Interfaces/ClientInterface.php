@@ -12,5 +12,5 @@ interface ClientInterface
     public function store(array $data);
     public function update(Client $client, array $data);
     public function invertActive(int $id);
-    public function getAllWithDebt();
+    public function getAllWithDebt(array $data = []);
 }

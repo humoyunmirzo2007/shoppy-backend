@@ -30,6 +30,11 @@ class Payment extends Model
         return $this->belongsTo(PaymentType::class);
     }
 
+    public function otherPaymentType(): BelongsTo
+    {
+        return $this->belongsTo(PaymentType::class, 'other_payment_type_id');
+    }
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);

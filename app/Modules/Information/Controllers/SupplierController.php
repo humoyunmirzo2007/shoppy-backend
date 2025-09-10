@@ -6,6 +6,7 @@ use App\Helpers\Response;
 use App\Http\Resources\DefaultResource;
 use App\Modules\Information\Requests\GetSupplierByIdRequest;
 use App\Modules\Information\Requests\GetSuppliersRequest;
+use App\Modules\Information\Requests\GetSuppliersWithDebtRequest;
 use App\Modules\Information\Requests\StoreSupplierRequest;
 use App\Modules\Information\Requests\UpdateSupplierRequest;
 use App\Modules\Information\Resources\SupplierWithDebtResource;
@@ -29,9 +30,9 @@ class SupplierController
         return DefaultResource::collection($data);
     }
 
-    public function getAllWithDebt()
+    public function getAllWithDebt(GetSuppliersWithDebtRequest $request)
     {
-        $data = $this->supplierService->getAllWithDebt();
+        $data = $this->supplierService->getAllWithDebt($request->validated());
 
         return SupplierWithDebtResource::collection($data);
     }
