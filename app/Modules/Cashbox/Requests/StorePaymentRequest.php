@@ -28,19 +28,19 @@ class StorePaymentRequest extends MainRequest
             $clientId = $this->input('client_id');
             $supplierId = $this->input('supplier_id');
 
-            if ($type === PaymentTypesEnum::CLIENT_PAYMENT->value && !$clientId) {
+            if ($type === PaymentTypesEnum::CLIENT_PAYMET_INPUTS->value && !$clientId) {
                 $validator->errors()->add('client_id', 'Mijoz to\'lovi uchun mijoz tanlanishi kerak');
             }
 
-            if ($type === PaymentTypesEnum::SUPPLIER_PAYMENT->value && !$supplierId) {
+            if ($type === PaymentTypesEnum::SUPPLIER_PAYMET_INPUTS->value && !$supplierId) {
                 $validator->errors()->add('supplier_id', 'Ta\'minotchi to\'lovi uchun ta\'minotchi tanlanishi kerak');
             }
 
-            if ($type === PaymentTypesEnum::CLIENT_PAYMENT->value && $supplierId) {
+            if ($type === PaymentTypesEnum::CLIENT_PAYMET_INPUTS->value && $supplierId) {
                 $validator->errors()->add('supplier_id', 'Mijoz to\'lovi uchun ta\'minotchi tanlanmasligi kerak');
             }
 
-            if ($type === PaymentTypesEnum::SUPPLIER_PAYMENT->value && $clientId) {
+            if ($type === PaymentTypesEnum::SUPPLIER_PAYMET_INPUTS->value && $clientId) {
                 $validator->errors()->add('client_id', 'Ta\'minotchi to\'lovi uchun mijoz tanlanmasligi kerak');
             }
         });

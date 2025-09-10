@@ -34,7 +34,7 @@ class GetCostsRequest extends MainRequest
             'limit.max' => 'Limit ko\'pi bilan 50 bo\'lishi kerak',
             'page.integer' => 'Page son bo\'lishi kerak',
             'page.min' => 'Page kamida 1 bo\'lishi kerak',
-            'type.enum' => 'Xarajat turi noto\'g\'ri. Quyidagi qiymatlardan birini tanlang: supplier_cost, client_cost, other_cost',
+            'type.enum' => 'Xarajat turi noto\'g\'ri. Quyidagi qiymatlardan birini tanlang: supplier_paymet_output, client_paymet_output, other_paymet_output',
 
             'client_id.integer' => 'Mijoz ID si butun son bo\'lishi kerak',
             'client_id.exists' => 'Bunday mijoz mavjud emas',
