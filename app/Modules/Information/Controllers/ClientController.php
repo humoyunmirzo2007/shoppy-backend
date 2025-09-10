@@ -6,6 +6,7 @@ use App\Helpers\Response;
 use App\Http\Resources\DefaultResource;
 use App\Modules\Information\Requests\GetClientByIdRequest;
 use App\Modules\Information\Requests\GetClientsRequest;
+use App\Modules\Information\Requests\GetClientsWithDebtRequest;
 use App\Modules\Information\Requests\StoreClientRequest;
 use App\Modules\Information\Requests\UpdateClientRequest;
 use App\Modules\Information\Resources\ClientWithDebtResource;
@@ -29,9 +30,9 @@ class ClientController
         return DefaultResource::collection($data);
     }
 
-    public function getAllWithDebt()
+    public function getAllWithDebt(GetClientsWithDebtRequest $request)
     {
-        $data = $this->clientService->getAllWithDebt();
+        $data = $this->clientService->getAllWithDebt($request->validated());
 
         return ClientWithDebtResource::collection($data);
     }
