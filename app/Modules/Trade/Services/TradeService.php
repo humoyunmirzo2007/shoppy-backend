@@ -3,6 +3,7 @@
 namespace App\Modules\Trade\Services;
 
 use App\Modules\Information\Interfaces\ProductInterface;
+use App\Modules\Information\Interfaces\ClientInterface;
 use App\Modules\Trade\Enums\TradeTypesEnum;
 use App\Modules\Trade\Interfaces\ClientCalculationInterface;
 use App\Modules\Trade\Interfaces\TradeInterface;
@@ -17,7 +18,8 @@ class TradeService
         protected TradeInterface $tradeRepository,
         protected TradeProductRepository $tradeProductRepository,
         protected ProductInterface $productRepository,
-        protected ClientCalculationInterface $clientCalculationRepository
+        protected ClientCalculationInterface $clientCalculationRepository,
+        protected ClientInterface $clientRepository
     ) {}
 
     public function getByType(string $type, array $data)
@@ -222,6 +224,16 @@ class TradeService
         $data['products_count'] = array_sum(array_column($savableProducts, 'count'));
         $data['total_price'] = $this->getTotalPrice($savableProducts);
 
+        // Generate history entry before updating
+        $productChanges = $this->getProductChanges($trade->id, $products);
+        $historyEntry = $this->generateHistoryEntry($trade, $data, $productChanges);
+
+        // Get current history and add new entry only if there are changes
+        $currentHistory = $trade->history ?? [];
+        if (!empty($historyEntry['description'])) {
+            $currentHistory[] = $historyEntry;
+        }
+
         DB::beginTransaction();
 
         try {
@@ -232,7 +244,8 @@ class TradeService
                 'total_price' => abs($data['total_price']),
                 'user_id' => Auth::id(),
                 'type' => $data['type'],
-                'commentary' => $data['commentary'] ?? null
+                'commentary' => $data['commentary'] ?? null,
+                'history' => $currentHistory
             ]);
 
             if (!$updatedTrade) {
@@ -424,5 +437,148 @@ class TradeService
         }
 
         return null; // No calculation for other types
+    }
+
+    private function generateHistoryEntry($oldTrade, $newData, $productChanges)
+    {
+        $user = Auth::user();
+        $description = '';
+
+        // Check client changes
+        $clientChange = $this->getClientChangeDescription($oldTrade, $newData);
+        if ($clientChange) {
+            $description .= $clientChange;
+        }
+
+        // Check date changes
+        $dateChange = $this->getDateChangeDescription($oldTrade, $newData);
+        if ($dateChange) {
+            $description .= $dateChange;
+        }
+
+        // Check product changes
+        $productChangeDesc = $this->getProductChangesDescription($productChanges);
+        if ($productChangeDesc) {
+            $description .= $productChangeDesc;
+        }
+
+        return [
+            'user_full_name' => $user->full_name,
+            'date' => Carbon::now()->format('d.m.Y, H:i:s'),
+            'description' => rtrim($description, ';')
+        ];
+    }
+
+    private function getClientChangeDescription($oldTrade, $newData)
+    {
+        $oldClientId = $oldTrade->client_id;
+        $newClientId = $newData['client_id'] ?? null;
+
+        // No changes
+        if ($oldClientId == $newClientId) {
+            return '';
+        }
+
+        $oldClientName = $this->getClientName($oldClientId);
+        $newClientName = $this->getClientName($newClientId);
+
+        return 'c@' . $oldClientName . ' → ' . $newClientName . ';';
+    }
+
+    private function getClientName($clientId)
+    {
+        if ($clientId) {
+            $client = $this->clientRepository->getById($clientId);
+            return $client?->name ?? 'Unknown';
+        }
+
+        return 'null';
+    }
+
+    private function getDateChangeDescription($oldTrade, $newData)
+    {
+        $oldDate = Carbon::parse($oldTrade->date)->format('d.m.Y');
+        $newDate = Carbon::createFromFormat('d.m.Y', $newData['date'])->format('d.m.Y');
+
+        if ($oldDate !== $newDate) {
+            return 'd@' . $oldDate . ' → d@' . $newDate . ';';
+        }
+
+        return '';
+    }
+
+    private function getProductChangesDescription($productChanges)
+    {
+        $description = '';
+
+        // Added products
+        foreach ($productChanges['added'] as $product) {
+            $productModel = $this->productRepository->getById($product['product_id'], ['name']);
+            $productName = $productModel?->name ?? 'Unknown';
+            $description .= 'a@#' . $product['product_id'] . '- ' . $productName . ': ' . number_format(abs($product['count']), 0, '.', ' ') . ', ' . number_format($product['price'], 0, '.', ' ') . ';';
+        }
+
+        // Updated products
+        foreach ($productChanges['updated'] as $change) {
+            $productModel = $this->productRepository->getById($change['product_id'], ['name']);
+            $productName = $productModel?->name ?? 'Unknown';
+            $description .= 'u@#' . $change['product_id'] . '- ' . $productName . ': ' .
+                number_format(abs($change['old_count']), 0, '.', ' ') . ' → ' . number_format(abs($change['new_count']), 0, '.', ' ') . ', ' .
+                number_format($change['old_price'], 0, '.', ' ') . ' → ' . number_format($change['new_price'], 0, '.', ' ') . ';';
+        }
+
+        // Removed products
+        foreach ($productChanges['removed'] as $product) {
+            $productModel = $this->productRepository->getById($product['product_id'], ['name']);
+            $productName = $productModel?->name ?? 'Unknown';
+            $description .= 'r@#' . $product['product_id'] . '- ' . $productName . ': ' . number_format(abs($product['count']), 0, '.', ' ') . ', ' . number_format($product['price'], 0, '.', ' ') . ';';
+        }
+
+        return $description;
+    }
+
+    private function getProductChanges($tradeId, $products)
+    {
+        $oldProducts = $this->tradeProductRepository->getByTradeId($tradeId);
+        $oldProductsMap = collect($oldProducts)->keyBy('product_id');
+        $oldProductsMapById = collect($oldProducts)->keyBy('id');
+
+        $added = [];
+        $updated = [];
+        $removed = [];
+
+        // Process current products
+        foreach ($products as $product) {
+            if ($product['action'] === 'add') {
+                $added[] = $product;
+            } elseif ($product['action'] === 'edit') {
+                $oldProduct = $oldProductsMap->get($product['product_id']);
+                if ($oldProduct) {
+                    $updated[] = [
+                        'product_id' => $product['product_id'],
+                        'old_count' => $oldProduct->count,
+                        'new_count' => $product['count'],
+                        'old_price' => $oldProduct->price,
+                        'new_price' => $product['price']
+                    ];
+                }
+            } elseif ($product['action'] === 'delete') {
+                // For delete action, we have trade_product ID, not product_id
+                $oldProduct = $oldProductsMapById->get($product['id']);
+                if ($oldProduct) {
+                    $removed[] = [
+                        'product_id' => $oldProduct->product_id,
+                        'count' => $oldProduct->count,
+                        'price' => $oldProduct->price
+                    ];
+                }
+            }
+        }
+
+        return [
+            'added' => $added,
+            'updated' => $updated,
+            'removed' => $removed
+        ];
     }
 }
