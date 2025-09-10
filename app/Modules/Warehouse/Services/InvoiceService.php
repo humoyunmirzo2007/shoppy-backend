@@ -593,7 +593,6 @@ class InvoiceService
 
     private function getProductChanges($invoiceId, $products)
     {
-        // Get old products
         $oldProducts = $this->invoiceProductRepository->getByInvoiceId($invoiceId);
         $oldProductsMap = collect($oldProducts)->keyBy('product_id');
         $oldProductsMapById = collect($oldProducts)->keyBy('id');
