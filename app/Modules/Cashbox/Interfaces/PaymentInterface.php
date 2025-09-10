@@ -12,4 +12,8 @@ interface PaymentInterface
     public function store(array $data): Payment;
     public function update(int $id, array $data): Payment;
     public function delete(int $id): bool;
+
+    // Transfer specific methods
+    public function getTransfers(array $data = []);
+    public function getTransferById(int $id): ?Payment;
 }
