@@ -1345,7 +1345,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"payment_type_id\": 1,\n    \"cost_type_id\": 1,\n    \"amount\": 200000,\n    \"description\": \"Ofis ijarasi to'landi\",\n    \"type\": \"OTHER_PAYMET_OUTPUT\"\n}"
+                            "raw": "{\n    \"payment_type_id\": 1,\n    \"cost_type_id\": 1,\n    \"amount\": 200000,\n    \"description\": \"Ofis ijarasi to'landi\",\n    \"type\": \"OTHER_PAYMENT_OUTPUT\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/money-outputs",
@@ -1366,7 +1366,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"payment_type_id\": 1,\n    \"cost_type_id\": 1,\n    \"amount\": 250000,\n    \"description\": \"Yangilangan xarajat\",\n    \"type\": \"OTHER_PAYMET_OUTPUT\"\n}"
+                            "raw": "{\n    \"payment_type_id\": 1,\n    \"cost_type_id\": 1,\n    \"amount\": 250000,\n    \"description\": \"Yangilangan xarajat\",\n    \"type\": \"OTHER_PAYMENT_OUTPUT\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/money-outputs/1",
