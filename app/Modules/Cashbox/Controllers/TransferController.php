@@ -26,14 +26,11 @@ class TransferController extends Controller
             return Response::error($result['message'], 400);
         }
 
-        $transfers = $result['data'];
-        $transfers->getCollection()->transform(function ($transfer) {
-            return new TransferResource($transfer);
-        });
+        return  DefaultResource::collection($result['data']);
 
-        return DefaultResource::collection($transfers);
-
+        return $transfers;
     }
+
     /**
      * Store a newly created transfer.
      */
@@ -45,7 +42,7 @@ class TransferController extends Controller
             return Response::error($result['message'], 400);
         }
 
-        return Response::success(new TransferResource($result['data']), $result['message'], 201);
+        return Response::success(DefaultResource::make($result['data']), $result['message'], 201);
     }
 
     /**
