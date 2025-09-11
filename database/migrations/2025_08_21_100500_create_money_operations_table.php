@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('operation_type'); // 'input' yoki 'output'
             $table->foreignId('payment_type_id')->constrained('payment_types');
             $table->foreignId('other_payment_type_id')->nullable()->constrained('payment_types');
+            $table->foreignId('other_source_id')->nullable()->constrained('other_sources');
             $table->foreignId('cost_type_id')->nullable()->constrained('cost_types');
             $table->foreignId('client_id')->nullable()->constrained('clients');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers');
