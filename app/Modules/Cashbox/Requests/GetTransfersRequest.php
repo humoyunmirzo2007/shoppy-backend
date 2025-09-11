@@ -22,7 +22,7 @@ class GetTransfersRequest extends MainRequest
     public function rules(): array
     {
         return [
-            'search' => 'sometimes|string|max:255',
+            'search' => 'nullable|string|max:255',
             'limit' => 'sometimes|integer|min:1|max:100',
             'payment_type_id' => 'sometimes|integer|exists:payment_types,id',
             'other_payment_type_id' => 'sometimes|integer|exists:payment_types,id',
