@@ -3,6 +3,7 @@
 namespace App\Modules\Cashbox\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\DefaultResource;
 use App\Modules\Cashbox\Requests\GetTransferByIdRequest;
 use App\Modules\Cashbox\Requests\GetTransfersRequest;
 use App\Modules\Cashbox\Requests\StoreTransferRequest;
@@ -30,9 +31,9 @@ class TransferController extends Controller
             return new TransferResource($transfer);
         });
 
-        return Response::success($transfers, $result['message']);
-    }
+        return DefaultResource::collection($transfers);
 
+    }
     /**
      * Store a newly created transfer.
      */

@@ -11,7 +11,7 @@ class StoreCostRequest extends MainRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|integer|exists:users,id',
+            
             'cost_type_id' => 'required|integer|exists:cost_types,id',
             'payment_type_id' => 'required|integer|exists:payment_types,id',
             'client_id' => 'nullable|integer|exists:clients,id',

@@ -11,15 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('costs', function (Blueprint $table) {
+        Schema::create('money_operations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('cost_type_id')->constrained('cost_types');
+            $table->string('operation_type'); // 'input' yoki 'output'
+            $table->foreignId('payment_type_id')->constrained('payment_types');
+            $table->foreignId('other_payment_type_id')->nullable()->constrained('payment_types');
+            $table->foreignId('cost_type_id')->nullable()->constrained('cost_types');
             $table->foreignId('client_id')->nullable()->constrained('clients');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers');
             $table->decimal('amount', 10, 2);
             $table->string('description')->nullable();
-            $table->string('type');
+            $table->string('type'); // PaymentTypesEnum yoki CostTypesEnum values
+            $table->date('date')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('costs');
+        Schema::dropIfExists('money_operations');
     }
 };

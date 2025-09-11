@@ -11,8 +11,8 @@ class UpdateCostRequest extends MainRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|exists:costs,id',
-            'user_id' => 'required|integer|exists:users,id',
+            'id' => 'required|integer|exists:money_operations,id',
+            
             'cost_type_id' => 'required|integer|exists:cost_types,id',
             'payment_type_id' => 'required|integer|exists:payment_types,id',
             'client_id' => 'nullable|integer|exists:clients,id',

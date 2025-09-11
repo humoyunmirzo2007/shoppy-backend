@@ -8,15 +8,15 @@ use App\Modules\Cashbox\Requests\GetCostByIdRequest;
 use App\Modules\Cashbox\Requests\GetCostsRequest;
 use App\Modules\Cashbox\Requests\StoreCostRequest;
 use App\Modules\Cashbox\Requests\UpdateCostRequest;
-use App\Modules\Cashbox\Services\CostService;
+use App\Modules\Cashbox\Services\MoneyOutputService;
 
-class CostController
+class MoneyOutputController
 {
-    public function __construct(protected CostService $costService) {}
+    public function __construct(protected MoneyOutputService $moneyOutputService) {}
 
     public function index(GetCostsRequest $request)
     {
-        $result = $this->costService->getAllCosts($request->validated());
+        $result = $this->moneyOutputService->getAllMoneyOutputs($request->validated());
 
         if (!$result['success']) {
             return Response::error([], $result['message']);
@@ -27,7 +27,7 @@ class CostController
 
     public function show(GetCostByIdRequest $request)
     {
-        $result = $this->costService->getCostById($request->validated()['id']);
+        $result = $this->moneyOutputService->getMoneyOutputById($request->validated()['id']);
 
         if (!$result['success']) {
             return Response::error([], $result['message']);
@@ -38,7 +38,7 @@ class CostController
 
     public function store(StoreCostRequest $request)
     {
-        $result = $this->costService->createCost($request->validated());
+        $result = $this->moneyOutputService->createMoneyOutput($request->validated());
 
         if (!$result['success']) {
             return Response::error([], $result['message']);
@@ -53,7 +53,7 @@ class CostController
         $id = $data['id'];
         unset($data['id']);
 
-        $result = $this->costService->updateCost($id, $data);
+        $result = $this->moneyOutputService->updateMoneyOutput($id, $data);
 
         if (!$result['success']) {
             return Response::error([], $result['message']);
@@ -64,7 +64,7 @@ class CostController
 
     public function destroy(GetCostByIdRequest $request)
     {
-        $result = $this->costService->deleteCost($request->validated()['id']);
+        $result = $this->moneyOutputService->deleteMoneyOutput($request->validated()['id']);
 
         if (!$result['success']) {
             return Response::error([], $result['message']);

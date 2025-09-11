@@ -8,15 +8,15 @@ use App\Modules\Cashbox\Requests\GetPaymentByIdRequest;
 use App\Modules\Cashbox\Requests\GetPaymentsRequest;
 use App\Modules\Cashbox\Requests\StorePaymentRequest;
 use App\Modules\Cashbox\Requests\UpdatePaymentRequest;
-use App\Modules\Cashbox\Services\PaymentService;
+use App\Modules\Cashbox\Services\MoneyInputService;
 
-class PaymentController
+class MoneyInputController
 {
-    public function __construct(protected PaymentService $paymentService) {}
+    public function __construct(protected MoneyInputService $moneyInputService) {}
 
     public function index(GetPaymentsRequest $request)
     {
-        $result = $this->paymentService->getAllPayments($request->validated());
+        $result = $this->moneyInputService->getAllMoneyInputs($request->validated());
 
         if (!$result['success']) {
             return Response::error([], $result['message']);
@@ -27,7 +27,7 @@ class PaymentController
 
     public function show(GetPaymentByIdRequest $request)
     {
-        $result = $this->paymentService->getPaymentById($request->validated()['id']);
+        $result = $this->moneyInputService->getMoneyInputById($request->validated()['id']);
 
         if (!$result['success']) {
             return Response::error([], $result['message']);
@@ -38,7 +38,7 @@ class PaymentController
 
     public function store(StorePaymentRequest $request)
     {
-        $result = $this->paymentService->createPayment($request->validated());
+        $result = $this->moneyInputService->createMoneyInput($request->validated());
 
         if (!$result['success']) {
             return Response::error([], $result['message']);
@@ -53,7 +53,7 @@ class PaymentController
         $id = $data['id'];
         unset($data['id']);
 
-        $result = $this->paymentService->updatePayment($id, $data);
+        $result = $this->moneyInputService->updateMoneyInput($id, $data);
 
         if (!$result['success']) {
             return Response::error([], $result['message']);
@@ -64,7 +64,7 @@ class PaymentController
 
     public function destroy(GetPaymentByIdRequest $request)
     {
-        $result = $this->paymentService->deletePayment($request->validated()['id']);
+        $result = $this->moneyInputService->deleteMoneyInput($request->validated()['id']);
 
         if (!$result['success']) {
             return Response::error([], $result['message']);

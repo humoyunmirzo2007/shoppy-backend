@@ -2,22 +2,21 @@
 
 namespace App\Modules\Cashbox\Repositories;
 
-use App\Models\Payment;
-use App\Modules\Cashbox\Interfaces\PaymentInterface;
-use App\Modules\Cashbox\Enums\PaymentTypesEnum;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\MoneyOperation;
+use App\Modules\Cashbox\Interfaces\MoneyInputInterface;
 
-class PaymentRepository implements PaymentInterface
+class MoneyInputRepository implements MoneyInputInterface
 {
-    public function __construct(protected Payment $payment) {}
+    public function __construct(protected MoneyOperation $moneyOperation) {}
 
-    public function getAll(array $data = [])
+    public function getAllMoneyInputs(array $data = [])
     {
         $search = $data['search'] ?? null;
         $limit = $data['limit'] ?? 15;
         $sort = $data['sort'] ?? ['id' => 'desc'];
 
-        return $this->payment->query()
+        return $this->moneyOperation->query()
+            ->inputs() // faqat input operatsiyalar
             ->with(['user:id,full_name', 'paymentType:id,name', 'client:id,name', 'supplier:id,name'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
@@ -42,45 +41,47 @@ class PaymentRepository implements PaymentInterface
             ->simplePaginate($limit);
     }
 
-    public function getById(int $id): ?Payment
+    public function getMoneyInputById(int $id): ?MoneyOperation
     {
-        return $this->payment->with(['user:id,full_name', 'paymentType:id,name', 'client:id,name', 'supplier:id,name'])->find($id);
+        return $this->moneyOperation
+            ->inputs()
+            ->with(['user:id,full_name', 'paymentType:id,name', 'client:id,name', 'supplier:id,name'])
+            ->find($id);
     }
 
-    public function store(array $data): Payment
+    public function createMoneyInput(array $data): MoneyOperation
     {
-        return $this->payment->create($data);
+        $data['operation_type'] = 'input';
+        return $this->moneyOperation->create($data);
     }
 
-    public function update(int $id, array $data): Payment
+    public function updateMoneyInput(int $id, array $data): MoneyOperation
     {
-        $payment = $this->payment->findOrFail($id);
-        $payment->update($data);
-        return $payment->fresh();
+        $moneyOperation = $this->moneyOperation->inputs()->findOrFail($id);
+        $moneyOperation->update($data);
+        return $moneyOperation->fresh();
     }
 
-    public function delete(int $id): bool
+    public function deleteMoneyInput(int $id): bool
     {
-        $payment = $this->payment->findOrFail($id);
-        return $payment->delete();
+        $moneyOperation = $this->moneyOperation->inputs()->findOrFail($id);
+        return $moneyOperation->delete();
     }
 
     // Transfer specific methods
     public function getTransfers(array $data = [])
     {
-        $data['type'] = PaymentTypesEnum::TRANSFER->value;
-
         $search = $data['search'] ?? null;
         $limit = $data['limit'] ?? 15;
         $sort = $data['sort'] ?? ['id' => 'desc'];
 
-        return $this->payment->query()
+        return $this->moneyOperation->query()
+            ->where('type', 'TRANSFER')
             ->with([
                 'user:id,full_name',
                 'paymentType:id,name',
                 'otherPaymentType:id,name'
             ])
-            ->where('type', PaymentTypesEnum::TRANSFER->value)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {
@@ -101,15 +102,28 @@ class PaymentRepository implements PaymentInterface
             ->simplePaginate($limit);
     }
 
-    public function getTransferById(int $id): ?Payment
+    public function getTransferById(int $id): ?\App\Models\MoneyOperation
     {
-        return $this->payment
+        return $this->moneyOperation
             ->with([
                 'user:id,full_name',
                 'paymentType:id,name',
                 'otherPaymentType:id,name'
             ])
-            ->where('type', PaymentTypesEnum::TRANSFER->value)
+            ->where('type', 'TRANSFER')
             ->find($id);
+    }
+
+    public function createTransfer(array $data): \App\Models\MoneyOperation
+    {
+        $data['operation_type'] = 'transfer'; // Special type for transfers
+        $data['type'] = 'TRANSFER';
+        return $this->moneyOperation->create($data);
+    }
+
+    public function deleteTransfer(int $id): bool
+    {
+        $transfer = $this->moneyOperation->where('type', 'TRANSFER')->findOrFail($id);
+        return $transfer->delete();
     }
 }

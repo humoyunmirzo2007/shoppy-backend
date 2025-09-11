@@ -37,8 +37,9 @@ class TradeService
         $type = $data['type'];
         switch ($type) {
             case TradeTypesEnum::TRADE->value:
-                // case TradeTypesEnum::RETURN_PRODUCT->value:
-                //     return $this->storeTrade($data);
+                return $this->storeTrade($data);
+                 case TradeTypesEnum::RETURN_PRODUCT->value:
+                     return $this->storeTrade($data);
             default:
                 return [
                     'status' => 'error',

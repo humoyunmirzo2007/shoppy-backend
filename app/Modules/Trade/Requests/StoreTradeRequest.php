@@ -3,6 +3,8 @@
 namespace App\Modules\Trade\Requests;
 
 use App\Http\Requests\MainRequest;
+use App\Modules\Trade\Enums\TradeTypesEnum;
+use Illuminate\Validation\Rule;
 
 class StoreTradeRequest extends MainRequest
 {
@@ -11,7 +13,7 @@ class StoreTradeRequest extends MainRequest
         return [
             'client_id' => ['required', 'numeric', 'exists:clients,id'],
             'commentary' => ['nullable', 'max:200'],
-            'type' => ['required', 'in:TRADE,RETURN_PRODUCT'],
+            'type' => ['required', Rule::enum(TradeTypesEnum::class)],
             'date' => ['required', 'date_format:d.m.Y'],
             'products' => ['required', 'array', 'min:1'],
             'products.*.product_id' => ['required', 'integer', 'exists:products,id'],
@@ -28,7 +30,7 @@ class StoreTradeRequest extends MainRequest
             'client_id.exists' => 'Bunday mijoz mavjud emas',
             'commentary.max' => 'Izoh 200 ta belgidan oshmasligi kerak',
             'type.required' => 'Savdo turini tanlash shart',
-            'type.in' => 'Savdo turini noto\'g\'ri',
+            'type.enum' => 'Savdo turini noto\'g\'ri',
             'products.required' => 'Mahsulotlar ro\'yxati bo\'sh bo\'lishi mumkin emas',
             'products.array' => 'Mahsulotlar noto\'g\'ri formatda yuborilgan',
             'products.min' => 'Kamida bitta mahsulot qo\'shilishi kerak',

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('products_count');
             $table->decimal('total_price', 15, 2);
             $table->text('commentary')->nullable();
+            $table->json('history')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
