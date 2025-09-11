@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Migrate fresh and seed
 
 on:
   workflow_dispatch: 
