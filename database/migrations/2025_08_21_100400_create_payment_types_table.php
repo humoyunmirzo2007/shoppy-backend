@@ -12,22 +12,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('payment_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
-            $table->string('unit');
+            $table->decimal('residue', 15, 2)->default(0);
             $table->boolean('is_active')->default(true);
-            $table->decimal('residue', 10, 2)->default(0);
-            $table->decimal('price', 10, 2)->default(0);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-
-            $table->index(['category_id', 'is_active', 'name']);
         });
 
         // Add check constraint for residue
-        DB::statement('ALTER TABLE products ADD CONSTRAINT check_products_residue_non_negative CHECK (residue >= 0)');
+        DB::statement('ALTER TABLE payment_types ADD CONSTRAINT check_payment_types_residue_non_negative CHECK (residue >= 0)');
     }
 
     /**
@@ -35,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('payment_types');
     }
 };

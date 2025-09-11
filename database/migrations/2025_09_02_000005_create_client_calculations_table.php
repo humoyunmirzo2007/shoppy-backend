@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('client_calculations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
-            $table->foreignId('trade_id')->constrained('trades')->onDelete('cascade');
+            $table->foreignId('trade_id')->nullable()->constrained('trades')->onDelete('cascade');
+            $table->foreignId('payment_id')->nullable()->constrained('money_operations')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('type');
             $table->decimal('value', 15, 2);
             $table->date('date');

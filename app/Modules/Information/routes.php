@@ -66,12 +66,16 @@ Route::group(['prefix' => 'cost-types', 'middleware' => ['auth:sanctum']], funct
 
 Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [ProductController::class, 'getAll']);
+    Route::get('/residues', [ProductController::class, 'getForResidues']);
     Route::post('/create', [ProductController::class, 'store']);
     Route::put('/update/{id}', [ProductController::class, 'update']);
     Route::put('/invert-active/{id}', [ProductController::class, 'invertActive']);
     Route::get('/download-template', [ProductController::class, 'downloadTemplate']);
+    Route::get('/download-update-price-template', [ProductController::class, 'downloadUpdatePriceTemplate']);
     Route::post('/import', [ProductController::class, 'import']);
+    Route::post('/update-prices-from-template', [ProductController::class, 'updatePricesFromTemplate']);
 });
+
 
 Route::group(['prefix' => 'other-sources', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [OtherSourceController::class, 'getAll']);

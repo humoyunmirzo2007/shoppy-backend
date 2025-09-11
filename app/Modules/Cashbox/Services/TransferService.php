@@ -2,8 +2,9 @@
 
 namespace App\Modules\Cashbox\Services;
 
-use App\Modules\Cashbox\Interfaces\PaymentInterface;
+use App\Modules\Cashbox\Interfaces\MoneyInputInterface;
 use App\Modules\Cashbox\Enums\PaymentTypesEnum;
+use Illuminate\Support\Facades\Auth;
 use App\Modules\Information\Interfaces\PaymentTypeInterface;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -11,14 +12,14 @@ use Exception;
 class TransferService
 {
     public function __construct(
-        protected PaymentInterface $paymentRepository,
+        protected MoneyInputInterface $moneyInputRepository,
         protected PaymentTypeInterface $paymentTypeRepository
     ) {}
 
     public function getTransfers(array $data): array
     {
         try {
-            $transfers = $this->paymentRepository->getTransfers($data);
+            $transfers = $this->moneyInputRepository->getTransfers($data);
 
             return ['success' => true, 'data' => $transfers, 'message' => 'O\'tkazmalar ro\'yxati olindi'];
         } catch (Exception $e) {
@@ -29,7 +30,7 @@ class TransferService
     public function getTransferById(int $id): array
     {
         try {
-            $transfer = $this->paymentRepository->getTransferById($id);
+            $transfer = $this->moneyInputRepository->getTransferById($id);
 
             if (!$transfer) {
                 return ['success' => false, 'message' => 'O\'tkazma topilmadi'];
@@ -65,7 +66,7 @@ class TransferService
 
             // Create transfer payment record
             $transferData = [
-                'user_id' => $data['user_id'],
+                'user_id' => Auth::id(),
                 'payment_type_id' => $data['payment_type_id'],
                 'other_payment_type_id' => $data['other_payment_type_id'],
                 'amount' => $data['amount'],
@@ -74,7 +75,7 @@ class TransferService
                 'date' => $data['date'] ?? now()->format('Y-m-d'),
             ];
 
-            $transfer = $this->paymentRepository->store($transferData);
+            $transfer = $this->moneyInputRepository->createTransfer($transferData);
 
             // Load relationships for response
             $transfer->load(['user:id,full_name', 'paymentType:id,name', 'otherPaymentType:id,name']);
@@ -91,7 +92,7 @@ class TransferService
     public function deleteTransfer(int $id): array
     {
         try {
-            $transfer = $this->paymentRepository->getTransferById($id);
+            $transfer = $this->moneyInputRepository->getTransferById($id);
 
             if (!$transfer) {
                 return ['success' => false, 'message' => 'O\'tkazma topilmadi'];
@@ -110,7 +111,7 @@ class TransferService
                 return ['success' => false, 'message' => 'O\'tkazilgan to\'lov turida yetarli qoldiq mavjud emas. Mavjud qoldiq: ' . $destinationPaymentType->residue];
             }
 
-            $this->paymentRepository->delete($id);
+            $this->moneyInputRepository->deleteTransfer($id);
 
             DB::commit();
 

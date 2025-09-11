@@ -9,7 +9,7 @@ class StoreTransferRequest extends MainRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|integer|exists:users,id',
+            
             'payment_type_id' => 'required|integer|exists:payment_types,id',
             'other_payment_type_id' => 'required|integer|exists:payment_types,id|different:payment_type_id',
             'amount' => 'required|numeric|min:0.01',

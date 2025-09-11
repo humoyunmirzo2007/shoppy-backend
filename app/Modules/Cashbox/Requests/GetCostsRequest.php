@@ -15,12 +15,13 @@ class GetCostsRequest extends MainRequest
             'sort' => ['nullable', 'array'],
             'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'type' => ['sometimes', Rule::enum(CostTypesEnum::class)],
-            'client_id' => 'sometimes|integer|exists:clients,id',
-            'supplier_id' => 'sometimes|integer|exists:suppliers,id',
-            'cost_type_id' => 'sometimes|integer|exists:cost_types,id',
-            'date_from' => 'sometimes|date',
-            'date_to' => 'sometimes|date|after_or_equal:date_from',
+            'type' => ['nullable', Rule::enum(CostTypesEnum::class)],
+            'client_id' => 'nullable|integer|exists:clients,id',
+            'supplier_id' => 'nullable|integer|exists:suppliers,id',
+            'cost_type_id' => 'nullable|integer|exists:cost_types,id',
+            'payment_type_id' => 'nullable|integer|exists:payment_types,id',
+            'date_from' => 'nullable|date',
+            'date_to' => 'nullable|date|after_or_equal:date_from',
         ];
     }
 
@@ -40,6 +41,7 @@ class GetCostsRequest extends MainRequest
             'client_id.exists' => 'Bunday mijoz mavjud emas',
             'supplier_id.integer' => 'Ta\'minotchi ID si butun son bo\'lishi kerak',
             'supplier_id.exists' => 'Bunday ta\'minotchi mavjud emas',
+            'payment_type_id.integer' => 'To'lov turi ID si butun son bo'lishi kerak',            'payment_type_id.exists' => 'Bunday to'lov turi mavjud emas',
             'cost_type_id.integer' => 'Xarajat turi ID si butun son bo\'lishi kerak',
             'cost_type_id.exists' => 'Bunday xarajat turi mavjud emas',
             'date_from.date' => 'Boshlanish sanasi to\'g\'ri formatda bo\'lishi kerak (YYYY-MM-DD)',

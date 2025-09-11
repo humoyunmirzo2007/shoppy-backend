@@ -9,7 +9,7 @@ class GetCostByIdRequest extends MainRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|exists:costs,id',
+            'id' => 'required|integer|exists:money_operations,id',
         ];
     }
 

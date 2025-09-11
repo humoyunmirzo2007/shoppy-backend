@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->foreignId('supplier_id')->nullable()->constrained()->restrictOnDelete();
+            $table->foreignId('other_source_id')->nullable()->constrained('other_sources')->restrictOnDelete();
             $table->decimal('total_price', 10, 2);
             $table->decimal('products_count', 10, 1);
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
             $table->string('type');
             $table->string('commentary', 200)->nullable();
+            $table->json('history')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 

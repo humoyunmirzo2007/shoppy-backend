@@ -6,5 +6,5 @@ enum ClientCalculationTypesEnum: string
 {
     case TRADE = 'TRADE';
     case RETURN_PRODUCT = 'RETURN_PRODUCT';
-    case CLIENT_PAYMENT = 'CLIENT_PAYMET_INPUTS';
+    case CLIENT_PAYMENT = 'CLIENT_PAYMET_INPUT';
 }
