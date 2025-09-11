@@ -38,19 +38,19 @@ class UpdatePaymentRequest extends MainRequest
             $clientId = $this->input('client_id');
             $supplierId = $this->input('supplier_id');
 
-            if ($type && $type === PaymentTypesEnum::CLIENT_PAYMET_INPUT->value && !$clientId) {
+            if ($type && $type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && !$clientId) {
                 $validator->errors()->add('client_id', 'Mijoz to\'lovi uchun mijoz tanlanishi kerak');
             }
 
-            if ($type && $type === PaymentTypesEnum::SUPPLIER_PAYMET_INPUT->value && !$supplierId) {
+            if ($type && $type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && !$supplierId) {
                 $validator->errors()->add('supplier_id', 'Ta\'minotchi to\'lovi uchun ta\'minotchi tanlanishi kerak');
             }
 
-            if ($type && $type === PaymentTypesEnum::CLIENT_PAYMET_INPUT->value && $supplierId) {
+            if ($type && $type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && $supplierId) {
                 $validator->errors()->add('supplier_id', 'Mijoz to\'lovi uchun ta\'minotchi tanlanmasligi kerak');
             }
 
-            if ($type && $type === PaymentTypesEnum::SUPPLIER_PAYMET_INPUT->value && $clientId) {
+            if ($type && $type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && $clientId) {
                 $validator->errors()->add('client_id', 'Ta\'minotchi to\'lovi uchun mijoz tanlanmasligi kerak');
             }
         });
