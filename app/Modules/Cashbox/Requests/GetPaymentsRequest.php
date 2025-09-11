@@ -34,7 +34,7 @@ class GetPaymentsRequest extends MainRequest
             'limit.max' => 'Limit ko\'pi bilan 50 bo\'lishi kerak',
             'page.integer' => 'Page son bo\'lishi kerak',
             'page.min' => 'Page kamida 1 bo\'lishi kerak',
-            'type.enum' => 'To\'lov turi noto\'g\'ri. Quyidagi qiymatlardan birini tanlang: supplier_paymet_inputs, client_paymet_inputs, other_paymet_inputs',
+            'type.enum' => 'To\'lov turi noto\'g\'ri. Quyidagi qiymatlardan birini tanlang: SUPPLIER_PAYMET_INPUT, CLIENT_PAYMET_INPUT, OTHER_PAYMET_INPUT',
 
             'client_id.integer' => 'Mijoz ID si butun son bo\'lishi kerak',
             'client_id.exists' => 'Bunday mijoz mavjud emas',

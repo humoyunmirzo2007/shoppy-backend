@@ -24,6 +24,13 @@ class ProductController
         return DefaultResource::collection($data);
     }
 
+    public function getForResidues(GetProductsRequest $request)
+    {
+        $data = $this->productService->getForResidues($request->validated());
+
+        return DefaultResource::collection($data);
+    }
+
     public function store(StoreProductRequest $request)
     {
         $data = $this->productService->store($request->validated());
@@ -73,6 +80,11 @@ class ProductController
         return $this->productService->downloadTemplate();
     }
 
+    public function downloadUpdatePriceTemplate()
+    {
+        return $this->productService->downloadUpdatePriceTemplate();
+    }
+
     public function import(UploadProductsImportFileRequest $request)
     {
         $data = $this->productService->import($request->file('file'));
@@ -83,6 +95,16 @@ class ProductController
 
             );
         }
+
+        return Response::success(
+            message: $data['message']
+        );
+    }
+
+
+    public function updatePricesFromTemplate(UploadProductsImportFileRequest $request)
+    {
+        $data = $this->productService->updatePricesFromTemplate($request->file('file'));
 
         return Response::success(
             message: $data['message']

@@ -11,15 +11,15 @@ class ProductRepository implements ProductInterface
 
     public function __construct(protected Product $product) {}
 
-    public function getAll(array $data)
+    public function getAll(array $data, array $fields = ['*'], ?bool $withLimit = true)
     {
         $search = $data['search'] ?? null;
         $limit = $data['limit'] ?? 15;
         $sort = $data['sort'] ?? ['id' => 'desc'];
         $filters = $data['filters'] ?? [];
 
-        return $this->product->query()
-            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'residue', 'price')
+        $query =  $this->product->query()
+            ->select($fields)
             ->with(['category:id,name'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
@@ -32,8 +32,12 @@ class ProductRepository implements ProductInterface
             ->when(!empty($filters['category_id']), function ($query) use ($filters) {
                 $query->where('category_id', $filters['category_id']);
             })
-            ->sortable($sort)
-            ->simplePaginate($limit);
+            ->sortable($sort);
+
+        if (!$withLimit) {
+            return $query->get();
+        }
+        return $query->simplePaginate($limit);
     }
 
     public function getById(int $id, array $fields = ['*'])
@@ -106,5 +110,14 @@ class ProductRepository implements ProductInterface
             ->get()
             ->keyBy('id')
         ;
+    }
+
+    public function upsert(array $data, array $uniqueBy, array $updates): void
+    {
+        $this->product->upsert(
+            $data,
+            $uniqueBy,
+            $updates
+        );
     }
 }

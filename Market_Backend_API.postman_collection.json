@@ -1242,7 +1242,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"payment_type_id\": 1,\n    \"amount\": 500000,\n    \"description\": \"Mijozdan to'lov olindi\",\n    \"type\": \"CLIENT_PAYMET_INPUTS\",\n    \"client_id\": 1,\n    \"date\": \"01.09.2025\"\n}"
+                            "raw": "{\n    \"payment_type_id\": 1,\n    \"amount\": 500000,\n    \"description\": \"Mijozdan to'lov olindi\",\n    \"type\": \"CLIENT_PAYMET_INPUT\",\n    \"client_id\": 1,\n    \"date\": \"01.09.2025\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/money-inputs",
@@ -1263,7 +1263,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"payment_type_id\": 1,\n    \"amount\": 600000,\n    \"description\": \"Yangilangan to'lov\",\n    \"type\": \"CLIENT_PAYMET_INPUTS\",\n    \"client_id\": 1,\n    \"date\": \"02.09.2025\"\n}"
+                            "raw": "{\n    \"payment_type_id\": 1,\n    \"amount\": 600000,\n    \"description\": \"Yangilangan to'lov\",\n    \"type\": \"CLIENT_PAYMET_INPUT\",\n    \"client_id\": 1,\n    \"date\": \"02.09.2025\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/money-inputs/1",

@@ -1,7 +1,8 @@
 CREATE OR REPLACE FUNCTION calculate_products_residue_when_invoice_product_create () RETURNS TRIGGER AS $$
 BEGIN
 UPDATE products
-SET residue = residue + NEW.count
+SET residue = residue + NEW.count,
+    input_price = NEW.price 
 WHERE id = NEW.product_id;
 
 RETURN NEW;

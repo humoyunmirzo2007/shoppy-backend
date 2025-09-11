@@ -148,7 +148,7 @@ class MoneyInputService
 
     private function createPaymentCalculation($moneyInput, $data)
     {
-        if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMET_INPUTS->value && !empty($data['supplier_id'])) {
+        if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMET_INPUT->value && !empty($data['supplier_id'])) {
             $calculationValue = -$moneyInput->amount; // Negative value for supplier payment
 
             $this->supplierCalculationRepository->create([
@@ -159,7 +159,7 @@ class MoneyInputService
                 'value' => $calculationValue,
                 'date' => $moneyInput->date ?? now()->format('Y-m-d'),
             ]);
-        } elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMET_INPUTS->value && !empty($data['client_id'])) {
+        } elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMET_INPUT->value && !empty($data['client_id'])) {
             $calculationValue = -$moneyInput->amount; // Negative value for client payment
 
             $this->clientCalculationRepository->create([
@@ -170,7 +170,7 @@ class MoneyInputService
                 'value' => $calculationValue,
                 'date' => $moneyInput->date ?? now()->format('Y-m-d'),
             ]);
-        } elseif ($moneyInput->type === PaymentTypesEnum::OTHER_PAYMET_INPUTS->value) {
+        } elseif ($moneyInput->type === PaymentTypesEnum::OTHER_PAYMET_INPUT->value) {
             $calculationValue = -$moneyInput->amount; // Negative value for other payment
 
             $this->otherCalculationRepository->create([
@@ -190,8 +190,8 @@ class MoneyInputService
         $existingClientCalculation = $this->clientCalculationRepository->getByPaymentId($moneyInput->id);
         $existingOtherCalculation = $this->otherCalculationRepository->getByPaymentId($moneyInput->id);
 
-        // Handle SUPPLIER_PAYMET_INPUTS
-        if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMET_INPUTS->value && !empty($moneyInput->supplier_id)) {
+        // Handle SUPPLIER_PAYMET_INPUT
+        if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMET_INPUT->value && !empty($moneyInput->supplier_id)) {
             $calculationValue = -$moneyInput->amount; // Negative value for supplier payment
 
             // Delete any existing client or other calculations (if payment type changed)
@@ -222,8 +222,8 @@ class MoneyInputService
                 ]);
             }
         }
-        // Handle CLIENT_PAYMET_INPUTS
-        elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMET_INPUTS->value && !empty($moneyInput->client_id)) {
+        // Handle CLIENT_PAYMET_INPUT
+        elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMET_INPUT->value && !empty($moneyInput->client_id)) {
             $calculationValue = -$moneyInput->amount; // Negative value for client payment
 
             // Delete any existing supplier or other calculations (if payment type changed)
@@ -254,8 +254,8 @@ class MoneyInputService
                 ]);
             }
         }
-        // Handle OTHER_PAYMET_INPUTS
-        elseif ($moneyInput->type === PaymentTypesEnum::OTHER_PAYMET_INPUTS->value) {
+        // Handle OTHER_PAYMET_INPUT
+        elseif ($moneyInput->type === PaymentTypesEnum::OTHER_PAYMET_INPUT->value) {
             $calculationValue = -$moneyInput->amount; // Negative value for other payment
 
             // Delete any existing supplier or client calculations (if payment type changed)
