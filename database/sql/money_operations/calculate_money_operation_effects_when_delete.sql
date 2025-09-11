@@ -25,11 +25,11 @@ BEGIN
         WHERE id = OLD.payment_type_id;
         
         -- Revert debt changes
-        IF OLD.type = 'CLIENT_PAYMET_OUTPUT' AND OLD.client_id IS NOT NULL THEN
+        IF OLD.type = 'CLIENT_PAYMENT_OUTPUT' AND OLD.client_id IS NOT NULL THEN
             UPDATE clients 
             SET debt = debt - OLD.amount 
             WHERE id = OLD.client_id;
-        ELSIF OLD.type = 'SUPPLIER_PAYMET_OUTPUT' AND OLD.supplier_id IS NOT NULL THEN
+        ELSIF OLD.type = 'SUPPLIER_PAYMENT_OUTPUT' AND OLD.supplier_id IS NOT NULL THEN
             UPDATE suppliers 
             SET debt = debt - OLD.amount 
             WHERE id = OLD.supplier_id;

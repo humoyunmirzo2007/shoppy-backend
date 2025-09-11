@@ -28,18 +28,18 @@ BEGIN
         WHERE id = NEW.payment_type_id;
         
         -- Handle client/supplier debt based on cost type
-        IF NEW.type = 'CLIENT_PAYMET_OUTPUT' AND NEW.client_id IS NOT NULL THEN
+        IF NEW.type = 'CLIENT_PAYMENT_OUTPUT' AND NEW.client_id IS NOT NULL THEN
             -- Increase client debt (client owes more)
             UPDATE clients 
             SET debt = debt + NEW.amount 
             WHERE id = NEW.client_id;
-        ELSIF NEW.type = 'SUPPLIER_PAYMET_OUTPUT' AND NEW.supplier_id IS NOT NULL THEN
+        ELSIF NEW.type = 'SUPPLIER_PAYMENT_OUTPUT' AND NEW.supplier_id IS NOT NULL THEN
             -- Increase supplier debt (we owe supplier more)
             UPDATE suppliers 
             SET debt = debt + NEW.amount 
             WHERE id = NEW.supplier_id;
         END IF;
-        -- For OTHER_PAYMET_OUTPUT, only payment_type residue is affected
+        -- For OTHER_PAYMENT_OUTPUT, only payment_type residue is affected
     END IF;
     
     RETURN NEW;

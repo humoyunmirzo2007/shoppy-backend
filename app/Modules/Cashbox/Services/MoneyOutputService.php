@@ -58,8 +58,8 @@ class MoneyOutputService
 
             $moneyOutput = $this->moneyOutputRepository->createMoneyOutput($data);
 
-            // If OTHER_PAYMET_OUTPUT, create other_calculation record
-            if ($data['type'] === CostTypesEnum::OTHER_PAYMET_OUTPUT->value) {
+            // If OTHER_PAYMENT_OUTPUT, create other_calculation record
+            if ($data['type'] === CostTypesEnum::OTHER_PAYMENT_OUTPUT->value) {
                 OtherCalculation::create([
                     'user_id' => $data['user_id'],
                     'payment_id' => null, // OTHER_COST is not linked to payment
@@ -119,8 +119,8 @@ class MoneyOutputService
                 ->where('type', OtherCalculationTypesEnum::OTHER_COST->value)
                 ->first();
 
-            // If new cost is OTHER_PAYMET_OUTPUT
-            if ($data['type'] === CostTypesEnum::OTHER_PAYMET_OUTPUT->value) {
+            // If new cost is OTHER_PAYMENT_OUTPUT
+            if ($data['type'] === CostTypesEnum::OTHER_PAYMENT_OUTPUT->value) {
                 $calculationValue = -$data['amount']; // Negative because it's a cost
 
                 // Update existing other_calculation or create new one
@@ -142,8 +142,8 @@ class MoneyOutputService
                     ]);
                 }
             } else {
-                // If old cost was OTHER_PAYMET_OUTPUT but new cost is not, delete the other_calculation
-                if ($moneyOutput->type === CostTypesEnum::OTHER_PAYMET_OUTPUT->value && $existingOtherCalculation) {
+                // If old cost was OTHER_PAYMENT_OUTPUT but new cost is not, delete the other_calculation
+                if ($moneyOutput->type === CostTypesEnum::OTHER_PAYMENT_OUTPUT->value && $existingOtherCalculation) {
                     $existingOtherCalculation->delete();
                 }
             }
