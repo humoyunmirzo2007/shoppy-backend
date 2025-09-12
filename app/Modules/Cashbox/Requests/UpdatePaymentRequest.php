@@ -12,10 +12,10 @@ class UpdatePaymentRequest extends MainRequest
     {
         return [
             'id' => 'required|integer|exists:money_operations,id',
-
             'payment_type_id' => 'required|integer|exists:payment_types,id',
             'client_id' => 'nullable|integer|exists:clients,id',
             'supplier_id' => 'nullable|integer|exists:suppliers,id',
+            'other_source_id' => 'nullable|integer|exists:other_sources,id',
             'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string|max:255',
             'type' => ['required', Rule::enum(PaymentTypesEnum::class)],
@@ -37,7 +37,7 @@ class UpdatePaymentRequest extends MainRequest
             $type = $this->input('type');
             $clientId = $this->input('client_id');
             $supplierId = $this->input('supplier_id');
-
+            $otherSourceId = $this->input('other_source_id');
             if ($type && $type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && !$clientId) {
                 $validator->errors()->add('client_id', 'Mijoz to\'lovi uchun mijoz tanlanishi kerak');
             }
@@ -52,6 +52,10 @@ class UpdatePaymentRequest extends MainRequest
 
             if ($type && $type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && $clientId) {
                 $validator->errors()->add('client_id', 'Ta\'minotchi to\'lovi uchun mijoz tanlanmasligi kerak');
+            }
+
+            if ($type && $type === PaymentTypesEnum::OTHER_PAYMENT_INPUT->value && !$otherSourceId) {
+                $validator->errors()->add('other_source_id', 'Boshqa manba to\'lovi uchun boshqa manba tanlanishi kerak');
             }
         });
     }
