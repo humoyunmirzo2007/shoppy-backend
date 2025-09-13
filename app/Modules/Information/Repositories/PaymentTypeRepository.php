@@ -14,7 +14,7 @@ class PaymentTypeRepository implements PaymentTypeInterface
     {
         $search = $data['search'] ?? null;
         $limit = $data['limit'] ?? 15;
-        $sort = $data['sort'] ?? ['id' => 'desc'];
+        $sort = $data['sort'] ?? ['residue' => 'desc'];
 
         return $this->paymentType->query()
             ->select('id', 'name', 'residue', 'is_active')
