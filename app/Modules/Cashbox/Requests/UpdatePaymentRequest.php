@@ -40,6 +40,11 @@ class UpdatePaymentRequest extends MainRequest
             $supplierId = $this->input('supplier_id');
             $otherSourceId = $this->input('other_source_id');
             $costTypeId = $this->input('cost_type_id');
+
+            if (!$clientId && !$supplierId && !$otherSourceId && !$costTypeId) {
+                $validator->errors()->add('client_id', 'Kamida mijoz, ta\'minotchi , xarajat turiyoki boshqa manba tanlanishi kerak');
+            }
+
             if ($type && $type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && !$clientId) {
                 $validator->errors()->add('client_id', 'Mijoz to\'lovi uchun mijoz tanlanishi kerak');
             }
