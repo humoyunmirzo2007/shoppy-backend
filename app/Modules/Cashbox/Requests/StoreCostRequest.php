@@ -56,8 +56,8 @@ class StoreCostRequest extends MainRequest
             }
 
             // Boshqa manba bo‘lsa cost_type_id majburiy
-            if ($otherSourceId && !$costTypeId) {
-                $validator->errors()->add('cost_type_id', 'Boshqa manba xarajati uchun xarajat turi majburiy');
+            if ($costTypeId && $type !== CostTypesEnum::COST_PAYMENT_OUTPUT->value) {
+                $validator->errors()->add('type', 'Xarajat turi tanlansa, type faqat COST_PAYMENT_OUTPUT bo‘lishi kerak');
             }
         });
     }
