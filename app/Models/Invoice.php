@@ -45,12 +45,12 @@ class Invoice extends Model
             ->format('d.m.Y, H:i:s');
     }
 
-    public function getDateAttribute($value)
-    {
-        return Carbon::parse($value)
-            ->timezone(config('app.timezone'))
-            ->format('d.m.Y');
-    }
+    // public function getDateAttribute($value)
+    // {
+    //     return Carbon::parse($value)
+    //         ->timezone(config('app.timezone'))
+    //         ->format('d.m.Y');
+    // }
 
     protected $sortable = ['id', 'updated_at', 'supplier_id', 'products_count', 'total_price', 'user_id'];
 }
