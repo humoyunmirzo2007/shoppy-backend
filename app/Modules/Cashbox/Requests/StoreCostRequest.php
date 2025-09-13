@@ -33,7 +33,7 @@ class StoreCostRequest extends MainRequest
 
             // Kamida bitta manba bo‘lishi kerak
             if (!$clientId && !$supplierId && !$otherSourceId) {
-                $validator->errors()->add('client_id', 'Kamida mijoz, ta\'minotchi yoki boshqa manba tanlanishi kerak');
+                $validator->errors()->add('client_id', 'Kamida mijoz, ta\'minotchi , xarajat turiyoki boshqa manba tanlanishi kerak');
             }
 
             // Faqat bitta manba bo‘lishi kerak
