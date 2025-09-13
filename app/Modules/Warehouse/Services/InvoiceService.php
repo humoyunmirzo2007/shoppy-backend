@@ -161,7 +161,7 @@ class InvoiceService
             DB::rollBack();
             return [
                 'status' => 'error',
-                'message' => 'Faktura yaratishda xatolik yuz berdi'
+                'message' => 'Faktura yaratishda xatolik yuz berdi: ' . $e->getMessage()
             ];
         }
     }
@@ -316,7 +316,7 @@ class InvoiceService
             DB::rollBack();
             return [
                 'status' => 'error',
-                'message' => 'Fakturani tahrirlashda xatolik yuz berdi',
+                'message' => 'Fakturani tahrirlashda xatolik yuz berdi: ' . $e->getMessage()
             ];
         }
     }
