@@ -101,7 +101,6 @@ class InvoiceService
                 'message' => 'Faktura muvaffaqiyatli o\'chirildi'
             ];
         } catch (\Throwable $e) {
-            dd($e);
             DB::rollBack();
             return [
                 'status' => 'error',
@@ -134,7 +133,7 @@ class InvoiceService
             $data['total_price'] =  $this->getTotalPrice($products);
 
             // Date formatini o'zgartirish (dd.mm.yyyy -> Y-m-d)
-            $data['date'] = Carbon::createFromFormat('d.m.Y', $data['date'])->format('Y-m-d');
+            $data['date'] = Carbon::parse($data['date'])->format('Y-m-d');
 
             $invoice = $this->invoiceRepository->store($data);
 
@@ -413,7 +412,6 @@ class InvoiceService
     private function createSupplierCalculation($invoice, $data)
     {
         $calculationValue = $this->getSupplierCalculationValue($invoice->type, $invoice->total_price);
-
         if ($calculationValue !== null) {
             $this->supplierCalculationRepository->create([
                 'supplier_id' => $data['supplier_id'],
