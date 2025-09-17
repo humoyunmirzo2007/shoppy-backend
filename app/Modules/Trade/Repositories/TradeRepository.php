@@ -19,7 +19,7 @@ class TradeRepository implements TradeInterface
         $filters = $data['filters'] ?? [];
 
         return $this->trade->query()
-            ->select('id', 'date', 'total_price', 'client_id', 'products_count', 'user_id', 'history', 'updated_at')
+            ->select('id', 'date', 'total_price', 'client_id', 'products_count', 'user_id', 'updated_at')
             ->with([
                 'client:id,name',
                 'user:id,full_name',
@@ -60,7 +60,7 @@ class TradeRepository implements TradeInterface
     public function getByIdWithProducts(int $id)
     {
         return $this->trade
-            ->select('id', 'client_id', 'commentary', 'user_id', 'updated_at', 'date', 'type')
+            ->select('id', 'client_id', 'commentary', 'user_id', 'updated_at', 'date', 'type', 'history')
             ->with([
                 'client:id,name',
                 'user:id,full_name',
