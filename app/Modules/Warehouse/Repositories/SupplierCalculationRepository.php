@@ -14,20 +14,19 @@ class SupplierCalculationRepository implements SupplierCalculationInterface
     {
         $limit = $data['limit'] ?? 15;
         $filters = $data['filters'] ?? [];
-
         return $this->supplierCalculation->query()
-            ->select('id', 'supplier_id', 'value', 'type', 'updated_at')
+            ->select('id', 'supplier_id', 'value', 'type', 'updated_at', 'date')
             ->where('supplier_id', $supplierId)
             ->when(!empty($filters['from_date']), function ($query) use ($filters) {
                 $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');
-                $query->whereDate('created_at', '>=', $from);
+                $query->whereDate('date', '>=', $from);
             })
             ->when(!empty($filters['to_date']), function ($query) use ($filters) {
                 $to = Carbon::createFromFormat('d.m.Y', $filters['to_date'])->format('Y-m-d');
-                $query->whereDate('created_at', '<=', $to);
+                $query->whereDate('date', '<=', $to);
             })
             ->orderBy('id', 'desc')
-            ->simplePaginate($limit);
+            ->get();
     }
 
     public function create(array $data)
