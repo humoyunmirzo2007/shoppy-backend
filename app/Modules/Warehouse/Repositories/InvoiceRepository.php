@@ -67,7 +67,7 @@ class InvoiceRepository implements InvoiceInterface
                 'supplier:id,name',
                 'otherSource:id,name',
                 'user:id,full_name',
-                'invoiceProducts:id,invoice_id,product_id,price,count,total_price',
+                'invoiceProducts:id,invoice_id,product_id,price,input_price,count,total_price',
                 'invoiceProducts.product:id,name,category_id,residue',
                 'invoiceProducts.product.category:id,name',
             ])

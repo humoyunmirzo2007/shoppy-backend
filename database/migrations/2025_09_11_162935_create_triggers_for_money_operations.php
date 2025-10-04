@@ -14,28 +14,6 @@ return new class extends Migration
         DB::unprepared(file_get_contents(database_path('sql/money_operations/calculate_money_operation_effects_when_create.sql')));
         DB::unprepared(file_get_contents(database_path('sql/money_operations/calculate_money_operation_effects_when_update.sql')));
         DB::unprepared(file_get_contents(database_path('sql/money_operations/calculate_money_operation_effects_when_delete.sql')));
-
-        // Create triggers
-        DB::unprepared('
-            CREATE TRIGGER trigger_calculate_money_operation_effects_when_create
-                AFTER INSERT ON money_operations
-                FOR EACH ROW
-                EXECUTE FUNCTION calculate_money_operation_effects_when_create();
-        ');
-
-        DB::unprepared('
-            CREATE TRIGGER trigger_calculate_money_operation_effects_when_update
-                AFTER UPDATE ON money_operations
-                FOR EACH ROW
-                EXECUTE FUNCTION calculate_money_operation_effects_when_update();
-        ');
-
-        DB::unprepared('
-            CREATE TRIGGER trigger_calculate_money_operation_effects_when_delete
-                AFTER DELETE ON money_operations
-                FOR EACH ROW
-                EXECUTE FUNCTION calculate_money_operation_effects_when_delete();
-        ');
     }
 
     /**

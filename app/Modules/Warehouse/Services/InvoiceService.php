@@ -78,10 +78,8 @@ class InvoiceService
 
             $invoice = $this->invoiceRepository->findById($id);
 
-            // Delete supplier calculation first
             $this->deleteSupplierCalculation($id);
 
-            // Delete other calculation if exists
             $this->deleteOtherCalculation($id);
 
             $result = $this->invoiceRepository->delete($invoice);
@@ -397,10 +395,11 @@ class InvoiceService
                 'product_id'  => $product['product_id'],
                 'count'    => $product['count'],
                 'price'       => $product['price'],
-                'total_price' => abs($product['price'] * $product['count']),
+                'total_price' => abs($product['input_price'] * $product['count']),
                 'date' => Carbon::now()->format('Y-m-d'),
                 'created_at'  => now(),
                 'updated_at'  => now(),
+                'input_price' => $product['input_price'],
             ];
             if (!empty($withId)) {
                 $data['id'] = $product['id'];

@@ -14,28 +14,6 @@ return new class extends Migration
         DB::unprepared(file_get_contents(database_path('sql/client_calculations/calculate_client_debt_when_client_calculation_create.sql')));
         DB::unprepared(file_get_contents(database_path('sql/client_calculations/calculate_client_debt_when_client_calculation_update.sql')));
         DB::unprepared(file_get_contents(database_path('sql/client_calculations/calculate_client_debt_when_client_calculation_delete.sql')));
-
-        // Create triggers on client_calculations table
-        DB::unprepared("
-            CREATE TRIGGER trg_client_calculation_create
-            AFTER INSERT ON client_calculations
-            FOR EACH ROW
-            EXECUTE FUNCTION calculate_client_debt_when_client_calculation_create();
-        ");
-
-        DB::unprepared("
-            CREATE TRIGGER trg_client_calculation_update
-            AFTER UPDATE ON client_calculations
-            FOR EACH ROW
-            EXECUTE FUNCTION calculate_client_debt_when_client_calculation_update();
-        ");
-
-        DB::unprepared("
-            CREATE TRIGGER trg_client_calculation_delete
-            AFTER DELETE ON client_calculations
-            FOR EACH ROW
-            EXECUTE FUNCTION calculate_client_debt_when_client_calculation_delete();
-        ");
     }
 
     /**

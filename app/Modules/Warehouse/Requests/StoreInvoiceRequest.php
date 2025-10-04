@@ -17,7 +17,8 @@ class StoreInvoiceRequest extends MainRequest
             'products' => ['required', 'array', 'min:1'],
             'products.*.product_id' => ['required', 'integer', 'exists:products,id'],
             'products.*.count' => ['required', 'numeric', 'gt:0'],
-            'products.*.price' => ['required', 'numeric', 'gte:0'],
+            'products.*.price' => ['nullable', 'numeric', 'gte:0'],
+            'products.*.input_price' => ['required', 'numeric', 'gte:0'],
         ];
     }
 
@@ -45,6 +46,24 @@ class StoreInvoiceRequest extends MainRequest
             if ($otherSourceId && !str_starts_with($type, 'OTHER_')) {
                 $validator->errors()->add('type', 'Boshqa manba tanlanganda faqat OTHER_INPUT yoki OTHER_OUTPUT turini tanlashingiz mumkin');
             }
+
+            // Mahsulotlar uchun price faqat SUPPLIER_INPUT yoki OTHER_INPUT bo'lganda required
+            $products = $this->input('products', []);
+            foreach ($products as $index => $product) {
+                // Price faqat SUPPLIER_INPUT yoki OTHER_INPUT bo'lganda required
+                if (in_array($type, ['SUPPLIER_INPUT', 'OTHER_INPUT'])) {
+                    if (!isset($product['price']) || $product['price'] === null || $product['price'] === '') {
+                        $validator->errors()->add("products.{$index}.price", 'Mahsulot narxi kiritilishi kerak');
+                    }
+                }
+
+                // Mahsulotlar uchun price input_price dan kichik bo'lishi mumkin emas
+                if (isset($product['price']) && isset($product['input_price'])) {
+                    if ($product['price'] < $product['input_price']) {
+                        $validator->errors()->add("products.{$index}.price", 'Mahsulot sotish narxi kirim narxidan kichik bo\'lishi mumkin emas');
+                    }
+                }
+            }
         });
     }
 
@@ -67,9 +86,12 @@ class StoreInvoiceRequest extends MainRequest
             'products.*.count.required' => 'Mahsulot miqdori kiritilishi kerak',
             'products.*.count.numeric' => 'Mahsulot miqdori raqam bo\'lishi kerak',
             'products.*.count.gt' => 'Mahsulot miqdori 0 dan katta bo\'lishi kerak',
-            'products.*.price.required' => 'Mahsulot narxi kiritilishi kerak',
+            'products.*.price.required' => 'Mahsulot narxi kiritilishi kerak (faqat SUPPLIER_INPUT yoki OTHER_INPUT uchun)',
             'products.*.price.numeric' => 'Mahsulot narxi raqam bo\'lishi kerak',
             'products.*.price.gte' => 'Mahsulot narxi musbat bo\'lishi kerak',
+            'products.*.input_price.required' => 'Mahsulot kirim narxi kiritilishi kerak',
+            'products.*.input_price.numeric' => 'Mahsulot kirim narxi raqam bo\'lishi kerak',
+            'products.*.input_price.gte' => 'Mahsulot kirim narxi musbat bo\'lishi kerak',
             'date.required' => 'Sana kiritilishi shart',
             'date.date_format' => 'Sana dd.mm.yyyy formatida bo\'lishi kerak',
 

@@ -8,4 +8,9 @@ BEGIN
     
     RETURN OLD;
 END;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_supplier_calculation_delete
+BEFORE DELETE ON supplier_calculations
+FOR EACH ROW
+EXECUTE FUNCTION calculate_supplier_debt_when_supplier_calculation_delete(); 

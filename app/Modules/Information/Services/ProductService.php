@@ -113,12 +113,13 @@ class ProductService
         $sheet->setCellValue('A1', 'Tovar ID');
         $sheet->setCellValue('B1', 'Tovar nomi');
         $sheet->setCellValue('C1', 'Kategoriya nomi');
-        $sheet->setCellValue('D1', 'Sotish narxi');
+        $sheet->setCellValue('D1', 'Kirim narxi');
+        $sheet->setCellValue('E1', 'Sotish narxi');
 
-        $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
 
         // Fetch products from repository
-        $products = $this->productRepository->getAll([], ['id', 'name', 'price', 'category_id'], false);
+        $products = $this->productRepository->getAll([], ['id', 'name', 'price', 'category_id', 'input_price'], false);
 
         // Populate data starting from row 2
         $row = 2;
@@ -126,12 +127,13 @@ class ProductService
             $sheet->setCellValue('A' . $row, $product->id);
             $sheet->setCellValue('B' . $row, $product->name);
             $sheet->setCellValue('C' . $row, $product->category->name ?? '');
-            $sheet->setCellValue('D' . $row, $product->price ?? '');
+            $sheet->setCellValue('D' . $row, $product->input_price ?? '');
+            $sheet->setCellValue('E' . $row, $product->price ?? '');
             $row++;
         }
 
         // Auto-size all columns
-        foreach (range('A', 'D') as $col) {
+        foreach (range('A', 'E') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
@@ -295,9 +297,9 @@ class ProductService
                 ];
             }
 
-            [$id, $name, $categoryName, $price] = $rowData;
+            [$id, $name, $categoryName, $inputPrice, $price] = $rowData;
 
-            if (!$id || !$price) {
+            if (!$id || !$inputPrice || !$price) {
                 return [
                     'status' => 'error',
                     'message' => "Qator {$rowIndex} da ID yoki narx to'ldirilmagan",
@@ -309,6 +311,14 @@ class ProductService
                 return [
                     'status' => 'error',
                     'message' => "Qator {$rowIndex} da ID raqam bo'lishi kerak",
+                    'status_code' => 422
+                ];
+            }
+
+            if (!is_numeric($inputPrice) || $inputPrice < 0) {
+                return [
+                    'status' => 'error',
+                    'message' => "Qator {$rowIndex} da kirim narxi raqam bo'lishi kerak",
                     'status_code' => 422
                 ];
             }
@@ -332,7 +342,8 @@ class ProductService
             $processedIds[] = $id;
             $priceData[] = [
                 'id' => (int)$id,
-                'price' => (float)$price
+                'price' => (float)$price,
+                'markup' => ((float)$price - (float)$inputPrice) / (float)$inputPrice * 100
             ];
         }
 
@@ -345,7 +356,7 @@ class ProductService
         }
 
         try {
-            $this->productRepository->upsert($priceData, ['id'], ['price']);
+            $this->productRepository->upsert($priceData, ['id'], ['price', 'input_price', 'markup']);
 
             return [
                 'status' => 'success',

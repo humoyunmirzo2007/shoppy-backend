@@ -10,13 +10,6 @@ return new class extends Migration
         DB::unprepared(file_get_contents(
             database_path('sql/invoice_products/calculate_products_residue_when_invoice_product_delete.sql')
         ));
-
-        DB::unprepared("
-            CREATE TRIGGER trg_invoice_product_delete
-            AFTER DELETE ON invoice_products
-            FOR EACH ROW
-            EXECUTE FUNCTION calculate_products_residue_when_invoice_product_delete();
-        ");
     }
 
     public function down(): void

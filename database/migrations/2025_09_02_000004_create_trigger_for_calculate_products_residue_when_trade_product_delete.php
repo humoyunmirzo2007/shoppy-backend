@@ -9,13 +9,6 @@ return new class extends Migration
     {
         $sql = file_get_contents(database_path('sql/trade_products/calculate_products_residue_when_trade_product_delete.sql'));
         DB::unprepared($sql);
-
-        DB::unprepared('
-            CREATE TRIGGER trigger_calculate_products_residue_when_trade_product_delete
-            AFTER DELETE ON trade_products
-            FOR EACH ROW
-            EXECUTE FUNCTION calculate_products_residue_when_trade_product_delete();
-        ');
     }
 
     public function down(): void

@@ -73,4 +73,9 @@ BEGIN
     
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trigger_calculate_money_operation_effects_when_update
+AFTER UPDATE ON money_operations
+FOR EACH ROW
+EXECUTE FUNCTION calculate_money_operation_effects_when_update(); 

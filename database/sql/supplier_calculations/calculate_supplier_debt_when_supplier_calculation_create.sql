@@ -8,4 +8,9 @@ BEGIN
     
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_supplier_calculation_create
+AFTER INSERT ON supplier_calculations
+FOR EACH ROW
+EXECUTE FUNCTION calculate_supplier_debt_when_supplier_calculation_create(); 
