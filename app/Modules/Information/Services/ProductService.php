@@ -357,7 +357,17 @@ class ProductService
             $priceData[] = [
                 'id' => (int)$id,
                 'price' => (float)$price,
-                'markup' => $markup
+                'markup' => $markup,
+
+                // avoid not null violation
+                'name' => '',
+                'category_id' => 0,
+                'unit' => '',
+                'input_price' => 0,
+                'is_active' => true,
+                'residue' => 0,
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
 
