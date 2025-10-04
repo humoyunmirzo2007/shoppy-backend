@@ -114,12 +114,13 @@ class ProductService
         $sheet->setCellValue('B1', 'Tovar nomi');
         $sheet->setCellValue('C1', 'Kategoriya nomi');
         $sheet->setCellValue('D1', 'Kirim narxi');
-        $sheet->setCellValue('E1', 'Sotish narxi');
+        $sheet->setCellValue('E1', 'Ustama');
+        $sheet->setCellValue('F1', 'Sotish narxi');
 
-        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
 
         // Fetch products from repository
-        $products = $this->productRepository->getAll([], ['id', 'name', 'price', 'category_id', 'input_price'], false);
+        $products = $this->productRepository->getAll([], ['id', 'name', 'price', 'category_id', 'input_price', 'markup'], false);
 
         // Populate data starting from row 2
         $row = 2;
@@ -128,12 +129,13 @@ class ProductService
             $sheet->setCellValue('B' . $row, $product->name);
             $sheet->setCellValue('C' . $row, $product->category->name ?? '');
             $sheet->setCellValue('D' . $row, $product->input_price ?? '');
-            $sheet->setCellValue('E' . $row, $product->price ?? '');
+            $sheet->setCellValue('E' . $row, $product->markup ?? '');
+            $sheet->setCellValue('F' . $row, $product->price ?? '');
             $row++;
         }
 
         // Auto-size all columns
-        foreach (range('A', 'E') as $col) {
+        foreach (range('A', 'F') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 

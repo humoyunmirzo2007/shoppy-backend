@@ -71,8 +71,8 @@ Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], functio
     Route::put('/update/{id}', [ProductController::class, 'update']);
     Route::put('/invert-active/{id}', [ProductController::class, 'invertActive']);
     Route::get('/download-template', [ProductController::class, 'downloadTemplate']);
-    Route::get('/download-update-price-template', [ProductController::class, 'downloadUpdatePriceTemplate']);
     Route::post('/import', [ProductController::class, 'import']);
+    Route::get('/download-update-price-template', [ProductController::class, 'downloadUpdatePriceTemplate']);
     Route::post('/update-prices-from-template', [ProductController::class, 'updatePricesFromTemplate']);
 });
 
