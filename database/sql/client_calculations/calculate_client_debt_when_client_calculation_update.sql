@@ -31,4 +31,9 @@ BEGIN
     
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_client_calculation_update
+AFTER UPDATE ON client_calculations
+FOR EACH ROW
+EXECUTE FUNCTION calculate_client_debt_when_client_calculation_update(); 

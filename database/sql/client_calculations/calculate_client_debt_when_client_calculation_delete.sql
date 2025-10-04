@@ -8,4 +8,9 @@ BEGIN
     
     RETURN OLD;
 END;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_client_calculation_delete
+AFTER DELETE ON client_calculations
+FOR EACH ROW
+EXECUTE FUNCTION calculate_client_debt_when_client_calculation_delete(); 

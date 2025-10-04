@@ -31,4 +31,9 @@ BEGIN
     
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_supplier_calculation_update
+AFTER UPDATE ON supplier_calculations
+FOR EACH ROW
+EXECUTE FUNCTION calculate_supplier_debt_when_supplier_calculation_update(); 

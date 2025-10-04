@@ -11,13 +11,6 @@ return new class extends Migration
     public function up(): void
     {
         DB::unprepared(file_get_contents(database_path('sql/invoice_products/calculate_products_residue_when_invoice_product_create.sql')));
-
-        DB::unprepared("
-            CREATE TRIGGER trg_invoice_product_create
-            AFTER INSERT ON invoice_products
-            FOR EACH ROW
-            EXECUTE FUNCTION calculate_products_residue_when_invoice_product_create();
-        ");
     }
 
     /**

@@ -14,28 +14,6 @@ return new class extends Migration
         DB::unprepared(file_get_contents(database_path('sql/supplier_calculations/calculate_supplier_debt_when_supplier_calculation_create.sql')));
         DB::unprepared(file_get_contents(database_path('sql/supplier_calculations/calculate_supplier_debt_when_supplier_calculation_update.sql')));
         DB::unprepared(file_get_contents(database_path('sql/supplier_calculations/calculate_supplier_debt_when_supplier_calculation_delete.sql')));
-
-        // Create triggers on supplier_calculations table
-        DB::unprepared("
-            CREATE TRIGGER trg_supplier_calculation_create
-            AFTER INSERT ON supplier_calculations
-            FOR EACH ROW
-            EXECUTE FUNCTION calculate_supplier_debt_when_supplier_calculation_create();
-        ");
-
-        DB::unprepared("
-            CREATE TRIGGER trg_supplier_calculation_update
-            AFTER UPDATE ON supplier_calculations
-            FOR EACH ROW
-            EXECUTE FUNCTION calculate_supplier_debt_when_supplier_calculation_update();
-        ");
-
-        DB::unprepared("
-            CREATE TRIGGER trg_supplier_calculation_delete
-            BEFORE DELETE ON supplier_calculations
-            FOR EACH ROW
-            EXECUTE FUNCTION calculate_supplier_debt_when_supplier_calculation_delete();
-        ");
     }
 
     /**

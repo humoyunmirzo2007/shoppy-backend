@@ -15,6 +15,7 @@ class InvoiceProductResource extends JsonResource
             'id' => $this->id,
             'invoice_id' => $this->invoice_id,
             'price' => $this->price,
+            'input_price' => $this->input_price,
             'count' => $this->count,
             'total_price' => $this->total_price,
             'product_id' => $this->product_id,

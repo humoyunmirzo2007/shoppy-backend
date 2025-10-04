@@ -10,8 +10,6 @@ use App\Modules\Information\Requests\StoreProductRequest;
 use App\Modules\Information\Requests\UpdateProductRequest;
 use App\Modules\Information\Requests\UploadProductsImportFileRequest;
 use App\Modules\Information\Services\ProductService;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProductController
 {
