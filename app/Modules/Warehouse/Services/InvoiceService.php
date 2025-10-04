@@ -383,7 +383,7 @@ class InvoiceService
     private function getTotalPrice(array $products)
     {
         return array_reduce($products, function ($carry, $item) {
-            return $carry + ($item['price'] * $item['count']);
+            return $carry + ($item['input_price'] * $item['count']);
         }, 0);
     }
 
