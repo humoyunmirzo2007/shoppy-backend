@@ -104,6 +104,13 @@ class ProductController
     {
         $data = $this->productService->updatePricesFromTemplate($request->file('file'));
 
+        if ($data['status'] === 'error') {
+            return Response::error(
+                message: $data['message'],
+                status: $data['status_code'] ?? 400
+            );
+        }
+
         return Response::success(
             message: $data['message']
         );
