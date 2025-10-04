@@ -19,12 +19,12 @@ class ProductService
 
     public function getAll(array $data)
     {
-        return $this->productRepository->getAll($data, ['id', 'name', 'unit', 'is_active', 'category_id', 'residue']);
+        return $this->productRepository->getAll($data, ['id', 'name', 'unit', 'is_active', 'category_id', 'residue', 'markup']);
     }
 
     public function getForResidues(array $data)
     {
-        return $this->productRepository->getAll($data, ['id', 'name', 'unit', 'category_id', 'residue', 'price', 'input_price']);
+        return $this->productRepository->getAll($data, ['id', 'name', 'unit', 'category_id', 'residue', 'price', 'input_price', 'markup']);
     }
 
     public function store(array $data)
