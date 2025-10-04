@@ -2,6 +2,7 @@
 
 namespace App\Modules\Trade\Services;
 
+use App\Helpers\TelegramBugNotifier;
 use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Information\Interfaces\ClientInterface;
 use App\Modules\Trade\Enums\TradeTypesEnum;
@@ -19,47 +20,80 @@ class TradeService
         protected TradeProductRepository $tradeProductRepository,
         protected ProductInterface $productRepository,
         protected ClientCalculationInterface $clientCalculationRepository,
-        protected ClientInterface $clientRepository
+        protected ClientInterface $clientRepository,
+        protected TelegramBugNotifier $telegramNotifier
     ) {}
 
     public function getByType(string $type, array $data)
     {
-        return $this->tradeRepository->getByType($type, $data);
+        try {
+            return $this->tradeRepository->getByType($type, $data);
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Savdolarni olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function getByIdWithProducts(int $id)
     {
-        return $this->tradeRepository->getByIdWithProducts($id);
+        try {
+            return $this->tradeRepository->getByIdWithProducts($id);
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Savdo ma\'lumotlarini olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function store(array $data)
     {
-        $type = $data['type'];
-        switch ($type) {
-            case TradeTypesEnum::TRADE->value:
-                return $this->storeTrade($data);
-                 case TradeTypesEnum::RETURN_PRODUCT->value:
-                     return $this->storeTrade($data);
-            default:
-                return [
-                    'status' => 'error',
-                    'message' => 'Mavjud bo\'lmagan turni yubordingiz'
-                ];
+        try {
+            $type = $data['type'];
+            switch ($type) {
+                case TradeTypesEnum::TRADE->value:
+                    return $this->storeTrade($data);
+                case TradeTypesEnum::RETURN_PRODUCT->value:
+                    return $this->storeTrade($data);
+                default:
+                    return [
+                        'status' => 'error',
+                        'message' => 'Mavjud bo\'lmagan turni yubordingiz'
+                    ];
+            }
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Savdo yaratishda xatolik yuz berdi'
+            ];
         }
     }
 
     public function update(int $id, array $data)
     {
-        $type = $data['type'];
-        switch ($type) {
-            case TradeTypesEnum::TRADE->value:
-            case TradeTypesEnum::RETURN_PRODUCT->value:
-                return $this->updateTrade($id, $data);
-            default:
-                return [
-                    'status' => 'error',
-                    'message' => 'Mavjud bo\'lmagan turni yubordingiz'
-                ];
+        try {
+            $type = $data['type'];
+            switch ($type) {
+                case TradeTypesEnum::TRADE->value:
+                case TradeTypesEnum::RETURN_PRODUCT->value:
+                    return $this->updateTrade($id, $data);
+                default:
+                    return [
+                        'status' => 'error',
+                        'message' => 'Mavjud bo\'lmagan turni yubordingiz'
+                    ];
+            }
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Savdoni yangilashda xatolik yuz berdi'
+            ];
         }
     }
 

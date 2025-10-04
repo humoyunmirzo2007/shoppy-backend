@@ -2,6 +2,7 @@
 
 namespace App\Modules\Warehouse\Services;
 
+use App\Helpers\TelegramBugNotifier;
 use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Information\Interfaces\SupplierInterface;
 use App\Modules\Information\Interfaces\OtherSourceInterface;
@@ -24,50 +25,83 @@ class InvoiceService
         protected SupplierCalculationInterface $supplierCalculationRepository,
         protected SupplierInterface $supplierRepository,
         protected OtherSourceInterface $otherSourceRepository,
-        protected OtherCalculationInterface $otherCalculationRepository
+        protected OtherCalculationInterface $otherCalculationRepository,
+        protected TelegramBugNotifier $telegramNotifier
     ) {}
 
     public function getByTypes(array $types, array $data)
     {
-        return $this->invoiceRepository->getByTypes($types, $data);
+        try {
+            return $this->invoiceRepository->getByTypes($types, $data);
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Fakturalarni olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function getByIdWithProducts(int $id)
     {
-        return $this->invoiceRepository->getByIdWithProducts($id);
+        try {
+            return $this->invoiceRepository->getByIdWithProducts($id);
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Faktura ma\'lumotlarini olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function store(array $data)
     {
-        $type = $data['type'];
-        switch ($type) {
-            case InvoiceTypesEnum::SUPPLIER_INPUT->value:
-            case InvoiceTypesEnum::SUPPLIER_OUTPUT->value:
-            case InvoiceTypesEnum::OTHER_INPUT->value:
-            case InvoiceTypesEnum::OTHER_OUTPUT->value:
-                return $this->storeInvoice($data);
-            default:
-                return [
-                    'status' => 'error',
-                    'message' => 'Mavjud bo\'lmagan turni yubordingiz'
-                ];
+        try {
+            $type = $data['type'];
+            switch ($type) {
+                case InvoiceTypesEnum::SUPPLIER_INPUT->value:
+                case InvoiceTypesEnum::SUPPLIER_OUTPUT->value:
+                case InvoiceTypesEnum::OTHER_INPUT->value:
+                case InvoiceTypesEnum::OTHER_OUTPUT->value:
+                    return $this->storeInvoice($data);
+                default:
+                    return [
+                        'status' => 'error',
+                        'message' => 'Mavjud bo\'lmagan turni yubordingiz'
+                    ];
+            }
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Faktura yaratishda xatolik yuz berdi'
+            ];
         }
     }
 
     public function update(int $id, array $data)
     {
-        $type = $data['type'];
-        switch ($type) {
-            case InvoiceTypesEnum::SUPPLIER_INPUT->value:
-            case InvoiceTypesEnum::SUPPLIER_OUTPUT->value:
-            case InvoiceTypesEnum::OTHER_INPUT->value:
-            case InvoiceTypesEnum::OTHER_OUTPUT->value:
-                return $this->updateInvoice($id, $data);
-            default:
-                return [
-                    'status' => 'error',
-                    'message' => 'Mavjud bo\'lmagan turni yubordingiz'
-                ];
+        try {
+            $type = $data['type'];
+            switch ($type) {
+                case InvoiceTypesEnum::SUPPLIER_INPUT->value:
+                case InvoiceTypesEnum::SUPPLIER_OUTPUT->value:
+                case InvoiceTypesEnum::OTHER_INPUT->value:
+                case InvoiceTypesEnum::OTHER_OUTPUT->value:
+                    return $this->updateInvoice($id, $data);
+                default:
+                    return [
+                        'status' => 'error',
+                        'message' => 'Mavjud bo\'lmagan turni yubordingiz'
+                    ];
+            }
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Fakturani yangilashda xatolik yuz berdi'
+            ];
         }
     }
 

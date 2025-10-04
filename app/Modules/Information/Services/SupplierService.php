@@ -2,82 +2,134 @@
 
 namespace App\Modules\Information\Services;
 
+use App\Helpers\TelegramBugNotifier;
 use App\Modules\Information\Interfaces\SupplierInterface;
 
 class SupplierService
 {
-    public function __construct(protected SupplierInterface $supplierRepository) {}
+    public function __construct(
+        protected SupplierInterface $supplierRepository,
+        protected TelegramBugNotifier $telegramNotifier
+    ) {}
 
     public function getAll(array $data)
     {
-        return $this->supplierRepository->getAll($data);
+        try {
+            return $this->supplierRepository->getAll($data);
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Ta\'minotchilarni olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function getAllActive()
     {
-        return $this->supplierRepository->getAllActive();
+        try {
+            return $this->supplierRepository->getAllActive();
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Faol ta\'minotchilarni olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function getAllWithDebt(array $data = [])
     {
-        return $this->supplierRepository->getAllWithDebt($data);
+        try {
+            return $this->supplierRepository->getAllWithDebt($data);
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Qarzli ta\'minotchilarni olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function store(array $data)
     {
-        $supplier = $this->supplierRepository->store($data);
+        try {
+            $supplier = $this->supplierRepository->store($data);
 
-        if (!$supplier) {
+            if (!$supplier) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Ta\'minotchi qo\'shishda xatolik yuz berdi'
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'message' => 'Ta\'minotchi muvaffaqiyatli qo\'shildi',
+                'data' => $supplier
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'status' => 'error',
                 'message' => 'Ta\'minotchi qo\'shishda xatolik yuz berdi'
             ];
         }
-
-        return [
-            'status' => 'success',
-            'message' => 'Ta\'minotchi muvaffaqiyatli qo\'shildi',
-            'data' => $supplier
-        ];
     }
 
     public function update(int $id, array $data)
     {
-        $supplier = $this->supplierRepository->getById($id);
+        try {
+            $supplier = $this->supplierRepository->getById($id);
 
-        if (!$supplier) {
+            if (!$supplier) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Ta\'minotchi topilmadi',
+                    'status_code' => 404
+                ];
+            }
+
+            $supplier = $this->supplierRepository->update($supplier, $data);
+
+            if (!$supplier) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Ta\'minotchi ma\'lumotlarini yangilashda xatolik yuz berdi'
+                ];
+            }
             return [
-                'status' => 'error',
-                'message' => 'Ta\'minotchi topilmadi',
-                'status_code' => 404
+                'status' => 'success',
+                'message' =>  'Ta\'minotchi ma\'lumotlari muvaffaqiyatli yangilandi',
+                'data' => $supplier
             ];
-        }
-
-        $supplier = $this->supplierRepository->update($supplier, $data);
-
-        if (!$supplier) {
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'status' => 'error',
                 'message' => 'Ta\'minotchi ma\'lumotlarini yangilashda xatolik yuz berdi'
             ];
         }
-        return [
-            'status' => 'success',
-            'message' =>  'Ta\'minotchi ma\'lumotlari muvaffaqiyatli yangilandi',
-            'data' => $supplier
-        ];
     }
 
 
 
     public function invertActive(int $id)
     {
-        $supplier = $this->supplierRepository->invertActive($id);
+        try {
+            $supplier = $this->supplierRepository->invertActive($id);
 
-        return [
-            'status' => 'success',
-            'message' => 'Ta\'minotchi faollik holati muvaffaqiyatli o\'zgartirildi',
-            'data' => $supplier
-        ];
+            return [
+                'status' => 'success',
+                'message' => 'Ta\'minotchi faollik holati muvaffaqiyatli o\'zgartirildi',
+                'data' => $supplier
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Ta\'minotchi faolligini o\'zgartirishda xatolik yuz berdi'
+            ];
+        }
     }
 }

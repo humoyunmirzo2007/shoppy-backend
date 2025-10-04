@@ -2,6 +2,7 @@
 
 namespace App\Modules\Information\Services;
 
+use App\Helpers\TelegramBugNotifier;
 use App\Models\OtherSource;
 use App\Modules\Information\Interfaces\OtherSourceInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,18 +11,19 @@ use Exception;
 class OtherSourceService
 {
     public function __construct(
-        private OtherSourceInterface $otherSourceRepository
+        private OtherSourceInterface $otherSourceRepository,
+        protected TelegramBugNotifier $telegramNotifier
     ) {}
 
     public function getAll(array $data)
     {
         try {
             return $this->otherSourceRepository->getAll($data);
-        } catch (Exception $e) {
-            dd($e);
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'success' => false,
-                'message' => 'Manbalarni olishda xatolik yuz berdi: '
+                'message' => 'Manbalarni olishda xatolik yuz berdi'
             ];
         }
     }
@@ -31,10 +33,11 @@ class OtherSourceService
         try {
             $type = $data['type'];
             return $this->otherSourceRepository->getByTypeAllActive($type);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'success' => false,
-                'message' => 'Faol manbalarni olishda xatolik yuz berdi: '
+                'message' => 'Faol manbalarni olishda xatolik yuz berdi'
             ];
         }
     }
@@ -48,7 +51,8 @@ class OtherSourceService
                 'message' => 'Manba muvaffaqiyatli yaratildi',
                 'data' => $otherSource
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'success' => false,
                 'message' => 'Manba yaratishda xatolik yuz berdi'
@@ -74,7 +78,8 @@ class OtherSourceService
                 'message' => 'Manba muvaffaqiyatli yangilandi',
                 'data' => $otherSource
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'success' => false,
                 'message' => 'Manba yangilashda xatolik yuz berdi'
@@ -100,7 +105,8 @@ class OtherSourceService
                 'message' => 'Faollik holat muvaffaqiyatli o\'zgartirildi',
                 'data' => $updatedOtherSource
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'success' => false,
                 'message' => 'Faol holatni o\'zgartirishda xatolik yuz berdi'
@@ -112,7 +118,8 @@ class OtherSourceService
     {
         try {
             return $this->otherSourceRepository->findById($id);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return null;
         }
     }

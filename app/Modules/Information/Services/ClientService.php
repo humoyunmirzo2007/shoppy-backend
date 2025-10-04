@@ -2,80 +2,132 @@
 
 namespace App\Modules\Information\Services;
 
+use App\Helpers\TelegramBugNotifier;
 use App\Modules\Information\Interfaces\ClientInterface;
 
 class ClientService
 {
-    public function __construct(protected ClientInterface $clientRepository) {}
+    public function __construct(
+        protected ClientInterface $clientRepository,
+        protected TelegramBugNotifier $telegramNotifier
+    ) {}
 
     public function getAll(array $data)
     {
-        return $this->clientRepository->getAll($data);
+        try {
+            return $this->clientRepository->getAll($data);
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Mijozlarni olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function getAllActive()
     {
-        return $this->clientRepository->getAllActive();
+        try {
+            return $this->clientRepository->getAllActive();
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Faol mijozlarni olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function getAllWithDebt(array $data = [])
     {
-        return $this->clientRepository->getAllWithDebt($data);
+        try {
+            return $this->clientRepository->getAllWithDebt($data);
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Qarzli mijozlarni olishda xatolik yuz berdi'
+            ];
+        }
     }
 
     public function store(array $data)
     {
-        $client = $this->clientRepository->store($data);
+        try {
+            $client = $this->clientRepository->store($data);
 
-        if (!$client) {
+            if (!$client) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Mijoz qo\'shishda xatolik yuz berdi'
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'message' => 'Mijoz muvaffaqiyatli qo\'shildi',
+                'data' => $client
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'status' => 'error',
                 'message' => 'Mijoz qo\'shishda xatolik yuz berdi'
             ];
         }
-
-        return [
-            'status' => 'success',
-            'message' => 'Mijoz muvaffaqiyatli qo\'shildi',
-            'data' => $client
-        ];
     }
 
     public function update(int $id, array $data)
     {
-        $client = $this->clientRepository->getById($id);
+        try {
+            $client = $this->clientRepository->getById($id);
 
-        if (!$client) {
+            if (!$client) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Mijoz topilmadi',
+                    'status_code' => 404
+                ];
+            }
+
+            $client = $this->clientRepository->update($client, $data);
+
+            if (!$client) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Mijoz ma\'lumotlarini yangilashda xatolik yuz berdi'
+                ];
+            }
             return [
-                'status' => 'error',
-                'message' => 'Mijoz topilmadi',
-                'status_code' => 404
+                'status' => 'success',
+                'message' =>  'Mijoz ma\'lumotlari muvaffaqiyatli yangilandi',
+                'data' => $client
             ];
-        }
-
-        $client = $this->clientRepository->update($client, $data);
-
-        if (!$client) {
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'status' => 'error',
                 'message' => 'Mijoz ma\'lumotlarini yangilashda xatolik yuz berdi'
             ];
         }
-        return [
-            'status' => 'success',
-            'message' =>  'Mijoz ma\'lumotlari muvaffaqiyatli yangilandi',
-            'data' => $client
-        ];
     }
 
     public function invertActive(int $id)
     {
-        $client = $this->clientRepository->invertActive($id);
+        try {
+            $client = $this->clientRepository->invertActive($id);
 
-        return [
-            'status' => 'success',
-            'message' => 'Mijoz faollik holati muvaffaqiyatli o\'zgartirildi',
-            'data' => $client
-        ];
+            return [
+                'status' => 'success',
+                'message' => 'Mijoz faollik holati muvaffaqiyatli o\'zgartirildi',
+                'data' => $client
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+            return [
+                'status' => 'error',
+                'message' => 'Mijoz faolligini o\'zgartirishda xatolik yuz berdi'
+            ];
+        }
     }
 }
