@@ -297,7 +297,7 @@ class ProductService
                 ];
             }
 
-            [$id, $name, $categoryName, $inputPrice, $price] = $rowData;
+            [$id, $name, $categoryName, $inputPrice, $markup, $price] = $rowData;
 
             if (!$id || $inputPrice === '' || $price === '') {
                 return [
