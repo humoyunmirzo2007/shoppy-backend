@@ -99,24 +99,45 @@ class MoneyOutputService
                 return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
             }
 
-            // Calculate the difference: if we're changing payment_type or amount
+            // Qoldiqni tekshirish - update qilishdan oldin
             $oldPaymentType = PaymentType::find($moneyOutput->payment_type_id);
-            $residueAfterRevert = $paymentType->residue;
 
-            // If changing payment_type, we need to consider the old amount will be reverted
-            if ($moneyOutput->payment_type_id != $data['payment_type_id'] && $oldPaymentType) {
-                // Different payment types, so new payment_type will get full impact
-                $residueAfterRevert = $paymentType->residue;
+            // Agar summa o'zgarayotgan bo'lsa, qoldiqni tekshirish
+            if (isset($data['amount']) && $data['amount'] != $moneyOutput->amount) {
+                $amountDifference = $data['amount'] - $moneyOutput->amount;
+
+                // Agar summa oshayotgan bo'lsa (amountDifference musbat), qoldiqni tekshirish
+                if ($amountDifference > 0) {
+                    // Agar to'lov turi o'zgarayotgan bo'lsa
+                    if ($moneyOutput->payment_type_id != $data['payment_type_id'] && $oldPaymentType) {
+                        // Yangi to'lov turida yetarli qoldiq borligini tekshirish
+                        if ($paymentType->residue < $amountDifference) {
+                            return [
+                                'success' => false,
+                                'message' => "Chiqim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($paymentType->residue, 2) . " so'm, kerak: " . number_format($amountDifference, 2) . " so'm"
+                            ];
+                        }
+                    } else {
+                        // Xuddi shu to'lov turida, eski summani qaytarib yangi summani olib ketish
+                        $residueAfterRevert = $paymentType->residue + $moneyOutput->amount;
+                        if ($residueAfterRevert < $data['amount']) {
+                            return [
+                                'success' => false,
+                                'message' => "Chiqim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($residueAfterRevert, 2) . " so'm, kerak: " . number_format($data['amount'], 2) . " so'm"
+                            ];
+                        }
+                    }
+                }
             } else {
-                // Same payment type, so we revert old amount and apply new amount
-                $residueAfterRevert = $paymentType->residue + $moneyOutput->amount;
-            }
-
-            if ($residueAfterRevert < $data['amount']) {
-                return [
-                    'success' => false,
-                    'message' => "Chiqim operatsiya yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($residueAfterRevert, 2) . " so'm"
-                ];
+                // Agar faqat to'lov turi o'zgarayotgan bo'lsa
+                if ($moneyOutput->payment_type_id != $data['payment_type_id'] && $oldPaymentType) {
+                    if ($paymentType->residue < $data['amount']) {
+                        return [
+                            'success' => false,
+                            'message' => "Chiqim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($paymentType->residue, 2) . " so'm, kerak: " . number_format($data['amount'], 2) . " so'm"
+                        ];
+                    }
+                }
             }
 
             $updatedMoneyOutput = $this->moneyOutputRepository->updateMoneyOutput($id, $data);

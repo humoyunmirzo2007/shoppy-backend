@@ -42,7 +42,7 @@ class TelegramBugNotifier
     public function sendError(Throwable $e, $request = null)
     {
         $message = "🚨 <b>Xatolik yuz berdi!</b>\n\n" .
-            "📝 <b>Xatolik:</b> " . $e->getMessage() . "\n" .
+            "📝 <b>Xatolik:</b>\n<pre>" . $e->getMessage() . "</pre>\n" .
             "📁 <b>Fayl:</b> " . basename($e->getFile()) . "\n" .
             "📍 <b>Qator:</b> " . $e->getLine() . "\n" .
             "⏰ <b>Vaqt:</b> " . now()->format('Y-m-d H:i:s') . "\n\n";

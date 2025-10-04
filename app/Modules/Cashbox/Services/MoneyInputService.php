@@ -90,6 +90,28 @@ class MoneyInputService
                 return ['success' => false, 'message' => 'Kirim operatsiya topilmadi'];
             }
 
+            // Qoldiqni tekshirish - update qilishdan oldin
+            $paymentType = PaymentType::find($data['payment_type_id']);
+            if (!$paymentType) {
+                return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
+            }
+
+            // Agar summa o'zgarayotgan bo'lsa, qoldiqni tekshirish
+            if (isset($data['amount']) && $data['amount'] != $moneyInput->amount) {
+                $amountDifference = $data['amount'] - $moneyInput->amount;
+
+                // Agar summa kamayayotgan bo'lsa (amountDifference manfiy), qoldiqni tekshirish
+                if ($amountDifference < 0) {
+                    $requiredResidue = abs($amountDifference);
+                    if ($paymentType->residue < $requiredResidue) {
+                        return [
+                            'success' => false,
+                            'message' => "Kirim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($paymentType->residue, 2) . " so'm, kerak: " . number_format($requiredResidue, 2) . " so'm"
+                        ];
+                    }
+                }
+            }
+
             DB::beginTransaction();
 
             // Date formatini o'zgartirish (dd.mm.yyyy -> Y-m-d)
