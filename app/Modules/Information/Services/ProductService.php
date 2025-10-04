@@ -382,7 +382,7 @@ class ProductService
         }
 
         try {
-            $this->productRepository->upsert($priceData, ['id'], ['price', 'input_price', 'markup']);
+            $this->productRepository->upsert($priceData, ['id'], ['price', 'markup']);
 
             return [
                 'status' => 'success',
