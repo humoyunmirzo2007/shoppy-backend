@@ -2,6 +2,7 @@
 
 namespace App\Modules\Trade\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -13,7 +14,8 @@ class ClientCalculationResource extends JsonResource
             'id' => $this->id,
             'value' => abs($this->value),
             'type' => $this->type,
-            'updated_at' => $this->updated_at,
+            'date' => Carbon::parse($this->date)->format('d.m.Y'),
+            'updated_at' => Carbon::parse($this->updated_at)->format('d.m.Y, H:i:s'),
         ];
     }
 }

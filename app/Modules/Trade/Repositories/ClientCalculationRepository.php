@@ -12,11 +12,10 @@ class ClientCalculationRepository implements ClientCalculationInterface
 
     public function getByClientId(int $clientId, array $data)
     {
-        $limit = $data['limit'] ?? 15;
         $filters = $data['filters'] ?? [];
 
         return $this->clientCalculation->query()
-            ->select('id', 'value', 'type', 'updated_at')
+            ->select('id', 'value', 'type', 'updated_at', 'date')
             ->where('client_id', $clientId)
             ->when(!empty($filters['from_date']), function ($query) use ($filters) {
                 $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');
@@ -27,7 +26,7 @@ class ClientCalculationRepository implements ClientCalculationInterface
                 $query->whereDate('date', '<=', $to);
             })
             ->orderBy('id', 'desc')
-            ->simplePaginate($limit);
+            ->get();
     }
 
     public function create(array $data)

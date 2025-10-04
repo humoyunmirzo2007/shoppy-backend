@@ -12,7 +12,6 @@ class SupplierCalculationRepository implements SupplierCalculationInterface
 
     public function getBySupplierId(int $supplierId, array $data)
     {
-        $limit = $data['limit'] ?? 15;
         $filters = $data['filters'] ?? [];
         return $this->supplierCalculation->query()
             ->select('id', 'supplier_id', 'value', 'type', 'updated_at', 'date')
