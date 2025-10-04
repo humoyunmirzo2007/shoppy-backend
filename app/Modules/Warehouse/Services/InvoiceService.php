@@ -134,6 +134,7 @@ class InvoiceService
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'status' => 'error',
                 'message' => 'Fakturani o\'chirishda xatolik yuz berdi'
@@ -190,9 +191,10 @@ class InvoiceService
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'status' => 'error',
-                'message' => 'Faktura yaratishda xatolik yuz berdi: ' . $e->getMessage()
+                'message' => 'Faktura yaratishda xatolik yuz berdi'
             ];
         }
     }

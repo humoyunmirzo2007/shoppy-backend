@@ -2,6 +2,7 @@
 
 namespace App\Modules\Cashbox\Services;
 
+use App\Helpers\TelegramBugNotifier;
 use App\Modules\Cashbox\Interfaces\MoneyInputInterface;
 use App\Modules\Cashbox\Enums\PaymentTypesEnum;
 use App\Modules\Cashbox\Enums\OtherCalculationTypesEnum;
@@ -22,7 +23,8 @@ class MoneyInputService
         protected MoneyInputInterface $moneyInputRepository,
         protected ClientCalculationInterface $clientCalculationRepository,
         protected SupplierCalculationInterface $supplierCalculationRepository,
-        protected OtherCalculationInterface $otherCalculationRepository
+        protected OtherCalculationInterface $otherCalculationRepository,
+        protected TelegramBugNotifier $telegramNotifier
     ) {}
 
     public function getAllMoneyInputs(array $data = []): array
@@ -31,7 +33,8 @@ class MoneyInputService
             $moneyInputs = $this->moneyInputRepository->getAllMoneyInputs($data);
             return ['success' => true, 'data' => $moneyInputs];
         } catch (Exception $e) {
-            return ['success' => false, 'message' => 'Kirim operatsiyalarni olishda xatolik yuz berdi: ' . $e->getMessage()];
+            $this->telegramNotifier->sendError($e, request());
+            return ['success' => false, 'message' => 'Kirim operatsiyalarni olishda xatolik yuz berdi'];
         }
     }
 
@@ -46,7 +49,8 @@ class MoneyInputService
 
             return ['success' => true, 'data' => $moneyInput];
         } catch (Exception $e) {
-            return ['success' => false, 'message' => 'Kirim operatsiyani olishda xatolik yuz berdi: ' . $e->getMessage()];
+            $this->telegramNotifier->sendError($e, request());
+            return ['success' => false, 'message' => 'Kirim operatsiyani olishda xatolik yuz berdi'];
         }
     }
 
@@ -71,7 +75,8 @@ class MoneyInputService
             return ['success' => true, 'data' => $moneyInput, 'message' => 'Kirim operatsiya muvaffaqiyatli yaratildi'];
         } catch (Exception $e) {
             DB::rollBack();
-            return ['success' => false, 'message' => 'Kirim operatsiya yaratishda xatolik yuz berdi: ' . $e->getMessage()];
+            $this->telegramNotifier->sendError($e, request());
+            return ['success' => false, 'message' => 'Kirim operatsiya yaratishda xatolik yuz berdi'];
         }
     }
 
@@ -102,7 +107,8 @@ class MoneyInputService
             return ['success' => true, 'data' => $updatedMoneyInput, 'message' => 'Kirim operatsiya muvaffaqiyatli yangilandi'];
         } catch (Exception $e) {
             DB::rollBack();
-            return ['success' => false, 'message' => 'Kirim operatsiyani yangilashda xatolik yuz berdi: ' . $e->getMessage()];
+            $this->telegramNotifier->sendError($e, request());
+            return ['success' => false, 'message' => 'Kirim operatsiyani yangilashda xatolik yuz berdi'];
         }
     }
 
@@ -142,7 +148,8 @@ class MoneyInputService
             return ['success' => false, 'message' => 'Kirim operatsiyani o\'chirishda xatolik yuz berdi'];
         } catch (Exception $e) {
             DB::rollBack();
-            return ['success' => false, 'message' => 'Kirim operatsiyani o\'chirishda xatolik yuz berdi: ' . $e->getMessage()];
+            $this->telegramNotifier->sendError($e, request());
+            return ['success' => false, 'message' => 'Kirim operatsiyani o\'chirishda xatolik yuz berdi'];
         }
     }
 

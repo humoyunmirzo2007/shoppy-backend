@@ -176,6 +176,7 @@ class TradeService
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'status' => 'error',
                 'message' => 'Savdo yaratishda xatolik yuz berdi'
@@ -320,9 +321,10 @@ class TradeService
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
+            $this->telegramNotifier->sendError($e, request());
             return [
                 'status' => 'error',
-                'message' => 'Savdoni tahrirlashda xatolik yuz berdi',
+                'message' => 'Savdoni tahrirlashda xatolik yuz berdi'
             ];
         }
     }

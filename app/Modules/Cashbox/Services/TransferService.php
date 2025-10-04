@@ -2,6 +2,7 @@
 
 namespace App\Modules\Cashbox\Services;
 
+use App\Helpers\TelegramBugNotifier;
 use App\Modules\Cashbox\Interfaces\MoneyInputInterface;
 use App\Modules\Cashbox\Enums\PaymentTypesEnum;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,8 @@ class TransferService
 {
     public function __construct(
         protected MoneyInputInterface $moneyInputRepository,
-        protected PaymentTypeInterface $paymentTypeRepository
+        protected PaymentTypeInterface $paymentTypeRepository,
+        protected TelegramBugNotifier $telegramNotifier
     ) {}
 
     public function getTransfers(array $data): array
@@ -23,7 +25,8 @@ class TransferService
 
             return ['success' => true, 'data' => $transfers, 'message' => 'O\'tkazmalar ro\'yxati olindi'];
         } catch (Exception $e) {
-            return ['success' => false, 'message' => 'O\'tkazmalarni olishda xatolik yuz berdi: ' . $e->getMessage()];
+            $this->telegramNotifier->sendError($e, request());
+            return ['success' => false, 'message' => 'O\'tkazmalarni olishda xatolik yuz berdi'];
         }
     }
 
@@ -38,7 +41,8 @@ class TransferService
 
             return ['success' => true, 'data' => $transfer, 'message' => 'O\'tkazma ma\'lumotlari olindi'];
         } catch (Exception $e) {
-            return ['success' => false, 'message' => 'O\'tkazmani olishda xatolik yuz berdi: ' . $e->getMessage()];
+            $this->telegramNotifier->sendError($e, request());
+            return ['success' => false, 'message' => 'O\'tkazmani olishda xatolik yuz berdi'];
         }
     }
 
@@ -85,7 +89,8 @@ class TransferService
             return ['success' => true, 'data' => $transfer, 'message' => 'O\'tkazma muvaffaqiyatli yaratildi'];
         } catch (Exception $e) {
             DB::rollBack();
-            return ['success' => false, 'message' => 'O\'tkazmani yaratishda xatolik yuz berdi: ' . $e->getMessage()];
+            $this->telegramNotifier->sendError($e, request());
+            return ['success' => false, 'message' => 'O\'tkazmani yaratishda xatolik yuz berdi'];
         }
     }
 
@@ -118,7 +123,8 @@ class TransferService
             return ['success' => true, 'message' => 'O\'tkazma muvaffaqiyatli o\'chirildi'];
         } catch (Exception $e) {
             DB::rollBack();
-            return ['success' => false, 'message' => 'O\'tkazmani o\'chirishda xatolik yuz berdi: ' . $e->getMessage()];
+            $this->telegramNotifier->sendError($e, request());
+            return ['success' => false, 'message' => 'O\'tkazmani o\'chirishda xatolik yuz berdi'];
         }
     }
 }
