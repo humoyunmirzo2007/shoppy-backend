@@ -299,7 +299,7 @@ class ProductService
 
             [$id, $name, $categoryName, $inputPrice, $price] = $rowData;
 
-            if (!$id || !$inputPrice || !$price) {
+            if (!$id || $inputPrice === '' || $price === '') {
                 return [
                     'status' => 'error',
                     'message' => "Qator {$rowIndex} da ID yoki narx to'ldirilmagan",
@@ -331,6 +331,14 @@ class ProductService
                 ];
             }
 
+            if ((float)$price < (float)$inputPrice) {
+                return [
+                    'status' => 'error',
+                    'message' => "Qator {$rowIndex} da sotish narxi kirim narxidan kam bo'lishi mumkin emas",
+                    'status_code' => 422
+                ];
+            }
+
             if (in_array($id, $processedIds)) {
                 return [
                     'status' => 'error',
@@ -340,10 +348,16 @@ class ProductService
             }
 
             $processedIds[] = $id;
+
+            $markup = 0;
+            if ((float)$inputPrice > 0) {
+                $markup = ((float)$price - (float)$inputPrice) / (float)$inputPrice * 100;
+            }
+
             $priceData[] = [
                 'id' => (int)$id,
                 'price' => (float)$price,
-                'markup' => ((float)$price - (float)$inputPrice) / (float)$inputPrice * 100
+                'markup' => $markup
             ];
         }
 
