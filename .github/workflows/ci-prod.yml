@@ -1,13 +1,17 @@
-name: Migrate fresh and seed
+name: Deploy to Prod Server
 
 on:
-  workflow_dispatch: 
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
-  migrate:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Migrate Database
+      - name: Deploy to prod server
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.HOST }}
@@ -16,5 +20,5 @@ jobs:
           port: 22
           script: |
             cd /home/main
-            chmod +x migrate.sh
-            ./migrate.sh
+            chmod +x deploy-prod-backend.sh
+            ./deploy-prod-backend.sh
