@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Modules\Cashbox\Controllers\MoneyInputController;
 use App\Modules\Cashbox\Controllers\MoneyOutputController;
 use App\Modules\Cashbox\Controllers\TransferController;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'money-inputs', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [MoneyInputController::class, 'index']);

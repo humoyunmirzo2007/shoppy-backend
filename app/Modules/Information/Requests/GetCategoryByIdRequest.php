@@ -9,7 +9,7 @@ class GetCategoryByIdRequest extends MainRequest
     public function rules()
     {
         return [
-            'category_id' => ['required', 'integer', 'exists:categories,id']
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
         ];
     }
 
@@ -23,7 +23,7 @@ class GetCategoryByIdRequest extends MainRequest
         return [
             'category_id.required' => 'Kategoriya ID si majburiy',
             'category_id.integer' => 'Kategoriya ID si son bo\'lishi kerak',
-            'category_id.exists' => 'Bunday kategoriya mavjud emas'
+            'category_id.exists' => 'Bunday kategoriya mavjud emas',
         ];
     }
 }

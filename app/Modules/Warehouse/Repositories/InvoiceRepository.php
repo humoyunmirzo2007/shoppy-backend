@@ -19,7 +19,7 @@ class InvoiceRepository implements InvoiceInterface
         $filters = $data['filters'] ?? [];
 
         return $this->invoice->query()
-            ->select('id', 'date', 'total_price', 'supplier_id', 'other_source_id', 'products_count', 'user_id',  'updated_at')
+            ->select('id', 'date', 'total_price', 'supplier_id', 'other_source_id', 'products_count', 'user_id', 'updated_at')
             ->with([
                 'supplier:id,name',
                 'otherSource:id,name',
@@ -34,30 +34,27 @@ class InvoiceRepository implements InvoiceInterface
                     $query->orWhere('number', 'ilike', "%$search%");
                 });
             })
-            ->when(!empty($filters['from_date']), function ($query) use ($filters) {
+            ->when(! empty($filters['from_date']), function ($query) use ($filters) {
                 $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');
                 $query->whereDate('date', '>=', $from);
             })
-            ->when(!empty($filters['to_date']), function ($query) use ($filters) {
+            ->when(! empty($filters['to_date']), function ($query) use ($filters) {
                 $to = Carbon::createFromFormat('d.m.Y', $filters['to_date'])->format('Y-m-d');
                 $query->whereDate('date', '<=', $to);
             })
             ->when(
-                !empty($filters['supplier_id']),
-                fn($q) =>
-                $q->whereHas('supplier', fn($sq) => $sq->where('id', $filters['supplier_id']))
+                ! empty($filters['supplier_id']),
+                fn ($q) => $q->whereHas('supplier', fn ($sq) => $sq->where('id', $filters['supplier_id']))
             )
             ->when(
-                !empty($filters['user_id']),
-                fn($q) =>
-                $q->whereHas('user', fn($uq) => $uq->where('id', $filters['user_id']))
+                ! empty($filters['user_id']),
+                fn ($q) => $q->whereHas('user', fn ($uq) => $uq->where('id', $filters['user_id']))
             )
-            ->when(!empty($filters['price_from']), fn($q) => $q->where('total_price', '>=', $filters['price_from']))
-            ->when(!empty($filters['price_to']), fn($q) => $q->where('total_price', '<=', $filters['price_to']))
+            ->when(! empty($filters['price_from']), fn ($q) => $q->where('total_price', '>=', $filters['price_from']))
+            ->when(! empty($filters['price_to']), fn ($q) => $q->where('total_price', '<=', $filters['price_to']))
             ->sortable($sort)
             ->simplePaginate($limit);
     }
-
 
     public function getByIdWithProducts(int $id)
     {
@@ -67,13 +64,12 @@ class InvoiceRepository implements InvoiceInterface
                 'supplier:id,name',
                 'otherSource:id,name',
                 'user:id,full_name',
-                'invoiceProducts:id,invoice_id,product_id,price,input_price,count,total_price',
+                'invoiceProducts:id,invoice_id,product_id,price,input_price,count,total_price,wholesale_price',
                 'invoiceProducts.product:id,name,category_id,residue',
                 'invoiceProducts.product.category:id,name',
             ])
             ->find($id);
     }
-
 
     public function findById(int $id)
     {
@@ -91,7 +87,7 @@ class InvoiceRepository implements InvoiceInterface
                 'total_price' => abs($data['total_price']),
                 'user_id' => Auth::id(),
                 'type' => $data['type'],
-                'commentary' => $data['commentary'] ?? null
+                'commentary' => $data['commentary'] ?? null,
             ]
         );
 

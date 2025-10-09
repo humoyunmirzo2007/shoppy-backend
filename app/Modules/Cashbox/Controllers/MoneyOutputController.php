@@ -18,7 +18,7 @@ class MoneyOutputController
     {
         $result = $this->moneyOutputService->getAllMoneyOutputs($request->validated());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 
@@ -29,7 +29,7 @@ class MoneyOutputController
     {
         $result = $this->moneyOutputService->getMoneyOutputById($request->validated()['id']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 
@@ -40,7 +40,7 @@ class MoneyOutputController
     {
         $result = $this->moneyOutputService->createMoneyOutput($request->validated());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 
@@ -55,7 +55,7 @@ class MoneyOutputController
 
         $result = $this->moneyOutputService->updateMoneyOutput($id, $data);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 
@@ -66,7 +66,7 @@ class MoneyOutputController
     {
         $result = $this->moneyOutputService->deleteMoneyOutput($request->validated()['id']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 

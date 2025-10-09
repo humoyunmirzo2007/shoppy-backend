@@ -3,12 +3,12 @@
 namespace App\Modules\Cashbox\Services;
 
 use App\Helpers\TelegramBugNotifier;
-use App\Modules\Cashbox\Interfaces\MoneyInputInterface;
 use App\Modules\Cashbox\Enums\PaymentTypesEnum;
-use Illuminate\Support\Facades\Auth;
+use App\Modules\Cashbox\Interfaces\MoneyInputInterface;
 use App\Modules\Information\Interfaces\PaymentTypeInterface;
-use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TransferService
 {
@@ -26,6 +26,7 @@ class TransferService
             return ['success' => true, 'data' => $transfers, 'message' => 'O\'tkazmalar ro\'yxati olindi'];
         } catch (Exception $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'O\'tkazmalarni olishda xatolik yuz berdi'];
         }
     }
@@ -35,13 +36,14 @@ class TransferService
         try {
             $transfer = $this->moneyInputRepository->getTransferById($id);
 
-            if (!$transfer) {
+            if (! $transfer) {
                 return ['success' => false, 'message' => 'O\'tkazma topilmadi'];
             }
 
             return ['success' => true, 'data' => $transfer, 'message' => 'O\'tkazma ma\'lumotlari olindi'];
         } catch (Exception $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'O\'tkazmani olishda xatolik yuz berdi'];
         }
     }
@@ -59,13 +61,13 @@ class TransferService
             $fromPaymentType = $this->paymentTypeRepository->getById($data['payment_type_id']);
             $toPaymentType = $this->paymentTypeRepository->getById($data['other_payment_type_id']);
 
-            if (!$fromPaymentType || !$toPaymentType) {
+            if (! $fromPaymentType || ! $toPaymentType) {
                 return ['success' => false, 'message' => 'To\'lov turlari topilmadi'];
             }
 
             // Check if source payment type has enough balance
             if ($fromPaymentType->residue < $data['amount']) {
-                return ['success' => false, 'message' => 'Yetarli qoldiq mavjud emas. Mavjud qoldiq: ' . $fromPaymentType->residue];
+                return ['success' => false, 'message' => 'Yetarli qoldiq mavjud emas. Mavjud qoldiq: '.$fromPaymentType->residue];
             }
 
             // Create transfer payment record
@@ -90,6 +92,7 @@ class TransferService
         } catch (Exception $e) {
             DB::rollBack();
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'O\'tkazmani yaratishda xatolik yuz berdi'];
         }
     }
@@ -99,7 +102,7 @@ class TransferService
         try {
             $transfer = $this->moneyInputRepository->getTransferById($id);
 
-            if (!$transfer) {
+            if (! $transfer) {
                 return ['success' => false, 'message' => 'O\'tkazma topilmadi'];
             }
 
@@ -108,12 +111,12 @@ class TransferService
             // Check if destination payment type has enough balance to reverse the transfer
             $destinationPaymentType = $this->paymentTypeRepository->getById($transfer->other_payment_type_id);
 
-            if (!$destinationPaymentType) {
+            if (! $destinationPaymentType) {
                 return ['success' => false, 'message' => 'O\'tkazilgan to\'lov turi topilmadi'];
             }
 
             if ($destinationPaymentType->residue < $transfer->amount) {
-                return ['success' => false, 'message' => 'O\'tkazilgan to\'lov turida yetarli qoldiq mavjud emas. Mavjud qoldiq: ' . $destinationPaymentType->residue];
+                return ['success' => false, 'message' => 'O\'tkazilgan to\'lov turida yetarli qoldiq mavjud emas. Mavjud qoldiq: '.$destinationPaymentType->residue];
             }
 
             $this->moneyInputRepository->deleteTransfer($id);
@@ -124,6 +127,7 @@ class TransferService
         } catch (Exception $e) {
             DB::rollBack();
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'O\'tkazmani o\'chirishda xatolik yuz berdi'];
         }
     }

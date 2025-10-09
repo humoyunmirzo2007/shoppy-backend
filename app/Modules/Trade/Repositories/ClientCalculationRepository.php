@@ -17,11 +17,11 @@ class ClientCalculationRepository implements ClientCalculationInterface
         return $this->clientCalculation->query()
             ->select('id', 'value', 'type', 'updated_at', 'date')
             ->where('client_id', $clientId)
-            ->when(!empty($filters['from_date']), function ($query) use ($filters) {
+            ->when(! empty($filters['from_date']), function ($query) use ($filters) {
                 $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');
                 $query->whereDate('date', '>=', $from);
             })
-            ->when(!empty($filters['to_date']), function ($query) use ($filters) {
+            ->when(! empty($filters['to_date']), function ($query) use ($filters) {
                 $to = Carbon::createFromFormat('d.m.Y', $filters['to_date'])->format('Y-m-d');
                 $query->whereDate('date', '<=', $to);
             })
@@ -38,12 +38,14 @@ class ClientCalculationRepository implements ClientCalculationInterface
     {
         $calculation = $this->clientCalculation->findOrFail($id);
         $calculation->update($data);
+
         return $calculation->fresh();
     }
 
     public function delete(int $id)
     {
         $calculation = $this->clientCalculation->findOrFail($id);
+
         return $calculation->delete();
     }
 

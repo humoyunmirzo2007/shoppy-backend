@@ -15,16 +15,16 @@ class UpdateOtherSourceRequest extends MainRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:other_sources,name,' . $otherSourceId,
+                'unique:other_sources,name,'.$otherSourceId,
             ],
             'type' => [
                 'required',
                 'string',
-                'in:PRODUCT,PAYMENT'
+                'in:PRODUCT,PAYMENT',
             ],
             'is_active' => [
                 'nullable',
-                'boolean'
+                'boolean',
             ],
         ];
     }

@@ -4,7 +4,6 @@ namespace App\Modules\Warehouse\Repositories;
 
 use App\Models\InvoiceProduct;
 use App\Modules\Warehouse\Interfaces\InvoiceProductInterface;
-use Illuminate\Support\Facades\DB;
 
 class InvoiceProductRepository implements InvoiceProductInterface
 {
@@ -17,14 +16,12 @@ class InvoiceProductRepository implements InvoiceProductInterface
 
     public function update(array $data)
     {
-        return    $this->invoiceProduct->upsert(
+        return $this->invoiceProduct->upsert(
             $data,
             ['id'],
-            ['invoice_id', 'product_id', 'count', 'price', 'total_price', 'date', 'updated_at']
+            ['invoice_id', 'product_id', 'count', 'price', 'total_price', 'date', 'updated_at', 'wholesale_price']
         );
     }
-
-
 
     public function deleteByIds(array $ids)
     {
@@ -39,10 +36,9 @@ class InvoiceProductRepository implements InvoiceProductInterface
             ->where('invoice_id', $invoiceId)
             ->whereIn('id', $ids)
             ->pluck('id')
-            ->map(fn($id) => (int)$id)
+            ->map(fn ($id) => (int) $id)
             ->toArray();
     }
-
 
     public function getByInvoiceId(int $invoiceId)
     {

@@ -32,7 +32,7 @@ class UpdateTradeRequest extends MainRequest
                 $action = $product['action'] ?? '';
                 $id = $product['id'] ?? null;
 
-                if ($action !== 'add' && !$id) {
+                if ($action !== 'add' && ! $id) {
                     $validator->errors()->add("products.{$index}.id", 'Savdo mahsulot idsi bo\'lishi shart');
                 }
             }

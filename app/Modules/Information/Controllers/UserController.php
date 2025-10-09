@@ -4,10 +4,10 @@ namespace App\Modules\Information\Controllers;
 
 use App\Helpers\Response;
 use App\Http\Resources\DefaultResource;
-use App\Modules\Information\Requests\UpdateUserPasswordRequest;
 use App\Modules\Information\Requests\GetUserByIdRequest;
 use App\Modules\Information\Requests\GetUsersRequest;
 use App\Modules\Information\Requests\StoreUserRequest;
+use App\Modules\Information\Requests\UpdateUserPasswordRequest;
 use App\Modules\Information\Requests\UpdateUserRequest;
 use App\Modules\Information\Services\UserService;
 
@@ -28,7 +28,6 @@ class UserController
 
         return DefaultResource::collection($data);
     }
-
 
     public function store(StoreUserRequest $request)
     {

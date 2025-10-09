@@ -24,9 +24,9 @@ class StoreUserRequest extends MainRequest
                 Rule::requiredIf($position !== 'MANAGER'),
                 'string',
                 'min:8',
-                'max:255'
+                'max:255',
             ],
-            'position' => ['required']
+            'position' => ['required'],
         ];
     }
 

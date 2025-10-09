@@ -18,11 +18,11 @@ class StoreOtherSourceRequest extends MainRequest
             'type' => [
                 'required',
                 'string',
-                'in:PRODUCT,PAYMENT'
+                'in:PRODUCT,PAYMENT',
             ],
             'is_active' => [
                 'nullable',
-                'boolean'
+                'boolean',
             ],
         ];
     }

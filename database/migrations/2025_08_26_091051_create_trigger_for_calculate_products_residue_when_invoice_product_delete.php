@@ -14,7 +14,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::unprepared("DROP TRIGGER IF EXISTS trg_invoice_product_delete ON invoice_products");
-        DB::unprepared("DROP FUNCTION IF EXISTS calculate_products_residue_when_invoice_product_delete");
+        DB::unprepared('DROP TRIGGER IF EXISTS trg_invoice_product_delete ON invoice_products');
+        DB::unprepared('DROP FUNCTION IF EXISTS calculate_products_residue_when_invoice_product_delete');
     }
 };

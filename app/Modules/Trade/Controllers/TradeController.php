@@ -2,8 +2,8 @@
 
 namespace App\Modules\Trade\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Helpers\Response;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\DefaultResource;
 use App\Modules\Trade\Enums\TradeTypesEnum;
 use App\Modules\Trade\Requests\GetTradeByIdRequest;

@@ -11,7 +11,6 @@ class CostType extends Model
 
     protected $guarded = [];
 
-
     protected $hidden = ['created_at', 'updated_at'];
 
     protected $sortable = ['id', 'name', 'is_active'];

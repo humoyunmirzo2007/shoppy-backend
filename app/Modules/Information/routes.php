@@ -1,17 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Modules\Information\Controllers\UserController;
 use App\Modules\Information\Controllers\CategoryController;
-use App\Modules\Information\Controllers\SupplierController;
 use App\Modules\Information\Controllers\ClientController;
 use App\Modules\Information\Controllers\CostTypeController;
-use App\Modules\Information\Controllers\ProductController;
 use App\Modules\Information\Controllers\OtherSourceController;
 use App\Modules\Information\Controllers\PaymentTypeController;
-
-
+use App\Modules\Information\Controllers\ProductController;
+use App\Modules\Information\Controllers\SupplierController;
+use App\Modules\Information\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
@@ -75,7 +73,6 @@ Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], functio
     Route::get('/download-update-price-template', [ProductController::class, 'downloadUpdatePriceTemplate']);
     Route::post('/update-prices-from-template', [ProductController::class, 'updatePricesFromTemplate']);
 });
-
 
 Route::group(['prefix' => 'other-sources', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [OtherSourceController::class, 'getAll']);

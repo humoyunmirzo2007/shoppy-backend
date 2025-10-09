@@ -18,9 +18,10 @@ class SupplierService
             return $this->supplierRepository->getAll($data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Ta\'minotchilarni olishda xatolik yuz berdi'
+                'message' => 'Ta\'minotchilarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -31,9 +32,10 @@ class SupplierService
             return $this->supplierRepository->getAllActive();
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Faol ta\'minotchilarni olishda xatolik yuz berdi'
+                'message' => 'Faol ta\'minotchilarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -44,9 +46,10 @@ class SupplierService
             return $this->supplierRepository->getAllWithDebt($data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Qarzli ta\'minotchilarni olishda xatolik yuz berdi'
+                'message' => 'Qarzli ta\'minotchilarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -56,23 +59,24 @@ class SupplierService
         try {
             $supplier = $this->supplierRepository->store($data);
 
-            if (!$supplier) {
+            if (! $supplier) {
                 return [
                     'status' => 'error',
-                    'message' => 'Ta\'minotchi qo\'shishda xatolik yuz berdi'
+                    'message' => 'Ta\'minotchi qo\'shishda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'Ta\'minotchi muvaffaqiyatli qo\'shildi',
-                'data' => $supplier
+                'data' => $supplier,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Ta\'minotchi qo\'shishda xatolik yuz berdi'
+                'message' => 'Ta\'minotchi qo\'shishda xatolik yuz berdi',
             ];
         }
     }
@@ -82,37 +86,37 @@ class SupplierService
         try {
             $supplier = $this->supplierRepository->getById($id);
 
-            if (!$supplier) {
+            if (! $supplier) {
                 return [
                     'status' => 'error',
                     'message' => 'Ta\'minotchi topilmadi',
-                    'status_code' => 404
+                    'status_code' => 404,
                 ];
             }
 
             $supplier = $this->supplierRepository->update($supplier, $data);
 
-            if (!$supplier) {
+            if (! $supplier) {
                 return [
                     'status' => 'error',
-                    'message' => 'Ta\'minotchi ma\'lumotlarini yangilashda xatolik yuz berdi'
+                    'message' => 'Ta\'minotchi ma\'lumotlarini yangilashda xatolik yuz berdi',
                 ];
             }
+
             return [
                 'status' => 'success',
-                'message' =>  'Ta\'minotchi ma\'lumotlari muvaffaqiyatli yangilandi',
-                'data' => $supplier
+                'message' => 'Ta\'minotchi ma\'lumotlari muvaffaqiyatli yangilandi',
+                'data' => $supplier,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Ta\'minotchi ma\'lumotlarini yangilashda xatolik yuz berdi'
+                'message' => 'Ta\'minotchi ma\'lumotlarini yangilashda xatolik yuz berdi',
             ];
         }
     }
-
-
 
     public function invertActive(int $id)
     {
@@ -122,13 +126,14 @@ class SupplierService
             return [
                 'status' => 'success',
                 'message' => 'Ta\'minotchi faollik holati muvaffaqiyatli o\'zgartirildi',
-                'data' => $supplier
+                'data' => $supplier,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Ta\'minotchi faolligini o\'zgartirishda xatolik yuz berdi'
+                'message' => 'Ta\'minotchi faolligini o\'zgartirishda xatolik yuz berdi',
             ];
         }
     }

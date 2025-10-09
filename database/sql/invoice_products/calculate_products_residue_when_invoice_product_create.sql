@@ -9,7 +9,9 @@ BEGIN
         UPDATE products
         SET price = NEW.price,
             input_price = NEW.input_price,
-            markup = ((NEW.price - NEW.input_price) / NEW.input_price) * 100
+            markup = ((NEW.price - NEW.input_price) / NEW.input_price) * 100,
+            wholesale_price = NEW.wholesale_price,
+            wholesale_markup = ((NEW.wholesale_price - NEW.input_price) / NULLIF(NEW.input_price, 0)) * 100
         WHERE id = NEW.product_id;
     END IF;
 

@@ -13,15 +13,10 @@ class Product extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'price' => 'decimal:2'
-    ];
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
-
 
     public function tradeProducts(): HasMany
     {
@@ -35,5 +30,5 @@ class Product extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    protected $sortable = ['id', 'name', 'unit', 'category_id', 'is_active', 'price'];
+    protected $sortable = ['id', 'name', 'unit', 'category_id', 'is_active', 'price', 'wholesale_price'];
 }

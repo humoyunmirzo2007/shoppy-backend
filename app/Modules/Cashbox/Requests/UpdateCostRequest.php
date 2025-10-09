@@ -43,7 +43,7 @@ class UpdateCostRequest extends MainRequest
             $costTypeId = $this->input('cost_type_id');
 
             // Kamida bitta manba bo‘lishi kerak
-            if (!$clientId && !$supplierId && !$otherSourceId && !$costTypeId) {
+            if (! $clientId && ! $supplierId && ! $otherSourceId && ! $costTypeId) {
                 $validator->errors()->add('client_id', 'Kamida mijoz, ta\'minotchi , xarajat turiyoki boshqa manba tanlanishi kerak');
             }
 

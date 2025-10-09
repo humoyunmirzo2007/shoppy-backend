@@ -18,12 +18,14 @@ class OtherCalculationRepository implements OtherCalculationInterface
     {
         $calculation = $this->otherCalculation->findOrFail($id);
         $calculation->update($data);
+
         return $calculation->fresh();
     }
 
     public function delete(int $id)
     {
         $calculation = $this->otherCalculation->findOrFail($id);
+
         return $calculation->delete();
     }
 

@@ -3,8 +3,8 @@
 namespace App\Modules\Warehouse\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Warehouse\Resources\SupplierCalculationResource;
 use App\Modules\Warehouse\Requests\GetSupplierCalculationsRequest;
+use App\Modules\Warehouse\Resources\SupplierCalculationResource;
 use App\Modules\Warehouse\Services\SupplierCalculationService;
 
 class SupplierCalculationController extends Controller
@@ -17,5 +17,4 @@ class SupplierCalculationController extends Controller
 
         return SupplierCalculationResource::collection($data);
     }
-
 }

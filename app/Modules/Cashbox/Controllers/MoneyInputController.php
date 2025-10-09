@@ -18,7 +18,7 @@ class MoneyInputController
     {
         $result = $this->moneyInputService->getAllMoneyInputs($request->validated());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 
@@ -29,7 +29,7 @@ class MoneyInputController
     {
         $result = $this->moneyInputService->getMoneyInputById($request->validated()['id']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 
@@ -40,7 +40,7 @@ class MoneyInputController
     {
         $result = $this->moneyInputService->createMoneyInput($request->validated());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 
@@ -55,7 +55,7 @@ class MoneyInputController
 
         $result = $this->moneyInputService->updateMoneyInput($id, $data);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 
@@ -66,7 +66,7 @@ class MoneyInputController
     {
         $result = $this->moneyInputService->deleteMoneyInput($request->validated()['id']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error([], $result['message']);
         }
 

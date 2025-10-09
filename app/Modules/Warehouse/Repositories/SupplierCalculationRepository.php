@@ -13,14 +13,15 @@ class SupplierCalculationRepository implements SupplierCalculationInterface
     public function getBySupplierId(int $supplierId, array $data)
     {
         $filters = $data['filters'] ?? [];
+
         return $this->supplierCalculation->query()
             ->select('id', 'supplier_id', 'value', 'type', 'updated_at', 'date')
             ->where('supplier_id', $supplierId)
-            ->when(!empty($filters['from_date']), function ($query) use ($filters) {
+            ->when(! empty($filters['from_date']), function ($query) use ($filters) {
                 $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');
                 $query->whereDate('date', '>=', $from);
             })
-            ->when(!empty($filters['to_date']), function ($query) use ($filters) {
+            ->when(! empty($filters['to_date']), function ($query) use ($filters) {
                 $to = Carbon::createFromFormat('d.m.Y', $filters['to_date'])->format('Y-m-d');
                 $query->whereDate('date', '<=', $to);
             })
@@ -37,12 +38,14 @@ class SupplierCalculationRepository implements SupplierCalculationInterface
     {
         $calculation = $this->supplierCalculation->findOrFail($id);
         $calculation->update($data);
+
         return $calculation->fresh();
     }
 
     public function delete(int $id)
     {
         $calculation = $this->supplierCalculation->findOrFail($id);
+
         return $calculation->delete();
     }
 

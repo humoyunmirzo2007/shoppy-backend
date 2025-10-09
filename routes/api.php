@@ -14,6 +14,6 @@ Route::get('/health', function () {
         'timestamp' => now(),
         'services' => [
             'database' => 'connected', // Bu yerda database connection tekshirilishi mumkin
-        ]
+        ],
     ]);
 });

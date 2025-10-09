@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Modules\Warehouse\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,6 +15,7 @@ class InvoiceProductResource extends JsonResource
             'invoice_id' => $this->invoice_id,
             'price' => $this->price,
             'input_price' => $this->input_price,
+            'wholesale_price' => $this->wholesale_price,
             'count' => $this->count,
             'total_price' => $this->total_price,
             'product_id' => $this->product_id,

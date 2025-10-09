@@ -7,7 +7,6 @@ use App\Modules\Information\Interfaces\CategoryInterface;
 
 class CategoryRepository implements CategoryInterface
 {
-
     public function __construct(protected Category $category) {}
 
     public function index(array $data)
@@ -36,6 +35,7 @@ class CategoryRepository implements CategoryInterface
             ->select('id', 'name')
             ->get();
     }
+
     public function getAllActive()
     {
         return $this->category->query()
@@ -69,7 +69,7 @@ class CategoryRepository implements CategoryInterface
     public function invertActive(int $id)
     {
         $category = $this->category->find($id);
-        $category->is_active = !$category->is_active;
+        $category->is_active = ! $category->is_active;
         $category->save();
 
         return $category;

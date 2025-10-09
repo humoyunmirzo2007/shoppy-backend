@@ -10,6 +10,7 @@ class UpdateClientRequest extends MainRequest
     public function rules(): array
     {
         $clientId = $this->route('id');
+
         return [
             'name' => [
                 'required',

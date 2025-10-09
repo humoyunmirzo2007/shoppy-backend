@@ -7,7 +7,6 @@ use App\Modules\Information\Interfaces\CostTypeInterface;
 
 class CostTypeRepository implements CostTypeInterface
 {
-
     public function __construct(protected CostType $costType) {}
 
     public function getAll(array $data)
@@ -45,9 +44,9 @@ class CostTypeRepository implements CostTypeInterface
 
     public function store(array $data)
     {
-        $costType =  $this->costType->create([
+        $costType = $this->costType->create([
             'name' => $data['name'],
-            'is_active' =>  true,
+            'is_active' => true,
         ]);
 
         return $costType;
@@ -63,7 +62,7 @@ class CostTypeRepository implements CostTypeInterface
     public function invertActive(int $id)
     {
         $costType = $this->costType->find($id);
-        $costType->is_active = !$costType->is_active;
+        $costType->is_active = ! $costType->is_active;
         $costType->save();
 
         return $costType;

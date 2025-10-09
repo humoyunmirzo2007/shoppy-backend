@@ -3,8 +3,8 @@
 namespace App\Modules\Trade\Services;
 
 use App\Helpers\TelegramBugNotifier;
-use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Information\Interfaces\ClientInterface;
+use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Trade\Enums\TradeTypesEnum;
 use App\Modules\Trade\Interfaces\ClientCalculationInterface;
 use App\Modules\Trade\Interfaces\TradeInterface;
@@ -30,9 +30,10 @@ class TradeService
             return $this->tradeRepository->getByType($type, $data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Savdolarni olishda xatolik yuz berdi'
+                'message' => 'Savdolarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -43,9 +44,10 @@ class TradeService
             return $this->tradeRepository->getByIdWithProducts($id);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Savdo ma\'lumotlarini olishda xatolik yuz berdi'
+                'message' => 'Savdo ma\'lumotlarini olishda xatolik yuz berdi',
             ];
         }
     }
@@ -62,14 +64,15 @@ class TradeService
                 default:
                     return [
                         'status' => 'error',
-                        'message' => 'Mavjud bo\'lmagan turni yubordingiz'
+                        'message' => 'Mavjud bo\'lmagan turni yubordingiz',
                     ];
             }
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Savdo yaratishda xatolik yuz berdi'
+                'message' => 'Savdo yaratishda xatolik yuz berdi',
             ];
         }
     }
@@ -85,14 +88,15 @@ class TradeService
                 default:
                     return [
                         'status' => 'error',
-                        'message' => 'Mavjud bo\'lmagan turni yubordingiz'
+                        'message' => 'Mavjud bo\'lmagan turni yubordingiz',
                     ];
             }
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Savdoni yangilashda xatolik yuz berdi'
+                'message' => 'Savdoni yangilashda xatolik yuz berdi',
             ];
         }
     }
@@ -109,11 +113,12 @@ class TradeService
 
             $result = $this->tradeRepository->delete($trade);
 
-            if (!$result) {
+            if (! $result) {
                 DB::rollBack();
+
                 return [
                     'status' => 'error',
-                    'message' => 'Savdoni o\'chirishda xatolik yuz berdi'
+                    'message' => 'Savdoni o\'chirishda xatolik yuz berdi',
                 ];
             }
 
@@ -121,13 +126,14 @@ class TradeService
 
             return [
                 'status' => 'success',
-                'message' => 'Savdo muvaffaqiyatli o\'chirildi'
+                'message' => 'Savdo muvaffaqiyatli o\'chirildi',
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
+
             return [
                 'status' => 'error',
-                'message' => 'Savdoni o\'chirishda xatolik yuz berdi'
+                'message' => 'Savdoni o\'chirishda xatolik yuz berdi',
             ];
         }
     }
@@ -145,7 +151,7 @@ class TradeService
                 if ($residueNotEnough) {
                     return [
                         'status' => 'error',
-                        'message' => $residueNotEnough
+                        'message' => $residueNotEnough,
                     ];
                 }
 
@@ -163,7 +169,7 @@ class TradeService
             $this->tradeProductRepository->store($this->cleanAndPrepareTradeProducts($products, $trade->id));
 
             // Create client calculation if client_id exists
-            if (!empty($data['client_id'])) {
+            if (! empty($data['client_id'])) {
                 $this->createClientCalculation($trade, $data);
             }
 
@@ -172,14 +178,15 @@ class TradeService
             return [
                 'status' => 'success',
                 'message' => 'Savdo muvaffaqiyatli qo\'shildi',
-                'data' => $trade
+                'data' => $trade,
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Savdo yaratishda xatolik yuz berdi'
+                'message' => 'Savdo yaratishda xatolik yuz berdi',
             ];
         }
     }
@@ -191,18 +198,18 @@ class TradeService
 
         $trade = $this->tradeRepository->findById($id);
 
-        if (!$trade) {
+        if (! $trade) {
             return [
                 'status' => 'error',
                 'message' => 'Ushbu savdo topilmadi',
-                'status_code' => 404
+                'status_code' => 404,
             ];
         }
 
-        $normalProducts = array_filter($products, fn($product) => $product['action'] === 'normal');
-        $productsForInsert = array_filter($products, fn($product) => $product['action'] === 'add');
-        $productsForUpdate = array_filter($products, fn($product) => $product['action'] === 'edit');
-        $productIdsForDelete = array_map(fn($product) => $product['id'], array_filter($products, fn($product) => $product['action'] === 'delete'));
+        $normalProducts = array_filter($products, fn ($product) => $product['action'] === 'normal');
+        $productsForInsert = array_filter($products, fn ($product) => $product['action'] === 'add');
+        $productsForUpdate = array_filter($products, fn ($product) => $product['action'] === 'edit');
+        $productIdsForDelete = array_map(fn ($product) => $product['id'], array_filter($products, fn ($product) => $product['action'] === 'delete'));
 
         $savableProducts = array_merge($normalProducts, $productsForInsert, $productsForUpdate);
 
@@ -214,7 +221,7 @@ class TradeService
                 if ($residueNotEnough) {
                     return [
                         'status' => 'error',
-                        'message' => $residueNotEnough
+                        'message' => $residueNotEnough,
                     ];
                 }
             }
@@ -225,7 +232,7 @@ class TradeService
                 if ($residueNotEnough) {
                     return [
                         'status' => 'error',
-                        'message' => $residueNotEnough
+                        'message' => $residueNotEnough,
                     ];
                 }
             }
@@ -237,10 +244,10 @@ class TradeService
             return array_key_exists('action', $product);
         });
 
-        if (!$allHaveAction) {
+        if (! $allHaveAction) {
             return [
                 'status' => 'error',
-                'message' => 'Barcha tovarlarda action bo\'lishi kerak'
+                'message' => 'Barcha tovarlarda action bo\'lishi kerak',
             ];
         }
 
@@ -266,7 +273,7 @@ class TradeService
 
         // Get current history and add new entry only if there are changes
         $currentHistory = $trade->history ?? [];
-        if (!empty($historyEntry['description'])) {
+        if (! empty($historyEntry['description'])) {
             $currentHistory[] = $historyEntry;
         }
 
@@ -281,14 +288,15 @@ class TradeService
                 'user_id' => Auth::id(),
                 'type' => $data['type'],
                 'commentary' => $data['commentary'] ?? null,
-                'history' => $currentHistory
+                'history' => $currentHistory,
             ]);
 
-            if (!$updatedTrade) {
+            if (! $updatedTrade) {
                 DB::rollBack();
+
                 return [
                     'status' => 'error',
-                    'message' => 'Savdoni tahrirlashda muammo yuz berdi'
+                    'message' => 'Savdoni tahrirlashda muammo yuz berdi',
                 ];
             }
 
@@ -305,7 +313,7 @@ class TradeService
             }
 
             // Update client calculation if client_id exists
-            if (!empty($data['client_id'])) {
+            if (! empty($data['client_id'])) {
                 $this->updateClientCalculation($updatedTrade, $data);
             } else {
                 // Delete calculation if client_id is null
@@ -317,33 +325,35 @@ class TradeService
             return [
                 'status' => 'success',
                 'message' => 'Savdo muvaffaqiyatli tahrirlandi',
-                'data' => $updatedTrade
+                'data' => $updatedTrade,
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Savdoni tahrirlashda xatolik yuz berdi'
+                'message' => 'Savdoni tahrirlashda xatolik yuz berdi',
             ];
         }
     }
 
-    private function checkProductResidues(array $products): string|null
+    private function checkProductResidues(array $products): ?string
     {
         $productIds = collect($products)->pluck('product_id')->toArray();
         $residues = $this->productRepository->getForCheckResidue($productIds);
 
         foreach ($products as $product) {
             $residue = $residues[$product['product_id']] ?? null;
-            if (!$residue || $product['count'] > $residue->residue) {
+            if (! $residue || $product['count'] > $residue->residue) {
                 return "{$product['product_id']} - ID li mahsulot uchun yetarli qoldiq mavjud emas.";
             }
         }
+
         return null;
     }
 
-    private function checkProductResiduesForUpdate(int $tradeId, array $products): string|null
+    private function checkProductResiduesForUpdate(int $tradeId, array $products): ?string
     {
         // Eski trade_products ni olish
         $oldTradeProducts = $this->tradeProductRepository->getByTradeId($tradeId);
@@ -376,7 +386,7 @@ class TradeService
         if ($someIdMissed) {
             return [
                 'status' => 'error',
-                'message' => 'Mavjud bo\'lmagan tovarni tahrirlash yoki o\'chirish mumkin emas'
+                'message' => 'Mavjud bo\'lmagan tovarni tahrirlash yoki o\'chirish mumkin emas',
             ];
         }
 
@@ -386,7 +396,8 @@ class TradeService
     private function makeProductCountsNegative(array $products): array
     {
         return array_map(function ($product) {
-            $product['count'] = -abs((float)$product['count']);
+            $product['count'] = -abs((float) $product['count']);
+
             return $product;
         }, $products);
     }
@@ -411,9 +422,10 @@ class TradeService
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-            if (!empty($withId)) {
+            if (! empty($withId)) {
                 $data['id'] = $product['id'];
             }
+
             return $data;
         }, $products);
     }
@@ -447,7 +459,7 @@ class TradeService
                 'value' => $calculationValue,
                 'date' => $trade->date,
             ]);
-        } elseif ($calculationValue !== null && !$existingCalculation) {
+        } elseif ($calculationValue !== null && ! $existingCalculation) {
             // Create new calculation if it doesn't exist
             $this->createClientCalculation($trade, $data);
         } elseif ($calculationValue === null && $existingCalculation) {
@@ -502,7 +514,7 @@ class TradeService
         return [
             'user_full_name' => $user->full_name,
             'date' => Carbon::now()->format('d.m.Y, H:i:s'),
-            'description' => rtrim($description, ';')
+            'description' => rtrim($description, ';'),
         ];
     }
 
@@ -519,13 +531,14 @@ class TradeService
         $oldClientName = $this->getClientName($oldClientId);
         $newClientName = $this->getClientName($newClientId);
 
-        return 'c@' . $oldClientName . ' → ' . $newClientName . ';';
+        return 'c@'.$oldClientName.' → '.$newClientName.';';
     }
 
     private function getClientName($clientId)
     {
         if ($clientId) {
             $client = $this->clientRepository->getById($clientId);
+
             return $client?->name ?? 'Unknown';
         }
 
@@ -538,7 +551,7 @@ class TradeService
         $newDate = Carbon::createFromFormat('d.m.Y', $newData['date'])->format('d.m.Y');
 
         if ($oldDate !== $newDate) {
-            return 'd@' . $oldDate . ' → d@' . $newDate . ';';
+            return 'd@'.$oldDate.' → d@'.$newDate.';';
         }
 
         return '';
@@ -552,23 +565,23 @@ class TradeService
         foreach ($productChanges['added'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
-            $description .= 'a@#' . $product['product_id'] . '- ' . $productName . ': ' . number_format(abs($product['count']), 0, '.', ' ') . ', ' . number_format($product['price'], 0, '.', ' ') . ';';
+            $description .= 'a@#'.$product['product_id'].'- '.$productName.': '.number_format(abs($product['count']), 0, '.', ' ').', '.number_format($product['price'], 0, '.', ' ').';';
         }
 
         // Updated products
         foreach ($productChanges['updated'] as $change) {
             $productModel = $this->productRepository->getById($change['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
-            $description .= 'u@#' . $change['product_id'] . '- ' . $productName . ': ' .
-                number_format(abs($change['old_count']), 0, '.', ' ') . ' → ' . number_format(abs($change['new_count']), 0, '.', ' ') . ', ' .
-                number_format($change['old_price'], 0, '.', ' ') . ' → ' . number_format($change['new_price'], 0, '.', ' ') . ';';
+            $description .= 'u@#'.$change['product_id'].'- '.$productName.': '.
+                number_format(abs($change['old_count']), 0, '.', ' ').' → '.number_format(abs($change['new_count']), 0, '.', ' ').', '.
+                number_format($change['old_price'], 0, '.', ' ').' → '.number_format($change['new_price'], 0, '.', ' ').';';
         }
 
         // Removed products
         foreach ($productChanges['removed'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
-            $description .= 'r@#' . $product['product_id'] . '- ' . $productName . ': ' . number_format(abs($product['count']), 0, '.', ' ') . ', ' . number_format($product['price'], 0, '.', ' ') . ';';
+            $description .= 'r@#'.$product['product_id'].'- '.$productName.': '.number_format(abs($product['count']), 0, '.', ' ').', '.number_format($product['price'], 0, '.', ' ').';';
         }
 
         return $description;
@@ -596,7 +609,7 @@ class TradeService
                         'old_count' => $oldProduct->count,
                         'new_count' => $product['count'],
                         'old_price' => $oldProduct->price,
-                        'new_price' => $product['price']
+                        'new_price' => $product['price'],
                     ];
                 }
             } elseif ($product['action'] === 'delete') {
@@ -606,7 +619,7 @@ class TradeService
                     $removed[] = [
                         'product_id' => $oldProduct->product_id,
                         'count' => $oldProduct->count,
-                        'price' => $oldProduct->price
+                        'price' => $oldProduct->price,
                     ];
                 }
             }
@@ -615,7 +628,7 @@ class TradeService
         return [
             'added' => $added,
             'updated' => $updated,
-            'removed' => $removed
+            'removed' => $removed,
         ];
     }
 }

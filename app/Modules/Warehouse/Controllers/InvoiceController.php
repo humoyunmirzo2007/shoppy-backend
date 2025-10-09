@@ -2,8 +2,8 @@
 
 namespace App\Modules\Warehouse\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Helpers\Response;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\DefaultResource;
 use App\Modules\Warehouse\Enums\InvoiceTypesEnum;
 use App\Modules\Warehouse\Requests\GetInvoiceByIdRequest;
@@ -32,7 +32,6 @@ class InvoiceController extends Controller
 
         return DefaultResource::collection($data);
     }
-
 
     public function getByIdWithProducts(GetInvoiceByIdRequest $request, int $id)
     {
@@ -72,7 +71,6 @@ class InvoiceController extends Controller
             data: $data['data'],
         );
     }
-
 
     public function delete(GetInvoiceByIdRequest $request, int $id)
     {

@@ -9,7 +9,7 @@ class GetSupplierByIdRequest extends MainRequest
     public function rules()
     {
         return [
-            'supplier_id' => ['required', 'integer', 'exists:suppliers,id']
+            'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
         ];
     }
 
@@ -23,7 +23,7 @@ class GetSupplierByIdRequest extends MainRequest
         return [
             'supplier_id.required' => 'Ta\'minotchi ID si majburiy',
             'supplier_id.integer' => 'Ta\'minotchi ID si son bo\'lishi kerak',
-            'supplier_id.exists' => 'Bunday ta\'minotchi mavjud emas'
+            'supplier_id.exists' => 'Bunday ta\'minotchi mavjud emas',
         ];
     }
 }

@@ -7,7 +7,6 @@ use App\Modules\Information\Interfaces\PaymentTypeInterface;
 
 class PaymentTypeRepository implements PaymentTypeInterface
 {
-
     public function __construct(protected PaymentType $paymentType) {}
 
     public function index(array $data)
@@ -67,7 +66,7 @@ class PaymentTypeRepository implements PaymentTypeInterface
     public function invertActive(int $id)
     {
         $paymentType = $this->paymentType->find($id);
-        $paymentType->is_active = !$paymentType->is_active;
+        $paymentType->is_active = ! $paymentType->is_active;
         $paymentType->save();
 
         return $paymentType;

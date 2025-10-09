@@ -4,7 +4,6 @@ namespace App\Modules\Trade\Repositories;
 
 use App\Models\TradeProduct;
 use App\Modules\Trade\Interfaces\TradeProductInterface;
-use Illuminate\Support\Facades\DB;
 
 class TradeProductRepository implements TradeProductInterface
 {
@@ -37,7 +36,7 @@ class TradeProductRepository implements TradeProductInterface
             ->where('trade_id', $tradeId)
             ->whereIn('id', $ids)
             ->pluck('id')
-            ->map(fn($id) => (int)$id)
+            ->map(fn ($id) => (int) $id)
             ->toArray();
     }
 

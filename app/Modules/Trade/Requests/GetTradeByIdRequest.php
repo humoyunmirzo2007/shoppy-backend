@@ -9,7 +9,7 @@ class GetTradeByIdRequest extends MainRequest
     public function rules()
     {
         return [
-            'trade_id' => ['required', 'integer', 'exists:trades,id']
+            'trade_id' => ['required', 'integer', 'exists:trades,id'],
         ];
     }
 
@@ -23,7 +23,7 @@ class GetTradeByIdRequest extends MainRequest
         return [
             'trade_id.required' => 'Savdo ID si majburiy',
             'trade_id.integer' => 'Savdo ID si son bo\'lishi kerak',
-            'trade_id.exists' => 'Bunday savdo mavjud emas'
+            'trade_id.exists' => 'Bunday savdo mavjud emas',
         ];
     }
 }

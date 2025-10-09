@@ -18,9 +18,10 @@ class SupplierCalculationService
             return $this->supplierCalculationRepository->getBySupplierId($supplierId, $data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Yetkazib beruvchi hisob-kitoblarini olishda xatolik yuz berdi'
+                'message' => 'Yetkazib beruvchi hisob-kitoblarini olishda xatolik yuz berdi',
             ];
         }
     }

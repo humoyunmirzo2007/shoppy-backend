@@ -19,6 +19,7 @@ class StoreInvoiceRequest extends MainRequest
             'products.*.count' => ['required', 'numeric', 'gt:0'],
             'products.*.price' => ['required', 'numeric', 'gte:0'],
             'products.*.input_price' => ['required', 'numeric', 'gte:0'],
+            'products.*.wholesale_price' => ['nullable', 'numeric', 'gte:0'],
         ];
     }
 
@@ -29,7 +30,7 @@ class StoreInvoiceRequest extends MainRequest
             $otherSourceId = $this->input('other_source_id');
             $type = $this->input('type');
 
-            if (!$supplierId && !$otherSourceId) {
+            if (! $supplierId && ! $otherSourceId) {
                 $validator->errors()->add('supplier_id', 'Ta\'minotchi yoki boshqa manba tanlanishi shart');
             }
 
@@ -38,12 +39,12 @@ class StoreInvoiceRequest extends MainRequest
             }
 
             // Supplier bo'lsa, type SUPPLIER_ bo'lishi kerak
-            if ($supplierId && !str_starts_with($type, 'SUPPLIER_')) {
+            if ($supplierId && ! str_starts_with($type, 'SUPPLIER_')) {
                 $validator->errors()->add('type', 'Ta\'minotchi tanlanganda faqat SUPPLIER_INPUT yoki SUPPLIER_OUTPUT turini tanlashingiz mumkin');
             }
 
             // Other source bo'lsa, type OTHER_ bo'lishi kerak
-            if ($otherSourceId && !str_starts_with($type, 'OTHER_')) {
+            if ($otherSourceId && ! str_starts_with($type, 'OTHER_')) {
                 $validator->errors()->add('type', 'Boshqa manba tanlanganda faqat OTHER_INPUT yoki OTHER_OUTPUT turini tanlashingiz mumkin');
             }
 
@@ -84,6 +85,8 @@ class StoreInvoiceRequest extends MainRequest
             'products.*.input_price.required' => 'Mahsulot kirim narxi kiritilishi kerak',
             'products.*.input_price.numeric' => 'Mahsulot kirim narxi raqam bo\'lishi kerak',
             'products.*.input_price.gte' => 'Mahsulot kirim narxi musbat bo\'lishi kerak',
+            'products.*.wholesale_price.numeric' => 'Optom narxi raqam bo\'lishi kerak',
+            'products.*.wholesale_price.gte' => 'Optom narxi musbat bo\'lishi kerak',
             'date.required' => 'Sana kiritilishi shart',
             'date.date_format' => 'Sana dd.mm.yyyy formatida bo\'lishi kerak',
 

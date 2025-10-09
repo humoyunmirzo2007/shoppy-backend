@@ -9,7 +9,7 @@ class GetClientByIdRequest extends MainRequest
     public function rules()
     {
         return [
-            'client_id' => ['required', 'integer', 'exists:clients,id']
+            'client_id' => ['required', 'integer', 'exists:clients,id'],
         ];
     }
 
@@ -23,7 +23,7 @@ class GetClientByIdRequest extends MainRequest
         return [
             'client_id.required' => 'Mijoz ID si majburiy',
             'client_id.integer' => 'Mijoz ID si son bo\'lishi kerak',
-            'client_id.exists' => 'Bunday mijoz mavjud emas'
+            'client_id.exists' => 'Bunday mijoz mavjud emas',
         ];
     }
 }

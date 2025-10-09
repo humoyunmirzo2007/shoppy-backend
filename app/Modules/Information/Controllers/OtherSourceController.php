@@ -4,8 +4,6 @@ namespace App\Modules\Information\Controllers;
 
 use App\Helpers\Response;
 use App\Http\Resources\DefaultResource;
-use App\Modules\Information\Enums\OtherSourceTypesEnum;
-use App\Modules\Information\Requests\GetOtherSourceByIdRequest;
 use App\Modules\Information\Requests\GetOtherSourcesByTypeRequest;
 use App\Modules\Information\Requests\GetOtherSourcesRequest;
 use App\Modules\Information\Requests\StoreOtherSourceRequest;
@@ -19,6 +17,7 @@ class OtherSourceController
     public function getAll(GetOtherSourcesRequest $request)
     {
         $data = $this->otherSourceService->getAll($request->validated());
+
         return DefaultResource::collection($data);
     }
 

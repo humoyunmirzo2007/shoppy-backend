@@ -45,12 +45,14 @@ class OtherSourceRepository implements OtherSourceInterface
     public function update(OtherSource $otherSource, array $data)
     {
         $otherSource->update($data);
+
         return $otherSource;
     }
 
     public function invertActive(OtherSource $otherSource)
     {
-        $otherSource->update(['is_active' => !$otherSource->is_active]);
+        $otherSource->update(['is_active' => ! $otherSource->is_active]);
+
         return $otherSource;
     }
 

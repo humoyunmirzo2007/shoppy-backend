@@ -12,16 +12,16 @@ class CostTypeService
         protected TelegramBugNotifier $telegramNotifier
     ) {}
 
-
     public function getAll(array $data)
     {
         try {
             return $this->costTypeRepository->getAll($data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Xarajat turlarini olishda xatolik yuz berdi'
+                'message' => 'Xarajat turlarini olishda xatolik yuz berdi',
             ];
         }
     }
@@ -32,9 +32,10 @@ class CostTypeService
             return $this->costTypeRepository->getAllActive();
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Faol xarajat turlarini olishda xatolik yuz berdi'
+                'message' => 'Faol xarajat turlarini olishda xatolik yuz berdi',
             ];
         }
     }
@@ -44,23 +45,24 @@ class CostTypeService
         try {
             $costType = $this->costTypeRepository->store($data);
 
-            if (!$costType) {
+            if (! $costType) {
                 return [
                     'status' => 'error',
-                    'message' => 'Xarajat turi qo\'shishda xatolik yuz berdi'
+                    'message' => 'Xarajat turi qo\'shishda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'Xarajat turi muvaffaqiyatli qo\'shildi',
-                'data' => $costType
+                'data' => $costType,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Xarajat turi qo\'shishda xatolik yuz berdi'
+                'message' => 'Xarajat turi qo\'shishda xatolik yuz berdi',
             ];
         }
     }
@@ -69,31 +71,32 @@ class CostTypeService
     {
         try {
             $costType = $this->costTypeRepository->getById($id);
-            if (!$costType) {
+            if (! $costType) {
                 return [
                     'status' => 'error',
                     'message' => 'Xarajat turi topilmadi',
-                    'status_code' => 404
+                    'status_code' => 404,
                 ];
             }
             $costType = $this->costTypeRepository->update($costType, $data);
-            if (!$costType) {
+            if (! $costType) {
                 return [
                     'status' => 'error',
-                    'message' => 'Xarajat turi ma\'lumotlarini yangilashda xatolik yuz berdi'
+                    'message' => 'Xarajat turi ma\'lumotlarini yangilashda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'Xarajat turi ma\'lumotlari muvaffaqiyatli yangilandi',
-                'data' => $costType
+                'data' => $costType,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Xarajat turi ma\'lumotlarini yangilashda xatolik yuz berdi'
+                'message' => 'Xarajat turi ma\'lumotlarini yangilashda xatolik yuz berdi',
             ];
         }
     }
@@ -106,13 +109,14 @@ class CostTypeService
             return [
                 'status' => 'success',
                 'message' => 'Xarajat turi faolligi muvaffaqiyatli o\'zgartirildi',
-                'data' => $costType
+                'data' => $costType,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Xarajat turi faolligini o\'zgartirishda xatolik yuz berdi'
+                'message' => 'Xarajat turi faolligini o\'zgartirishda xatolik yuz berdi',
             ];
         }
     }

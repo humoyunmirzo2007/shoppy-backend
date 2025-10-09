@@ -30,7 +30,7 @@ class GetOtherSourcesRequest extends MainRequest
             'page.min' => 'Page kamida 1 bo\'lishi kerak',
             'filters.type.string' => 'Turi matn bo\'lishi kerak',
             'filters.type.in' => 'Turi PRODUCT yoki PAYMENT bo\'lishi kerak',
-            'filters.is_active.boolean' => 'Faol holat mantiqiy qiymat bo\'lishi kerak'
+            'filters.is_active.boolean' => 'Faol holat mantiqiy qiymat bo\'lishi kerak',
         ];
     }
 }

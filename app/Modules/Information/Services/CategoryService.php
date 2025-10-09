@@ -12,16 +12,16 @@ class CategoryService
         protected TelegramBugNotifier $telegramNotifier
     ) {}
 
-
     public function index(array $data)
     {
         try {
             return $this->categoryRepository->index($data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Kategoriyalarni olishda xatolik yuz berdi'
+                'message' => 'Kategoriyalarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -32,9 +32,10 @@ class CategoryService
             return $this->categoryRepository->getAll();
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Barcha kategoriyalarni olishda xatolik yuz berdi'
+                'message' => 'Barcha kategoriyalarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -45,9 +46,10 @@ class CategoryService
             return $this->categoryRepository->getAllActive();
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Faol kategoriyalarni olishda xatolik yuz berdi'
+                'message' => 'Faol kategoriyalarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -57,23 +59,24 @@ class CategoryService
         try {
             $category = $this->categoryRepository->store($data);
 
-            if (!$category) {
+            if (! $category) {
                 return [
                     'status' => 'error',
-                    'message' => 'Kategoriya qo\'shishda xatolik yuz berdi'
+                    'message' => 'Kategoriya qo\'shishda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'Kategoriya muvaffaqiyatli qo\'shildi',
-                'data' => $category
+                'data' => $category,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Kategoriya qo\'shishda xatolik yuz berdi'
+                'message' => 'Kategoriya qo\'shishda xatolik yuz berdi',
             ];
         }
     }
@@ -82,31 +85,32 @@ class CategoryService
     {
         try {
             $category = $this->categoryRepository->getById($id);
-            if (!$category) {
+            if (! $category) {
                 return [
                     'status' => 'error',
                     'message' => 'Kategoriya topilmadi',
-                    'status_code' => 404
+                    'status_code' => 404,
                 ];
             }
             $updatedCategory = $this->categoryRepository->update($category, $data);
-            if (!$updatedCategory) {
+            if (! $updatedCategory) {
                 return [
                     'status' => 'error',
-                    'message' => 'Kategoriya ma\'lumotlarini yangilashda xatolik yuz berdi'
+                    'message' => 'Kategoriya ma\'lumotlarini yangilashda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'Kategoriya ma\'lumotlari muvaffaqiyatli yangilandi',
-                'data' => $updatedCategory
+                'data' => $updatedCategory,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Kategoriya ma\'lumotlarini yangilashda xatolik yuz berdi'
+                'message' => 'Kategoriya ma\'lumotlarini yangilashda xatolik yuz berdi',
             ];
         }
     }
@@ -119,13 +123,14 @@ class CategoryService
             return [
                 'status' => 'success',
                 'message' => 'Kategoriya faolligi muvaffaqiyatli o\'zgartirildi',
-                'data' => $category
+                'data' => $category,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Kategoriya faolligini o\'zgartirishda xatolik yuz berdi'
+                'message' => 'Kategoriya faolligini o\'zgartirishda xatolik yuz berdi',
             ];
         }
     }

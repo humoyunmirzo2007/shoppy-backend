@@ -13,7 +13,7 @@ class UploadProductsImportFileRequest extends MainRequest
                 'required',
                 'file',
                 'mimes:xlsx,xls',
-                'max:10240'
+                'max:10240',
             ],
         ];
     }

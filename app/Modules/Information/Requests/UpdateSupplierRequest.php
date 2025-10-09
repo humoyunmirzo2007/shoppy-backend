@@ -10,6 +10,7 @@ class UpdateSupplierRequest extends MainRequest
     public function rules(): array
     {
         $supplierId = $this->route('id');
+
         return [
             'name' => [
                 'required',
@@ -26,7 +27,7 @@ class UpdateSupplierRequest extends MainRequest
             'address' => [
                 'required',
                 'string',
-                'max:500'
+                'max:500',
             ],
         ];
     }

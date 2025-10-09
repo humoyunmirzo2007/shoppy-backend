@@ -18,9 +18,10 @@ class ClientService
             return $this->clientRepository->getAll($data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Mijozlarni olishda xatolik yuz berdi'
+                'message' => 'Mijozlarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -31,9 +32,10 @@ class ClientService
             return $this->clientRepository->getAllActive();
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Faol mijozlarni olishda xatolik yuz berdi'
+                'message' => 'Faol mijozlarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -44,9 +46,10 @@ class ClientService
             return $this->clientRepository->getAllWithDebt($data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Qarzli mijozlarni olishda xatolik yuz berdi'
+                'message' => 'Qarzli mijozlarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -56,23 +59,24 @@ class ClientService
         try {
             $client = $this->clientRepository->store($data);
 
-            if (!$client) {
+            if (! $client) {
                 return [
                     'status' => 'error',
-                    'message' => 'Mijoz qo\'shishda xatolik yuz berdi'
+                    'message' => 'Mijoz qo\'shishda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'Mijoz muvaffaqiyatli qo\'shildi',
-                'data' => $client
+                'data' => $client,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Mijoz qo\'shishda xatolik yuz berdi'
+                'message' => 'Mijoz qo\'shishda xatolik yuz berdi',
             ];
         }
     }
@@ -82,32 +86,34 @@ class ClientService
         try {
             $client = $this->clientRepository->getById($id);
 
-            if (!$client) {
+            if (! $client) {
                 return [
                     'status' => 'error',
                     'message' => 'Mijoz topilmadi',
-                    'status_code' => 404
+                    'status_code' => 404,
                 ];
             }
 
             $client = $this->clientRepository->update($client, $data);
 
-            if (!$client) {
+            if (! $client) {
                 return [
                     'status' => 'error',
-                    'message' => 'Mijoz ma\'lumotlarini yangilashda xatolik yuz berdi'
+                    'message' => 'Mijoz ma\'lumotlarini yangilashda xatolik yuz berdi',
                 ];
             }
+
             return [
                 'status' => 'success',
-                'message' =>  'Mijoz ma\'lumotlari muvaffaqiyatli yangilandi',
-                'data' => $client
+                'message' => 'Mijoz ma\'lumotlari muvaffaqiyatli yangilandi',
+                'data' => $client,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Mijoz ma\'lumotlarini yangilashda xatolik yuz berdi'
+                'message' => 'Mijoz ma\'lumotlarini yangilashda xatolik yuz berdi',
             ];
         }
     }
@@ -120,13 +126,14 @@ class ClientService
             return [
                 'status' => 'success',
                 'message' => 'Mijoz faollik holati muvaffaqiyatli o\'zgartirildi',
-                'data' => $client
+                'data' => $client,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Mijoz faolligini o\'zgartirishda xatolik yuz berdi'
+                'message' => 'Mijoz faolligini o\'zgartirishda xatolik yuz berdi',
             ];
         }
     }

@@ -10,6 +10,7 @@ class UpdatePaymentTypeRequest extends MainRequest
     public function rules(): array
     {
         $paymentTypeId = $this->route('id');
+
         return [
             'name' => [
                 'required',

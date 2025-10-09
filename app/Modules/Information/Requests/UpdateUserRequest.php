@@ -31,9 +31,9 @@ class UpdateUserRequest extends MainRequest
                 'string',
                 'min:8',
                 'max:255',
-                'not_in:""'
+                'not_in:""',
             ],
-            'position' => ['required']
+            'position' => ['required'],
         ];
     }
 

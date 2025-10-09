@@ -2,14 +2,14 @@
 
 namespace App\Modules\Cashbox\Controllers;
 
+use App\Helpers\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DefaultResource;
 use App\Modules\Cashbox\Requests\GetTransferByIdRequest;
 use App\Modules\Cashbox\Requests\GetTransfersRequest;
 use App\Modules\Cashbox\Requests\StoreTransferRequest;
-use App\Modules\Cashbox\Services\TransferService;
 use App\Modules\Cashbox\Resources\TransferResource;
-use App\Helpers\Response;
+use App\Modules\Cashbox\Services\TransferService;
 
 class TransferController extends Controller
 {
@@ -22,11 +22,11 @@ class TransferController extends Controller
     {
         $result = $this->transferService->getTransfers($request->validated());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error($result['message'], 400);
         }
 
-        return  DefaultResource::collection($result['data']);
+        return DefaultResource::collection($result['data']);
 
         return $transfers;
     }
@@ -38,7 +38,7 @@ class TransferController extends Controller
     {
         $result = $this->transferService->createTransfer($request->validated());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error($result['message'], 400);
         }
 
@@ -52,7 +52,7 @@ class TransferController extends Controller
     {
         $result = $this->transferService->getTransferById($request->validated()['id']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error($result['message'], 404);
         }
 
@@ -66,7 +66,7 @@ class TransferController extends Controller
     {
         $result = $this->transferService->deleteTransfer($request->validated()['id']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return Response::error($result['message'], 400);
         }
 

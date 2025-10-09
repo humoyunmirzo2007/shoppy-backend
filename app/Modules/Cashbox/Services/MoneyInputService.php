@@ -3,18 +3,18 @@
 namespace App\Modules\Cashbox\Services;
 
 use App\Helpers\TelegramBugNotifier;
-use App\Modules\Cashbox\Interfaces\MoneyInputInterface;
-use App\Modules\Cashbox\Enums\PaymentTypesEnum;
-use App\Modules\Cashbox\Enums\OtherCalculationTypesEnum;
-use App\Modules\Cashbox\Interfaces\OtherCalculationInterface;
 use App\Models\PaymentType;
-use App\Modules\Trade\Interfaces\ClientCalculationInterface;
+use App\Modules\Cashbox\Enums\OtherCalculationTypesEnum;
+use App\Modules\Cashbox\Enums\PaymentTypesEnum;
+use App\Modules\Cashbox\Interfaces\MoneyInputInterface;
+use App\Modules\Cashbox\Interfaces\OtherCalculationInterface;
 use App\Modules\Trade\Enums\ClientCalculationTypesEnum;
-use App\Modules\Warehouse\Interfaces\SupplierCalculationInterface;
+use App\Modules\Trade\Interfaces\ClientCalculationInterface;
 use App\Modules\Warehouse\Enums\SupplierCalculationTypesEnum;
+use App\Modules\Warehouse\Interfaces\SupplierCalculationInterface;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MoneyInputService
@@ -31,9 +31,11 @@ class MoneyInputService
     {
         try {
             $moneyInputs = $this->moneyInputRepository->getAllMoneyInputs($data);
+
             return ['success' => true, 'data' => $moneyInputs];
         } catch (Exception $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Kirim operatsiyalarni olishda xatolik yuz berdi'];
         }
     }
@@ -43,13 +45,14 @@ class MoneyInputService
         try {
             $moneyInput = $this->moneyInputRepository->getMoneyInputById($id);
 
-            if (!$moneyInput) {
+            if (! $moneyInput) {
                 return ['success' => false, 'message' => 'Kirim operatsiya topilmadi'];
             }
 
             return ['success' => true, 'data' => $moneyInput];
         } catch (Exception $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Kirim operatsiyani olishda xatolik yuz berdi'];
         }
     }
@@ -76,6 +79,7 @@ class MoneyInputService
         } catch (Exception $e) {
             DB::rollBack();
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Kirim operatsiya yaratishda xatolik yuz berdi'];
         }
     }
@@ -86,13 +90,13 @@ class MoneyInputService
             $data['user_id'] = Auth::id();
             $moneyInput = $this->moneyInputRepository->getMoneyInputById($id);
 
-            if (!$moneyInput) {
+            if (! $moneyInput) {
                 return ['success' => false, 'message' => 'Kirim operatsiya topilmadi'];
             }
 
             // Qoldiqni tekshirish - update qilishdan oldin
             $paymentType = PaymentType::find($data['payment_type_id']);
-            if (!$paymentType) {
+            if (! $paymentType) {
                 return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
             }
 
@@ -106,7 +110,7 @@ class MoneyInputService
                     if ($paymentType->residue < $requiredResidue) {
                         return [
                             'success' => false,
-                            'message' => "Kirim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($paymentType->residue, 2) . " so'm, kerak: " . number_format($requiredResidue, 2) . " so'm"
+                            'message' => "Kirim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: ".number_format($paymentType->residue, 2)." so'm, kerak: ".number_format($requiredResidue, 2)." so'm",
                         ];
                     }
                 }
@@ -130,6 +134,7 @@ class MoneyInputService
         } catch (Exception $e) {
             DB::rollBack();
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Kirim operatsiyani yangilashda xatolik yuz berdi'];
         }
     }
@@ -139,20 +144,20 @@ class MoneyInputService
         try {
             $moneyInput = $this->moneyInputRepository->getMoneyInputById($id);
 
-            if (!$moneyInput) {
+            if (! $moneyInput) {
                 return ['success' => false, 'message' => 'Kirim operatsiya topilmadi'];
             }
 
             // Check payment_type residue before deletion
             $paymentType = PaymentType::find($moneyInput->payment_type_id);
-            if (!$paymentType) {
+            if (! $paymentType) {
                 return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
             }
 
             if ($paymentType->residue < $moneyInput->amount) {
                 return [
                     'success' => false,
-                    'message' => "Kirim operatsiyani o'chirib bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($paymentType->residue, 2) . " so'm, o'chirilishi kerak: " . number_format($moneyInput->amount, 2) . " so'm"
+                    'message' => "Kirim operatsiyani o'chirib bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: ".number_format($paymentType->residue, 2)." so'm, o'chirilishi kerak: ".number_format($moneyInput->amount, 2)." so'm",
                 ];
             }
 
@@ -163,21 +168,24 @@ class MoneyInputService
 
             if ($deleted) {
                 DB::commit();
+
                 return ['success' => true, 'message' => 'Kirim operatsiya muvaffaqiyatli o\'chirildi'];
             }
 
             DB::rollBack();
+
             return ['success' => false, 'message' => 'Kirim operatsiyani o\'chirishda xatolik yuz berdi'];
         } catch (Exception $e) {
             DB::rollBack();
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Kirim operatsiyani o\'chirishda xatolik yuz berdi'];
         }
     }
 
     private function createPaymentCalculation($moneyInput, $data)
     {
-        if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && !empty($data['supplier_id'])) {
+        if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && ! empty($data['supplier_id'])) {
             $calculationValue = -$moneyInput->amount; // Negative value for supplier payment
 
             $this->supplierCalculationRepository->create([
@@ -188,7 +196,7 @@ class MoneyInputService
                 'value' => $calculationValue,
                 'date' => $moneyInput->date ?? now()->format('Y-m-d'),
             ]);
-        } elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && !empty($data['client_id'])) {
+        } elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && ! empty($data['client_id'])) {
             $calculationValue = -$moneyInput->amount; // Negative value for client payment
 
             $this->clientCalculationRepository->create([
@@ -220,7 +228,7 @@ class MoneyInputService
         $existingOtherCalculation = $this->otherCalculationRepository->getByPaymentId($moneyInput->id);
 
         // Handle SUPPLIER_PAYMENT_INPUT
-        if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && !empty($moneyInput->supplier_id)) {
+        if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && ! empty($moneyInput->supplier_id)) {
             $calculationValue = -$moneyInput->amount; // Negative value for supplier payment
 
             // Delete any existing client or other calculations (if payment type changed)
@@ -252,7 +260,7 @@ class MoneyInputService
             }
         }
         // Handle CLIENT_PAYMENT_INPUT
-        elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && !empty($moneyInput->client_id)) {
+        elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && ! empty($moneyInput->client_id)) {
             $calculationValue = -$moneyInput->amount; // Negative value for client payment
 
             // Delete any existing supplier or other calculations (if payment type changed)

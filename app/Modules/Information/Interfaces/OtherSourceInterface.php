@@ -3,8 +3,6 @@
 namespace App\Modules\Information\Interfaces;
 
 use App\Models\OtherSource;
-use App\Modules\Information\Enums\OtherSourceTypesEnum;
-use Illuminate\Database\Eloquent\Collection;
 
 interface OtherSourceInterface
 {

@@ -33,26 +33,24 @@ class TradeRepository implements TradeInterface
                     $query->orWhere('number', 'ilike', "%$search%");
                 });
             })
-            ->when(!empty($filters['from_date']), function ($query) use ($filters) {
+            ->when(! empty($filters['from_date']), function ($query) use ($filters) {
                 $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');
                 $query->whereDate('date', '>=', $from);
             })
-            ->when(!empty($filters['to_date']), function ($query) use ($filters) {
+            ->when(! empty($filters['to_date']), function ($query) use ($filters) {
                 $to = Carbon::createFromFormat('d.m.Y', $filters['to_date'])->format('Y-m-d');
                 $query->whereDate('date', '<=', $to);
             })
             ->when(
-                !empty($filters['client_id']),
-                fn($q) =>
-                $q->whereHas('client', fn($cq) => $cq->where('id', $filters['client_id']))
+                ! empty($filters['client_id']),
+                fn ($q) => $q->whereHas('client', fn ($cq) => $cq->where('id', $filters['client_id']))
             )
             ->when(
-                !empty($filters['user_id']),
-                fn($q) =>
-                $q->whereHas('user', fn($uq) => $uq->where('id', $filters['user_id']))
+                ! empty($filters['user_id']),
+                fn ($q) => $q->whereHas('user', fn ($uq) => $uq->where('id', $filters['user_id']))
             )
-            ->when(!empty($filters['price_from']), fn($q) => $q->where('total_price', '>=', $filters['price_from']))
-            ->when(!empty($filters['price_to']), fn($q) => $q->where('total_price', '<=', $filters['price_to']))
+            ->when(! empty($filters['price_from']), fn ($q) => $q->where('total_price', '>=', $filters['price_from']))
+            ->when(! empty($filters['price_to']), fn ($q) => $q->where('total_price', '<=', $filters['price_to']))
             ->sortable($sort)
             ->simplePaginate($limit);
     }
@@ -86,7 +84,7 @@ class TradeRepository implements TradeInterface
                 'total_price' => abs($data['total_price']),
                 'user_id' => Auth::id(),
                 'type' => $data['type'],
-                'commentary' => $data['commentary'] ?? null
+                'commentary' => $data['commentary'] ?? null,
             ]
         );
 

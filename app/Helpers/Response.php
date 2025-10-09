@@ -9,7 +9,7 @@ class Response
         return response()->json([
             'status' => 'success',
             'message' => $message,
-            'data' => $data
+            'data' => $data,
         ], $status);
     }
 
@@ -18,7 +18,7 @@ class Response
         return response()->json([
             'status' => 'error',
             'message' => $message,
-            'errors' => is_array($errors) ? array_values($errors) : [$errors]
+            'errors' => is_array($errors) ? array_values($errors) : [$errors],
         ], $status);
     }
 }

@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Mews\Captcha\Captcha;
 
-
 class AuthController extends Controller
 {
     public function __construct(
@@ -19,7 +18,6 @@ class AuthController extends Controller
     ) {}
 
     public function login(LoginRequest $request)
-
     {
         $credentials = [
             'username' => $request->get('username'),
@@ -28,7 +26,7 @@ class AuthController extends Controller
 
         $user = $this->userRepository->getByUsername($credentials['username']);
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             return Response::error(
                 message: 'Foydalanuvchi nomi yoki parol noto\'g\'ri',
                 status: 401
@@ -46,7 +44,7 @@ class AuthController extends Controller
 
         return Response::success(
             data: [
-                'token' => $token
+                'token' => $token,
             ],
             message: 'Tizimga muvaffaqiyatli kirdingiz',
 

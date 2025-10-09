@@ -12,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, Sortable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable, Sortable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,10 +25,8 @@ class User extends Authenticatable
         'username',
         'password',
         'phone_number',
-        'is_active'
+        'is_active',
     ];
-
-
 
     /**
      * The attributes that should be hidden for serialization.
@@ -42,6 +40,7 @@ class User extends Authenticatable
     ];
 
     protected $sortable = ['id', 'full_name', 'is_active', 'phone_number', 'position', 'username'];
+
     /**
      * Get the attributes that should be cast.
      *

@@ -3,13 +3,13 @@
 namespace App\Modules\Cashbox\Services;
 
 use App\Helpers\TelegramBugNotifier;
-use App\Modules\Cashbox\Interfaces\MoneyOutputInterface;
+use App\Models\OtherCalculation;
+use App\Models\PaymentType;
 use App\Modules\Cashbox\Enums\CostTypesEnum;
 use App\Modules\Cashbox\Enums\OtherCalculationTypesEnum;
-use App\Models\OtherCalculation;
-use Illuminate\Support\Facades\Auth;
-use App\Models\PaymentType;
+use App\Modules\Cashbox\Interfaces\MoneyOutputInterface;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class MoneyOutputService
 {
@@ -22,9 +22,11 @@ class MoneyOutputService
     {
         try {
             $moneyOutputs = $this->moneyOutputRepository->getAllMoneyOutputs($data);
+
             return ['success' => true, 'data' => $moneyOutputs];
         } catch (Exception $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Chiqim operatsiyalarni olishda xatolik yuz berdi'];
         }
     }
@@ -34,13 +36,14 @@ class MoneyOutputService
         try {
             $moneyOutput = $this->moneyOutputRepository->getMoneyOutputById($id);
 
-            if (!$moneyOutput) {
+            if (! $moneyOutput) {
                 return ['success' => false, 'message' => 'Chiqim operatsiya topilmadi'];
             }
 
             return ['success' => true, 'data' => $moneyOutput];
         } catch (Exception $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Chiqim operatsiyani olishda xatolik yuz berdi'];
         }
     }
@@ -51,14 +54,14 @@ class MoneyOutputService
             $data['user_id'] = Auth::id();
             // Check payment_type residue before creating cost
             $paymentType = PaymentType::find($data['payment_type_id']);
-            if (!$paymentType) {
+            if (! $paymentType) {
                 return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
             }
 
             if ($paymentType->residue < $data['amount']) {
                 return [
                     'success' => false,
-                    'message' => "Chiqim operatsiya yaratib bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($paymentType->residue, 2) . " so'm"
+                    'message' => "Chiqim operatsiya yaratib bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: ".number_format($paymentType->residue, 2)." so'm",
                 ];
             }
 
@@ -72,13 +75,14 @@ class MoneyOutputService
                     'cost_id' => $moneyOutput->id, // Link to the money operation
                     'type' => OtherCalculationTypesEnum::OTHER_COST->value,
                     'value' => -$data['amount'], // Negative because it's a cost
-                    'date' => now()->toDateString()
+                    'date' => now()->toDateString(),
                 ]);
             }
 
             return ['success' => true, 'data' => $moneyOutput, 'message' => 'Chiqim operatsiya muvaffaqiyatli yaratildi'];
         } catch (Exception $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Chiqim operatsiya yaratishda xatolik yuz berdi'];
         }
     }
@@ -89,13 +93,13 @@ class MoneyOutputService
             $moneyOutput = $this->moneyOutputRepository->getMoneyOutputById($id);
             $data['user_id'] = Auth::id();
 
-            if (!$moneyOutput) {
+            if (! $moneyOutput) {
                 return ['success' => false, 'message' => 'Chiqim operatsiya topilmadi'];
             }
 
             // Check payment_type residue before updating cost
             $paymentType = PaymentType::find($data['payment_type_id']);
-            if (!$paymentType) {
+            if (! $paymentType) {
                 return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
             }
 
@@ -114,7 +118,7 @@ class MoneyOutputService
                         if ($paymentType->residue < $amountDifference) {
                             return [
                                 'success' => false,
-                                'message' => "Chiqim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($paymentType->residue, 2) . " so'm, kerak: " . number_format($amountDifference, 2) . " so'm"
+                                'message' => "Chiqim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: ".number_format($paymentType->residue, 2)." so'm, kerak: ".number_format($amountDifference, 2)." so'm",
                             ];
                         }
                     } else {
@@ -123,7 +127,7 @@ class MoneyOutputService
                         if ($residueAfterRevert < $data['amount']) {
                             return [
                                 'success' => false,
-                                'message' => "Chiqim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($residueAfterRevert, 2) . " so'm, kerak: " . number_format($data['amount'], 2) . " so'm"
+                                'message' => "Chiqim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: ".number_format($residueAfterRevert, 2)." so'm, kerak: ".number_format($data['amount'], 2)." so'm",
                             ];
                         }
                     }
@@ -134,7 +138,7 @@ class MoneyOutputService
                     if ($paymentType->residue < $data['amount']) {
                         return [
                             'success' => false,
-                            'message' => "Chiqim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: " . number_format($paymentType->residue, 2) . " so'm, kerak: " . number_format($data['amount'], 2) . " so'm"
+                            'message' => "Chiqim operatsiyani yangilab bo'lmaydi. {$paymentType->name} hisobida yetarli mablag' yo'q. Mavjud: ".number_format($paymentType->residue, 2)." so'm, kerak: ".number_format($data['amount'], 2)." so'm",
                         ];
                     }
                 }
@@ -157,7 +161,7 @@ class MoneyOutputService
                         'user_id' => $data['user_id'],
                         'type' => OtherCalculationTypesEnum::OTHER_COST->value,
                         'value' => $calculationValue,
-                        'date' => now()->toDateString()
+                        'date' => now()->toDateString(),
                     ]);
                 } else {
                     OtherCalculation::create([
@@ -166,7 +170,7 @@ class MoneyOutputService
                         'cost_id' => $updatedMoneyOutput->id,
                         'type' => OtherCalculationTypesEnum::OTHER_COST->value,
                         'value' => $calculationValue,
-                        'date' => now()->toDateString()
+                        'date' => now()->toDateString(),
                     ]);
                 }
             } else {
@@ -179,6 +183,7 @@ class MoneyOutputService
             return ['success' => true, 'data' => $updatedMoneyOutput, 'message' => 'Chiqim operatsiya muvaffaqiyatli yangilandi'];
         } catch (Exception $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Chiqim operatsiyani yangilashda xatolik yuz berdi'];
         }
     }
@@ -188,7 +193,7 @@ class MoneyOutputService
         try {
             $moneyOutput = $this->moneyOutputRepository->getMoneyOutputById($id);
 
-            if (!$moneyOutput) {
+            if (! $moneyOutput) {
                 return ['success' => false, 'message' => 'Chiqim operatsiya topilmadi'];
             }
 
@@ -204,6 +209,7 @@ class MoneyOutputService
             return ['success' => false, 'message' => 'Chiqim operatsiyani o\'chirishda xatolik yuz berdi'];
         } catch (Exception $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return ['success' => false, 'message' => 'Chiqim operatsiyani o\'chirishda xatolik yuz berdi'];
         }
     }

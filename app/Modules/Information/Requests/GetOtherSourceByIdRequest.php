@@ -27,7 +27,7 @@ class GetOtherSourceByIdRequest extends MainRequest
         parent::prepareForValidation();
 
         $this->merge([
-            'id' => $this->route('id')
+            'id' => $this->route('id'),
         ]);
     }
 }

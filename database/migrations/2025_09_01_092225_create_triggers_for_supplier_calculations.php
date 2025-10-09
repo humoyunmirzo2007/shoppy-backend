@@ -22,13 +22,13 @@ return new class extends Migration
     public function down(): void
     {
         // Drop triggers
-        DB::unprepared("DROP TRIGGER IF EXISTS trg_supplier_calculation_create ON supplier_calculations");
-        DB::unprepared("DROP TRIGGER IF EXISTS trg_supplier_calculation_update ON supplier_calculations");
-        DB::unprepared("DROP TRIGGER IF EXISTS trg_supplier_calculation_delete ON supplier_calculations");
+        DB::unprepared('DROP TRIGGER IF EXISTS trg_supplier_calculation_create ON supplier_calculations');
+        DB::unprepared('DROP TRIGGER IF EXISTS trg_supplier_calculation_update ON supplier_calculations');
+        DB::unprepared('DROP TRIGGER IF EXISTS trg_supplier_calculation_delete ON supplier_calculations');
 
         // Drop functions
-        DB::unprepared("DROP FUNCTION IF EXISTS calculate_supplier_debt_when_supplier_calculation_create()");
-        DB::unprepared("DROP FUNCTION IF EXISTS calculate_supplier_debt_when_supplier_calculation_update()");
-        DB::unprepared("DROP FUNCTION IF EXISTS calculate_supplier_debt_when_supplier_calculation_delete()");
+        DB::unprepared('DROP FUNCTION IF EXISTS calculate_supplier_debt_when_supplier_calculation_create()');
+        DB::unprepared('DROP FUNCTION IF EXISTS calculate_supplier_debt_when_supplier_calculation_update()');
+        DB::unprepared('DROP FUNCTION IF EXISTS calculate_supplier_debt_when_supplier_calculation_delete()');
     }
 };

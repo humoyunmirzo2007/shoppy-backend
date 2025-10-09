@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class ProductRepository implements ProductInterface
 {
-
     public function __construct(protected Product $product) {}
 
     public function getAll(array $data, array $fields = ['*'], ?bool $withLimit = true)
@@ -18,7 +17,7 @@ class ProductRepository implements ProductInterface
         $sort = $data['sort'] ?? ['id' => 'desc'];
         $filters = $data['filters'] ?? [];
 
-        $query =  $this->product->query()
+        $query = $this->product->query()
             ->select($fields)
             ->with(['category:id,name'])
             ->when($search, function ($query) use ($search) {
@@ -29,14 +28,15 @@ class ProductRepository implements ProductInterface
                     $query->orWhere('name', 'ilike', "%$search%");
                 });
             })
-            ->when(!empty($filters['category_id']), function ($query) use ($filters) {
+            ->when(! empty($filters['category_id']), function ($query) use ($filters) {
                 $query->where('category_id', $filters['category_id']);
             })
             ->sortable($sort);
 
-        if (!$withLimit) {
+        if (! $withLimit) {
             return $query->get();
         }
+
         return $query->simplePaginate($limit);
     }
 
@@ -73,17 +73,18 @@ class ProductRepository implements ProductInterface
     public function invertActive(int $id)
     {
         $product = $this->product->find($id);
-        $product->is_active = !$product->is_active;
+        $product->is_active = ! $product->is_active;
         $product->save();
 
         return $this->product->with(['category:id,name'])
             ->select('id', 'name', 'unit', 'is_active', 'category_id', 'price')
             ->find($id);
     }
+
     public function import(array $insertProducts, array $updateProducts): void
     {
         DB::transaction(function () use ($insertProducts, $updateProducts) {
-            if (!empty($insertProducts)) {
+            if (! empty($insertProducts)) {
                 $this->product->insert($insertProducts);
             }
 
@@ -108,8 +109,7 @@ class ProductRepository implements ProductInterface
             ->whereIn('id', $ids)
             ->select('id', 'residue')
             ->get()
-            ->keyBy('id')
-        ;
+            ->keyBy('id');
     }
 
     public function upsert(array $data, array $uniqueBy, array $updates): void

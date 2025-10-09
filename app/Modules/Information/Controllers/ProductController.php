@@ -99,7 +99,6 @@ class ProductController
         );
     }
 
-
     public function updatePricesFromTemplate(UploadProductsImportFileRequest $request)
     {
         $data = $this->productService->updatePricesFromTemplate($request->file('file'));

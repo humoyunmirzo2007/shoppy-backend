@@ -82,7 +82,7 @@ class ClientRepository implements ClientInterface
     public function invertActive(int $id)
     {
         $client = $this->client->find($id);
-        $client->is_active = !$client->is_active;
+        $client->is_active = ! $client->is_active;
         $client->save();
 
         return $client;

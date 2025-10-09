@@ -20,13 +20,13 @@ class OtherCalculation extends Model
         'invoice_id',
         'type',
         'value',
-        'date'
+        'date',
     ];
 
     protected $casts = [
         'date' => 'date',
         'value' => 'decimal:2',
-        'type' => OtherCalculationTypesEnum::class
+        'type' => OtherCalculationTypesEnum::class,
     ];
 
     protected $hidden = ['created_at'];

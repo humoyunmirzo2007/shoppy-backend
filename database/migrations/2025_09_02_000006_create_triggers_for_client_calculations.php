@@ -22,13 +22,13 @@ return new class extends Migration
     public function down(): void
     {
         // Drop triggers
-        DB::unprepared("DROP TRIGGER IF EXISTS trg_client_calculation_create ON client_calculations");
-        DB::unprepared("DROP TRIGGER IF EXISTS trg_client_calculation_update ON client_calculations");
-        DB::unprepared("DROP TRIGGER IF EXISTS trg_client_calculation_delete ON client_calculations");
+        DB::unprepared('DROP TRIGGER IF EXISTS trg_client_calculation_create ON client_calculations');
+        DB::unprepared('DROP TRIGGER IF EXISTS trg_client_calculation_update ON client_calculations');
+        DB::unprepared('DROP TRIGGER IF EXISTS trg_client_calculation_delete ON client_calculations');
 
         // Drop functions
-        DB::unprepared("DROP FUNCTION IF EXISTS calculate_client_debt_when_client_calculation_create()");
-        DB::unprepared("DROP FUNCTION IF EXISTS calculate_client_debt_when_client_calculation_update()");
-        DB::unprepared("DROP FUNCTION IF EXISTS calculate_client_debt_when_client_calculation_delete()");
+        DB::unprepared('DROP FUNCTION IF EXISTS calculate_client_debt_when_client_calculation_create()');
+        DB::unprepared('DROP FUNCTION IF EXISTS calculate_client_debt_when_client_calculation_update()');
+        DB::unprepared('DROP FUNCTION IF EXISTS calculate_client_debt_when_client_calculation_delete()');
     }
 };

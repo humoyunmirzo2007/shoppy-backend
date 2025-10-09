@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\MainRequest;
-
 class LoginRequest extends MainRequest
 {
     public function rules()
@@ -13,11 +11,11 @@ class LoginRequest extends MainRequest
             'password' => ['required', 'string', 'max:255'],
         ];
 
-        if (!config('captcha.disable')) {
+        if (! config('captcha.disable')) {
             $rules['key'] = ['required', 'string'];
             $rules['captcha'] = [
                 'required',
-                'captcha_api:' . request('key') . ',math',
+                'captcha_api:'.request('key').',math',
             ];
         }
 

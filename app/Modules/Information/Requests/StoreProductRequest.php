@@ -18,11 +18,11 @@ class StoreProductRequest extends MainRequest
             'category_id' => [
                 'required',
                 'integer',
-                'exists:categories,id'
+                'exists:categories,id',
             ],
             'unit' => [
                 'required',
-                'not_in:""'
+                'not_in:""',
             ],
         ];
     }

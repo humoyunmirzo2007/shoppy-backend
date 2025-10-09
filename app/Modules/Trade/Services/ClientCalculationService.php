@@ -18,9 +18,10 @@ class ClientCalculationService
             return $this->clientCalculationRepository->getByClientId($clientId, $data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Mijoz hisob-kitoblarini olishda xatolik yuz berdi'
+                'message' => 'Mijoz hisob-kitoblarini olishda xatolik yuz berdi',
             ];
         }
     }

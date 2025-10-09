@@ -1,9 +1,7 @@
 <?php
 
-
 namespace App\Modules\Warehouse\Resources;
 
-use App\Modules\Warehouse\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class InvoiceResource extends JsonResource

@@ -15,16 +15,16 @@ class UpdateProductRequest extends MainRequest
             'name' => [
                 'required',
                 'max:255',
-                Rule::unique('products')->ignore($productId)
+                Rule::unique('products')->ignore($productId),
             ],
             'category_id' => [
                 'required',
                 'integer',
-                'exists:categories,id'
+                'exists:categories,id',
             ],
             'unit' => [
                 'required',
-                'not_in:""'
+                'not_in:""',
             ],
         ];
     }

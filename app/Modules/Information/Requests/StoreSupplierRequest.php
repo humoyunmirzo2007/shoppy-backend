@@ -3,7 +3,6 @@
 namespace App\Modules\Information\Requests;
 
 use App\Http\Requests\MainRequest;
-use Illuminate\Validation\Rule;
 
 class StoreSupplierRequest extends MainRequest
 {

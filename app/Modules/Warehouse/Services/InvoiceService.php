@@ -3,15 +3,15 @@
 namespace App\Modules\Warehouse\Services;
 
 use App\Helpers\TelegramBugNotifier;
+use App\Modules\Cashbox\Enums\OtherCalculationTypesEnum;
+use App\Modules\Cashbox\Interfaces\OtherCalculationInterface;
+use App\Modules\Information\Interfaces\OtherSourceInterface;
 use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Information\Interfaces\SupplierInterface;
-use App\Modules\Information\Interfaces\OtherSourceInterface;
 use App\Modules\Warehouse\Enums\InvoiceTypesEnum;
 use App\Modules\Warehouse\Interfaces\InvoiceInterface;
 use App\Modules\Warehouse\Interfaces\SupplierCalculationInterface;
 use App\Modules\Warehouse\Repositories\InvoiceProductRepository;
-use App\Modules\Cashbox\Interfaces\OtherCalculationInterface;
-use App\Modules\Cashbox\Enums\OtherCalculationTypesEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -35,9 +35,10 @@ class InvoiceService
             return $this->invoiceRepository->getByTypes($types, $data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Fakturalarni olishda xatolik yuz berdi'
+                'message' => 'Fakturalarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -48,9 +49,10 @@ class InvoiceService
             return $this->invoiceRepository->getByIdWithProducts($id);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Faktura ma\'lumotlarini olishda xatolik yuz berdi'
+                'message' => 'Faktura ma\'lumotlarini olishda xatolik yuz berdi',
             ];
         }
     }
@@ -68,14 +70,15 @@ class InvoiceService
                 default:
                     return [
                         'status' => 'error',
-                        'message' => 'Mavjud bo\'lmagan turni yubordingiz'
+                        'message' => 'Mavjud bo\'lmagan turni yubordingiz',
                     ];
             }
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Faktura yaratishda xatolik yuz berdi'
+                'message' => 'Faktura yaratishda xatolik yuz berdi',
             ];
         }
     }
@@ -93,14 +96,15 @@ class InvoiceService
                 default:
                     return [
                         'status' => 'error',
-                        'message' => 'Mavjud bo\'lmagan turni yubordingiz'
+                        'message' => 'Mavjud bo\'lmagan turni yubordingiz',
                     ];
             }
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Fakturani yangilashda xatolik yuz berdi'
+                'message' => 'Fakturani yangilashda xatolik yuz berdi',
             ];
         }
     }
@@ -118,11 +122,12 @@ class InvoiceService
 
             $result = $this->invoiceRepository->delete($invoice);
 
-            if (!$result) {
+            if (! $result) {
                 DB::rollBack();
+
                 return [
                     'status' => 'error',
-                    'message' => 'Fakturani o\'chirishda xatolik yuz berdi'
+                    'message' => 'Fakturani o\'chirishda xatolik yuz berdi',
                 ];
             }
 
@@ -130,14 +135,15 @@ class InvoiceService
 
             return [
                 'status' => 'success',
-                'message' => 'Faktura muvaffaqiyatli o\'chirildi'
+                'message' => 'Faktura muvaffaqiyatli o\'chirildi',
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Fakturani o\'chirishda xatolik yuz berdi'
+                'message' => 'Fakturani o\'chirishda xatolik yuz berdi',
             ];
         }
     }
@@ -155,15 +161,15 @@ class InvoiceService
                 if ($residueNotEnough) {
                     return [
                         'status' => 'error',
-                        'message' => $residueNotEnough
+                        'message' => $residueNotEnough,
                     ];
                 }
 
-                $products = $this->makeProductCountsNegative($products);;
+                $products = $this->makeProductCountsNegative($products);
             }
 
             $data['products_count'] = array_sum(array_column($products, 'count'));
-            $data['total_price'] =  $this->getTotalPrice($products);
+            $data['total_price'] = $this->getTotalPrice($products);
 
             // Date formatini o'zgartirish (dd.mm.yyyy -> Y-m-d)
             $data['date'] = Carbon::parse($data['date'])->format('Y-m-d');
@@ -173,7 +179,7 @@ class InvoiceService
             $this->invoiceProductRepository->store($this->cleanAndPrepareTradeProducts($products, $invoice->id));
 
             // Create supplier calculation if supplier_id exists
-            if (!empty($data['supplier_id'])) {
+            if (! empty($data['supplier_id'])) {
                 $this->createSupplierCalculation($invoice, $data);
             }
 
@@ -187,14 +193,15 @@ class InvoiceService
             return [
                 'status' => 'success',
                 'message' => 'Faktura muvaffaqiyatli qo\'shildi',
-                'data' => $invoice
+                'data' => $invoice,
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Faktura yaratishda xatolik yuz berdi'
+                'message' => 'Faktura yaratishda xatolik yuz berdi',
             ];
         }
     }
@@ -207,18 +214,18 @@ class InvoiceService
 
         $invoice = $this->invoiceRepository->findById($id);
 
-        if (!$invoice) {
+        if (! $invoice) {
             return [
                 'status' => 'error',
                 'message' => 'Ushbu faktura topilmadi',
-                'status_code' => 404
+                'status_code' => 404,
             ];
         }
 
-        $normalProducts = array_filter($products, fn($product) => $product['action'] === 'normal');
-        $productsForInsert = array_filter($products, fn($product) => $product['action'] === 'add');
-        $productsForUpdate = array_filter($products, fn($product) => $product['action'] === 'edit');
-        $productIdsForDelete = array_map(fn($product) => $product['id'], array_filter($products, fn($product) => $product['action'] === 'delete'));
+        $normalProducts = array_filter($products, fn ($product) => $product['action'] === 'normal');
+        $productsForInsert = array_filter($products, fn ($product) => $product['action'] === 'add');
+        $productsForUpdate = array_filter($products, fn ($product) => $product['action'] === 'edit');
+        $productIdsForDelete = array_map(fn ($product) => $product['id'], array_filter($products, fn ($product) => $product['action'] === 'delete'));
 
         $savableProducts = array_merge($normalProducts, $productsForInsert, $productsForUpdate);
 
@@ -230,7 +237,7 @@ class InvoiceService
                 if ($residueNotEnough) {
                     return [
                         'status' => 'error',
-                        'message' => $residueNotEnough
+                        'message' => $residueNotEnough,
                     ];
                 }
             }
@@ -241,7 +248,7 @@ class InvoiceService
                 if ($residueNotEnough) {
                     return [
                         'status' => 'error',
-                        'message' => $residueNotEnough
+                        'message' => $residueNotEnough,
                     ];
                 }
             }
@@ -253,10 +260,10 @@ class InvoiceService
             return array_key_exists('action', $product);
         });
 
-        if (!$allHaveAction) {
+        if (! $allHaveAction) {
             return [
                 'status' => 'error',
-                'message' => 'Barcha tovarlarda action bo\'lishi kerak'
+                'message' => 'Barcha tovarlarda action bo\'lishi kerak',
             ];
         }
 
@@ -274,8 +281,7 @@ class InvoiceService
         }
 
         $data['products_count'] = array_sum(array_column($savableProducts, 'count'));
-        $data['total_price']  =  $this->getTotalPrice($savableProducts);
-
+        $data['total_price'] = $this->getTotalPrice($savableProducts);
 
         // Generate history entry before updating
         $productChanges = $this->getProductChanges($invoice->id, $products);
@@ -283,7 +289,7 @@ class InvoiceService
 
         // Get current history and add new entry only if there are changes
         $currentHistory = $invoice->history ?? [];
-        if (!empty($historyEntry['description'])) {
+        if (! empty($historyEntry['description'])) {
             $currentHistory[] = $historyEntry;
         }
 
@@ -294,19 +300,20 @@ class InvoiceService
                 'date' => \Carbon\Carbon::createFromFormat('d.m.Y', $data['date'])->format('Y-m-d'),
                 'supplier_id' => $data['supplier_id'] ?? null,
                 'other_source_id' => $data['other_source_id'] ?? null,
-                'products_count' =>  abs($data['products_count']),
+                'products_count' => abs($data['products_count']),
                 'total_price' => abs($data['total_price']),
                 'user_id' => Auth::id(),
                 'type' => $data['type'],
                 'commentary' => $data['commentary'] ?? null,
-                'history' => $currentHistory
+                'history' => $currentHistory,
             ]);
 
-            if (!$updatedInvoice) {
+            if (! $updatedInvoice) {
                 DB::rollBack();
+
                 return [
                     'status' => 'error',
-                    'message' => 'Fakturani tahrirlashda muammo yuz berdi'
+                    'message' => 'Fakturani tahrirlashda muammo yuz berdi',
                 ];
             }
 
@@ -323,7 +330,7 @@ class InvoiceService
             }
 
             // Update supplier calculation if supplier_id exists
-            if (!empty($data['supplier_id'])) {
+            if (! empty($data['supplier_id'])) {
                 $this->updateSupplierCalculation($updatedInvoice, $data);
             } else {
                 // Delete calculation if supplier_id is null
@@ -343,18 +350,19 @@ class InvoiceService
             return [
                 'status' => 'success',
                 'message' => 'Faktura muvaffaqiyatli tahrirlandi',
-                'data' => $updatedInvoice
+                'data' => $updatedInvoice,
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
+
             return [
                 'status' => 'error',
-                'message' => 'Fakturani tahrirlashda xatolik yuz berdi: ' . $e->getMessage()
+                'message' => 'Fakturani tahrirlashda xatolik yuz berdi: '.$e->getMessage(),
             ];
         }
     }
 
-    private function checkProductResiduesForUpdate(int $invoiceId, array $products): string|null
+    private function checkProductResiduesForUpdate(int $invoiceId, array $products): ?string
     {
         // Eski invoice_products ni olish
         $oldInvoiceProducts = $this->invoiceProductRepository->getByInvoiceId($invoiceId);
@@ -381,17 +389,18 @@ class InvoiceService
         return null;
     }
 
-    private function checkProductResidues(array $products): string|null
+    private function checkProductResidues(array $products): ?string
     {
         $productIds = collect($products)->pluck('product_id')->toArray();
         $residues = $this->productRepository->getForCheckResidue($productIds);
 
         foreach ($products as $product) {
             $residue = $residues[$product['product_id']] ?? null;
-            if (!$residue || $product['count'] > $residue->residue) {
+            if (! $residue || $product['count'] > $residue->residue) {
                 return "{$product['product_id']} - ID li mahsulot uchun yetarli qoldiq mavjud emas.";
             }
         }
+
         return null;
     }
 
@@ -401,7 +410,7 @@ class InvoiceService
         if ($someIdMissed) {
             return [
                 'status' => 'error',
-                'message' => 'Mavjud bo\'lmagan tovarni tahrirlash yoki o\'chirish mumkin emas'
+                'message' => 'Mavjud bo\'lmagan tovarni tahrirlash yoki o\'chirish mumkin emas',
             ];
         }
 
@@ -411,7 +420,8 @@ class InvoiceService
     private function makeProductCountsNegative(array $products): array
     {
         return array_map(function ($product) {
-            $product['count'] = -abs((float)$product['count']);
+            $product['count'] = -abs((float) $product['count']);
+
             return $product;
         }, $products);
     }
@@ -427,19 +437,21 @@ class InvoiceService
     {
         return array_map(function ($product) use ($invoiceId, $withId) {
             $data = [
-                'invoice_id'  => $invoiceId,
-                'product_id'  => $product['product_id'],
-                'count'    => $product['count'],
-                'price'       => $product['price'],
+                'invoice_id' => $invoiceId,
+                'product_id' => $product['product_id'],
+                'count' => $product['count'],
+                'price' => $product['price'],
                 'total_price' => abs($product['input_price'] * $product['count']),
                 'date' => Carbon::now()->format('Y-m-d'),
-                'created_at'  => now(),
-                'updated_at'  => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
                 'input_price' => $product['input_price'],
+                'wholesale_price' => $product['wholesale_price'] ?? 0,
             ];
-            if (!empty($withId)) {
+            if (! empty($withId)) {
                 $data['id'] = $product['id'];
             }
+
             return $data;
         }, $products);
     }
@@ -472,7 +484,7 @@ class InvoiceService
                 'value' => $calculationValue,
                 'date' => $invoice->date,
             ]);
-        } elseif ($calculationValue !== null && !$existingCalculation) {
+        } elseif ($calculationValue !== null && ! $existingCalculation) {
             $this->createSupplierCalculation($invoice, $data);
         } elseif ($calculationValue === null && $existingCalculation) {
             $this->supplierCalculationRepository->delete($existingCalculation->id);
@@ -519,7 +531,7 @@ class InvoiceService
                 'value' => $calculationValue,
                 'date' => $invoice->date,
             ]);
-        } elseif ($calculationValue !== null && $calculationType !== null && !$existingCalculation) {
+        } elseif ($calculationValue !== null && $calculationType !== null && ! $existingCalculation) {
             $this->createOtherCalculation($invoice, $data);
         } elseif (($calculationValue === null || $calculationType === null) && $existingCalculation) {
             $this->otherCalculationRepository->delete($existingCalculation->id);
@@ -594,7 +606,7 @@ class InvoiceService
         return [
             'user_full_name' => $user->full_name,
             'date' => Carbon::now()->format('d.m.Y, H:i:s'),
-            'description' => rtrim($description, ';')
+            'description' => rtrim($description, ';'),
         ];
     }
 
@@ -616,17 +628,19 @@ class InvoiceService
         $oldSourceName = $this->getSourceNameOnly($oldSupplierId, $oldOtherSourceId);
         $newSourceName = $this->getSourceNameOnly($newSupplierId, $newOtherSourceId);
 
-        return $prefix . $oldSourceName . ' → ' . $newSourceName . ';';
+        return $prefix.$oldSourceName.' → '.$newSourceName.';';
     }
 
     private function getSourceName($supplierId, $otherSourceId)
     {
         if ($supplierId) {
             $supplier = $this->supplierRepository->getById($supplierId, ['name']);
-            return 's@' . ($supplier?->name ?? 'Unknown');
+
+            return 's@'.($supplier?->name ?? 'Unknown');
         } elseif ($otherSourceId) {
             $otherSource = $this->otherSourceRepository->findById($otherSourceId, ['name']);
-            return 'o@' . ($otherSource?->name ?? 'Unknown');
+
+            return 'o@'.($otherSource?->name ?? 'Unknown');
         }
 
         // Handle null case (no source selected)
@@ -636,12 +650,12 @@ class InvoiceService
     private function getSourceChangePrefix($oldSupplierId, $oldOtherSourceId, $newSupplierId, $newOtherSourceId)
     {
         // Determine old source type
-        $oldIsSupplier = !empty($oldSupplierId);
-        $oldIsOther = !empty($oldOtherSourceId);
+        $oldIsSupplier = ! empty($oldSupplierId);
+        $oldIsOther = ! empty($oldOtherSourceId);
 
         // Determine new source type
-        $newIsSupplier = !empty($newSupplierId);
-        $newIsOther = !empty($newOtherSourceId);
+        $newIsSupplier = ! empty($newSupplierId);
+        $newIsOther = ! empty($newOtherSourceId);
 
         if ($oldIsSupplier && $newIsSupplier) {
             return 's@'; // supplier to supplier
@@ -660,9 +674,11 @@ class InvoiceService
     {
         if ($supplierId) {
             $supplier = $this->supplierRepository->getById($supplierId, ['name']);
+
             return $supplier?->name ?? 'Unknown';
         } elseif ($otherSourceId) {
             $otherSource = $this->otherSourceRepository->findById($otherSourceId, ['name']);
+
             return $otherSource?->name ?? 'Unknown';
         }
 
@@ -676,7 +692,7 @@ class InvoiceService
         $newDate = Carbon::createFromFormat('d.m.Y', $newData['date'])->format('d.m.Y');
 
         if ($oldDate !== $newDate) {
-            return 'd@' . $oldDate . ' → d@' . $newDate . ';';
+            return 'd@'.$oldDate.' → d@'.$newDate.';';
         }
 
         return '';
@@ -690,23 +706,23 @@ class InvoiceService
         foreach ($productChanges['added'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
-            $description .= 'a@#' . $product['product_id'] . '- ' . $productName . ': ' . number_format(abs($product['count']), 0, '.', ' ') . ', ' . number_format($product['price'], 0, '.', ' ') . ';';
+            $description .= 'a@#'.$product['product_id'].'- '.$productName.': '.number_format(abs($product['count']), 0, '.', ' ').', '.number_format($product['price'], 0, '.', ' ').';';
         }
 
         // Updated products
         foreach ($productChanges['updated'] as $change) {
             $productModel = $this->productRepository->getById($change['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
-            $description .= 'u@#' . $change['product_id'] . '- ' . $productName . ': ' .
-                number_format(abs($change['old_count']), 0, '.', ' ') . ' → ' . number_format(abs($change['new_count']), 0, '.', ' ') . ', ' .
-                number_format($change['old_price'], 0, '.', ' ') . ' → ' . number_format($change['new_price'], 0, '.', ' ') . ';';
+            $description .= 'u@#'.$change['product_id'].'- '.$productName.': '.
+                number_format(abs($change['old_count']), 0, '.', ' ').' → '.number_format(abs($change['new_count']), 0, '.', ' ').', '.
+                number_format($change['old_price'], 0, '.', ' ').' → '.number_format($change['new_price'], 0, '.', ' ').';';
         }
 
         // Removed products
         foreach ($productChanges['removed'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name']);
             $productName = $productModel?->name ?? 'Unknown';
-            $description .= 'r@#' . $product['product_id'] . '- ' . $productName . ': ' . number_format(abs($product['count']), 0, '.', ' ') . ', ' . number_format($product['price'], 0, '.', ' ') . ';';
+            $description .= 'r@#'.$product['product_id'].'- '.$productName.': '.number_format(abs($product['count']), 0, '.', ' ').', '.number_format($product['price'], 0, '.', ' ').';';
         }
 
         return $description;
@@ -734,7 +750,7 @@ class InvoiceService
                         'old_count' => $oldProduct->count,
                         'new_count' => $product['count'],
                         'old_price' => $oldProduct->price,
-                        'new_price' => $product['price']
+                        'new_price' => $product['price'],
                     ];
                 }
             } elseif ($product['action'] === 'delete') {
@@ -744,7 +760,7 @@ class InvoiceService
                     $removed[] = [
                         'product_id' => $oldProduct->product_id,
                         'count' => $oldProduct->count,
-                        'price' => $oldProduct->price
+                        'price' => $oldProduct->price,
                     ];
                 }
             }
@@ -753,7 +769,7 @@ class InvoiceService
         return [
             'added' => $added,
             'updated' => $updated,
-            'removed' => $removed
+            'removed' => $removed,
         ];
     }
 }

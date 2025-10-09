@@ -27,6 +27,7 @@ class CategoryController
 
         return DefaultResource::collection($data);
     }
+
     public function getAllActive()
     {
         $data = $this->categoryService->getAllActive();

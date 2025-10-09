@@ -18,13 +18,13 @@ class ClientCalculation extends Model
         'payment_id',
         'type',
         'value',
-        'date'
+        'date',
     ];
 
     protected $casts = [
         'date' => 'date',
         'value' => 'decimal:2',
-        'type' => ClientCalculationTypesEnum::class
+        'type' => ClientCalculationTypesEnum::class,
     ];
 
     public function client(): BelongsTo

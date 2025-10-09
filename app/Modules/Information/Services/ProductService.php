@@ -18,16 +18,16 @@ class ProductService
         protected TelegramBugNotifier $telegramNotifier
     ) {}
 
-
     public function getAll(array $data)
     {
         try {
-            return $this->productRepository->getAll($data, ['id', 'name', 'unit', 'is_active', 'category_id', 'residue', 'markup']);
+            return $this->productRepository->getAll($data, ['id', 'name', 'unit', 'is_active', 'category_id', 'residue', 'markup', 'wholesale_price', 'wholesale_markup']);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Tovarlarni olishda xatolik yuz berdi'
+                'message' => 'Tovarlarni olishda xatolik yuz berdi',
             ];
         }
     }
@@ -35,12 +35,13 @@ class ProductService
     public function getForResidues(array $data)
     {
         try {
-            return $this->productRepository->getAll($data, ['id', 'name', 'unit', 'category_id', 'residue', 'price', 'input_price', 'markup']);
+            return $this->productRepository->getAll($data, ['id', 'name', 'unit', 'category_id', 'residue', 'price', 'input_price', 'markup', 'wholesale_price', 'wholesale_markup']);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Tovar qoldiqlarini olishda xatolik yuz berdi'
+                'message' => 'Tovar qoldiqlarini olishda xatolik yuz berdi',
             ];
         }
     }
@@ -50,23 +51,24 @@ class ProductService
         try {
             $product = $this->productRepository->store($data);
 
-            if (!$product) {
+            if (! $product) {
                 return [
                     'status' => 'error',
-                    'message' => 'Tovar qo\'shishda xatolik yuz berdi'
+                    'message' => 'Tovar qo\'shishda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'Tovar muvaffaqiyatli qo\'shildi',
-                'data' => $product
+                'data' => $product,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Tovar qo\'shishda xatolik yuz berdi'
+                'message' => 'Tovar qo\'shishda xatolik yuz berdi',
             ];
         }
     }
@@ -75,32 +77,33 @@ class ProductService
     {
         try {
             $product = $this->productRepository->getById($id);
-            if (!$product) {
+            if (! $product) {
                 return [
                     'status' => 'error',
                     'message' => 'Tovar topilmadi',
-                    'status_code' => 404
+                    'status_code' => 404,
                 ];
             }
 
             $product = $this->productRepository->update($product, $data);
-            if (!$product) {
+            if (! $product) {
                 return [
                     'status' => 'error',
-                    'message' => 'Tovar ma\'lumotlarini yangilashda xatolik yuz berdi'
+                    'message' => 'Tovar ma\'lumotlarini yangilashda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'Tovar ma\'lumotlari muvaffaqiyatli yangilandi',
-                'data' => $product
+                'data' => $product,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Tovar ma\'lumotlarini yangilashda xatolik yuz berdi'
+                'message' => 'Tovar ma\'lumotlarini yangilashda xatolik yuz berdi',
             ];
         }
     }
@@ -113,13 +116,14 @@ class ProductService
             return [
                 'status' => 'success',
                 'message' => 'Tovar faolligi muvaffaqiyatli o\'zgartirildi',
-                'data' => $product
+                'data' => $product,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Tovar faolligini o\'zgartirishda xatolik yuz berdi'
+                'message' => 'Tovar faolligini o\'zgartirishda xatolik yuz berdi',
             ];
         }
     }
@@ -127,7 +131,7 @@ class ProductService
     public function downloadTemplate()
     {
         try {
-            $spreadSheet = new Spreadsheet();
+            $spreadSheet = new Spreadsheet;
             $sheet = $spreadSheet->getActiveSheet();
 
             $sheet->setCellValue('A1', 'Tovar nomi');
@@ -147,9 +151,10 @@ class ProductService
             return response()->download($tempFile, 'product_template.xlsx')->deleteFileAfterSend(true);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'Template yuklab olishda xatolik yuz berdi'
+                'message' => 'Template yuklab olishda xatolik yuz berdi',
             ], 500);
         }
     }
@@ -157,7 +162,7 @@ class ProductService
     public function downloadUpdatePriceTemplate()
     {
         try {
-            $spreadSheet = new Spreadsheet();
+            $spreadSheet = new Spreadsheet;
             $sheet = $spreadSheet->getActiveSheet();
 
             // Set headers
@@ -168,25 +173,27 @@ class ProductService
             $sheet->setCellValue('E1', 'Ustama');
             $sheet->setCellValue('F1', 'Sotish narxi');
 
-            $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+            $sheet->getStyle('A1:H1')->getFont()->setBold(true);
 
             // Fetch products from repository
-            $products = $this->productRepository->getAll([], ['id', 'name', 'price', 'category_id', 'input_price', 'markup'], false);
+            $products = $this->productRepository->getAll([], ['id', 'name', 'price', 'category_id', 'input_price', 'markup', 'wholesale_price', 'wholesale_markup'], false);
 
             // Populate data starting from row 2
             $row = 2;
             foreach ($products as $product) {
-                $sheet->setCellValue('A' . $row, $product->id);
-                $sheet->setCellValue('B' . $row, $product->name);
-                $sheet->setCellValue('C' . $row, $product->category->name ?? '');
-                $sheet->setCellValue('D' . $row, $product->input_price ?? '');
-                $sheet->setCellValue('E' . $row, $product->markup ?? '');
-                $sheet->setCellValue('F' . $row, $product->price ?? '');
+                $sheet->setCellValue('A'.$row, $product->id);
+                $sheet->setCellValue('B'.$row, $product->name);
+                $sheet->setCellValue('C'.$row, $product->category->name ?? '');
+                $sheet->setCellValue('D'.$row, $product->input_price ?? '');
+                $sheet->setCellValue('E'.$row, $product->markup ?? '');
+                $sheet->setCellValue('F'.$row, $product->price ?? '');
+                $sheet->setCellValue('G'.$row, $product->wholesale_price ?? '');
+                $sheet->setCellValue('H'.$row, $product->wholesale_markup ?? '');
                 $row++;
             }
 
             // Auto-size all columns
-            foreach (range('A', 'F') as $col) {
+            foreach (range('A', 'H') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
@@ -197,9 +204,10 @@ class ProductService
             return response()->download($tempFile, 'product_price_template.xlsx')->deleteFileAfterSend(true);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'Narx template yuklab olishda xatolik yuz berdi'
+                'message' => 'Narx template yuklab olishda xatolik yuz berdi',
             ], 500);
         }
     }
@@ -207,72 +215,86 @@ class ProductService
     public function import(UploadedFile $file)
     {
         try {
-            $spreadsheet = IOFactory::load($file->getRealPath());
+            $reader = IOFactory::createReaderForFile($file->getRealPath());
+            $reader->setReadDataOnly(true);
+            $reader->setReadEmptyCells(false);
+            $spreadsheet = $reader->load($file->getRealPath());
             $sheet = $spreadsheet->getActiveSheet();
             $highestRow = $sheet->getHighestRow();
+            $highestColumn = 'C';
 
             if ($highestRow < 2) {
+                $spreadsheet->disconnectWorksheets();
+                unset($spreadsheet);
+
                 return [
                     'status' => 'error',
-                    'message' => 'Faylga tovar kiritish majburiy'
+                    'message' => 'Faylga tovar kiritish majburiy',
                 ];
             }
 
+            $dataArray = $sheet->rangeToArray(
+                'A2:'.$highestColumn.$highestRow,
+                null,        // nullValue
+                true,        // calculateFormulas
+                false,       // formatData
+                false        // returnCellRef
+            );
 
-            $rows = $sheet->getRowIterator(2);
+            $spreadsheet->disconnectWorksheets();
+            unset($spreadsheet, $sheet, $reader);
+            gc_collect_cycles();
 
             $productsToInsert = [];
             $productsToUpdate = [];
             $productNamesInFile = [];
-            foreach ($rows as $row) {
-                $rowIndex = $row->getRowIndex();
-                $cellIterator = $row->getCellIterator();
-                $cellIterator->setIterateOnlyExistingCells(false);
 
-                $rowData = [];
+            foreach ($dataArray as $index => $rowData) {
+                $rowIndex = $index + 2;
+                $rowData = array_map('trim', $rowData);
+
                 $isEmptyRow = true;
-
-                foreach ($cellIterator as $cell) {
-                    $value = trim($cell->getValue());
-                    $rowData[] = $value;
-                    if ($value !== '') $isEmptyRow = false;
+                foreach ($rowData as $value) {
+                    if ($value !== '') {
+                        $isEmptyRow = false;
+                        break;
+                    }
                 }
 
-                if ($isEmptyRow) continue;
+                if ($isEmptyRow) {
+                    continue;
+                }
 
                 if (count($rowData) < 3) {
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da yetarli ustunlar mavjud emas",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
 
-                [$name, $categoryName,  $unit] = $rowData;
+                [$name, $categoryName, $unit] = $rowData;
 
-                if (!$name || !$categoryName ||  !$unit) {
+                if (! $name || ! $categoryName || ! $unit) {
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da to'ldirilmagan maydon mavjud",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
+
                 if (in_array(mb_strtolower($name), $productNamesInFile)) {
                     continue;
                 }
 
                 $productNamesInFile[] = mb_strtolower($name);
 
-
-
                 $category = $this->categoryRepository->getByNameOrCreate($categoryName);
-
-
-                if (!$category) {
+                if (! $category) {
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da kategoriya aniqlanmadi",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
 
@@ -283,8 +305,6 @@ class ProductService
                 ];
 
                 $existingProduct = $this->productRepository->findByName($name);
-
-
                 if ($existingProduct) {
                     $productData['id'] = $existingProduct->id;
                     $productsToUpdate[] = $productData;
@@ -293,11 +313,13 @@ class ProductService
                 }
             }
 
+            unset($dataArray);
+
             if (empty($productsToInsert) && empty($productsToUpdate)) {
                 return [
                     'status' => 'error',
                     'message' => 'Import qilish uchun yangi yoki yangilanadigan tovar topilmadi.',
-                    'status_code' => 422
+                    'status_code' => 422,
                 ];
             }
 
@@ -305,14 +327,15 @@ class ProductService
 
             return [
                 'status' => 'success',
-                'message' => 'Tovarlar muvaffaqiyatli import qilindi.'
+                'message' => 'Tovarlar muvaffaqiyatli import qilindi.',
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
                 'message' => 'Tovarlarni import qilishda xatolik yuz berdi',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -320,84 +343,102 @@ class ProductService
     public function updatePricesFromTemplate(UploadedFile $file)
     {
         try {
-            $spreadsheet = IOFactory::load($file->getRealPath());
+            $reader = IOFactory::createReaderForFile($file->getRealPath());
+            $reader->setReadDataOnly(true);
+            $reader->setReadEmptyCells(false);
+            $spreadsheet = $reader->load($file->getRealPath());
             $sheet = $spreadsheet->getActiveSheet();
             $highestRow = $sheet->getHighestRow();
+            $highestColumn = 'H';
 
             if ($highestRow < 2) {
+                $spreadsheet->disconnectWorksheets();
+                unset($spreadsheet);
+
                 return [
                     'status' => 'error',
-                    'message' => 'Faylga mahsulot ma\'lumotlari kiritish majburiy'
+                    'message' => 'Faylga mahsulot ma\'lumotlari kiritish majburiy',
                 ];
             }
 
-            $rows = $sheet->getRowIterator(2);
+            $dataArray = $sheet->rangeToArray(
+                'A2:'.$highestColumn.$highestRow,
+                null,        // nullValue
+                true,        // calculateFormulas
+                false,       // formatData
+                false        // returnCellRef
+            );
+
+            $spreadsheet->disconnectWorksheets();
+            unset($spreadsheet, $sheet, $reader);
+            gc_collect_cycles();
+
             $priceData = [];
             $processedIds = [];
 
-            foreach ($rows as $row) {
-                $rowIndex = $row->getRowIndex();
-                $cellIterator = $row->getCellIterator();
-                $cellIterator->setIterateOnlyExistingCells(false);
+            foreach ($dataArray as $index => $rowData) {
+                $rowIndex = $index + 2;
+                $rowData = array_map('trim', $rowData);
 
-                $rowData = [];
                 $isEmptyRow = true;
-
-                foreach ($cellIterator as $cell) {
-                    $value = trim($cell->getValue());
-                    $rowData[] = $value;
-                    if ($value !== '') $isEmptyRow = false;
+                foreach ($rowData as $value) {
+                    if ($value !== '') {
+                        $isEmptyRow = false;
+                        break;
+                    }
                 }
 
-                if ($isEmptyRow) continue;
+                if ($isEmptyRow) {
+                    continue;
+                }
 
-                if (count($rowData) < 4) {
+                if (count($rowData) < 5) {
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da yetarli ustunlar mavjud emas",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
 
-                [$id, $name, $categoryName, $inputPrice, $markup, $price] = $rowData;
+                [$id, $name, $categoryName, $inputPrice, $markup, $price, $wholesalePrice, $wholesaleMarkup] = $rowData;
 
-                if (!$id || $inputPrice === '' || $price === '') {
+                if (! $id || $inputPrice === '' || $price === '' || $wholesalePrice === '' || $wholesaleMarkup === '') {
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da ID yoki narx to'ldirilmagan",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
 
-                if (!is_numeric($id)) {
+                if (! is_numeric($id)) {
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da ID raqam bo'lishi kerak",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
 
-                if (!is_numeric($inputPrice) || $inputPrice < 0) {
+                if (! is_numeric($inputPrice) || $inputPrice < 0) {
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da kirim narxi raqam bo'lishi kerak",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
 
-                if (!is_numeric($price) || $price < 0) {
+                if (! is_numeric($price) || $price < 0) {
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da narx musbat raqam bo'lishi kerak",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
 
-                if ((float)$price < (float)$inputPrice) {
+                if ((float) $price < (float) $inputPrice) {
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da sotish narxi kirim narxidan kam bo'lishi mumkin emas",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
 
@@ -405,22 +446,27 @@ class ProductService
                     return [
                         'status' => 'error',
                         'message' => "Qator {$rowIndex} da takroriy ID mavjud",
-                        'status_code' => 422
+                        'status_code' => 422,
                     ];
                 }
 
                 $processedIds[] = $id;
 
                 $markup = 0;
-                if ((float)$inputPrice > 0) {
-                    $markup = ((float)$price - (float)$inputPrice) / (float)$inputPrice * 100;
+                if ((float) $inputPrice > 0) {
+                    $markup = ((float) $price - (float) $inputPrice) / (float) $inputPrice * 100;
+                }
+                $wholesaleMarkup = 0;
+                if ((float) $inputPrice > 0) {
+                    $wholesaleMarkup = ((float) $wholesalePrice - (float) $inputPrice) / (float) $inputPrice * 100;
                 }
 
                 $priceData[] = [
-                    'id' => (int)$id,
-                    'price' => (float)$price,
+                    'id' => (int) $id,
+                    'price' => (float) $price,
                     'markup' => $markup,
-
+                    'wholesale_price' => (float) $wholesalePrice,
+                    'wholesale_markup' => $wholesaleMarkup,
                     // avoid not null violation
                     'name' => '',
                     'category_id' => 0,
@@ -433,26 +479,29 @@ class ProductService
                 ];
             }
 
+            unset($dataArray);
+
             if (empty($priceData)) {
                 return [
                     'status' => 'error',
                     'message' => 'Yangilanish uchun ma\'lumot topilmadi',
-                    'status_code' => 422
+                    'status_code' => 422,
                 ];
             }
 
-            $this->productRepository->upsert($priceData, ['id'], ['price', 'markup']);
+            $this->productRepository->upsert($priceData, ['id'], ['price', 'markup', 'wholesale_price', 'wholesale_markup']);
 
             return [
                 'status' => 'success',
-                'message' => count($priceData) . ' ta mahsulotning narxi muvaffaqiyatli yangilandi'
+                'message' => count($priceData).' ta mahsulotning narxi muvaffaqiyatli yangilandi',
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
                 'message' => 'Narxlarni yangilashda xatolik yuz berdi',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
         }
     }

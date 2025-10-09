@@ -4,8 +4,8 @@ namespace App\Modules\Information\Controllers;
 
 use App\Helpers\Response;
 use App\Http\Resources\DefaultResource;
-use App\Modules\Information\Requests\GetPaymentTypesRequest;
 use App\Modules\Information\Requests\GetPaymentTypeByIdRequest;
+use App\Modules\Information\Requests\GetPaymentTypesRequest;
 use App\Modules\Information\Requests\StorePaymentTypeRequest;
 use App\Modules\Information\Requests\UpdatePaymentTypeRequest;
 use App\Modules\Information\Services\PaymentTypeService;

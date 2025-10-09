@@ -1,7 +1,7 @@
 <?php
 
-use App\Modules\Trade\Controllers\TradeController;
 use App\Modules\Trade\Controllers\ClientCalculationController;
+use App\Modules\Trade\Controllers\TradeController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'trades', 'middleware' => ['auth:sanctum']], function () {

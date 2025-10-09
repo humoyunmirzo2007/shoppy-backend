@@ -3,8 +3,8 @@
 namespace App\Modules\Trade\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Trade\Resources\ClientCalculationResource;
 use App\Modules\Trade\Requests\GetClientCalculationsRequest;
+use App\Modules\Trade\Resources\ClientCalculationResource;
 use App\Modules\Trade\Services\ClientCalculationService;
 
 class ClientCalculationController extends Controller

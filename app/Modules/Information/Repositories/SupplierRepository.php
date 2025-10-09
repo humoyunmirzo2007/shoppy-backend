@@ -4,7 +4,6 @@ namespace App\Modules\Information\Repositories;
 
 use App\Models\Supplier;
 use App\Modules\Information\Interfaces\SupplierInterface;
-use Illuminate\Support\Str;
 
 class SupplierRepository implements SupplierInterface
 {
@@ -66,7 +65,7 @@ class SupplierRepository implements SupplierInterface
 
     public function store(array $data)
     {
-        $supplier =  $this->supplier->create([
+        $supplier = $this->supplier->create([
             ...$data,
             'is_active' => true,
         ]);
@@ -81,12 +80,10 @@ class SupplierRepository implements SupplierInterface
         return $supplier;
     }
 
-
-
     public function invertActive(int $id)
     {
         $supplier = $this->supplier->find($id);
-        $supplier->is_active = !$supplier->is_active;
+        $supplier->is_active = ! $supplier->is_active;
         $supplier->save();
 
         return $supplier;

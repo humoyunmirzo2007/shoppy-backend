@@ -12,7 +12,7 @@ class HideDevUsersScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         if ($this->shouldHideDevUsers()) {
-            $builder->where($model->getTable() . '.is_dev', false);
+            $builder->where($model->getTable().'.is_dev', false);
         }
     }
 
@@ -22,22 +22,20 @@ class HideDevUsersScope implements Scope
             return false;
         }
 
-        if (!app()->bound('request')) {
+        if (! app()->bound('request')) {
             return false;
         }
 
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return false;
         }
 
         $user = auth()->user();
 
-        if (!$user->is_dev) {
+        if (! $user->is_dev) {
             return true;
         }
 
         return false;
     }
-
-
 }

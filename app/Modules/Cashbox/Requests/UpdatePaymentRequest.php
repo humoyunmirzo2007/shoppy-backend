@@ -26,7 +26,7 @@ class UpdatePaymentRequest extends MainRequest
     public function prepareForValidation()
     {
         $this->merge([
-            'id' => $this->route('id')
+            'id' => $this->route('id'),
         ]);
 
         parent::prepareForValidation();
@@ -41,15 +41,15 @@ class UpdatePaymentRequest extends MainRequest
             $otherSourceId = $this->input('other_source_id');
             $costTypeId = $this->input('cost_type_id');
 
-            if (!$clientId && !$supplierId && !$otherSourceId && !$costTypeId) {
+            if (! $clientId && ! $supplierId && ! $otherSourceId && ! $costTypeId) {
                 $validator->errors()->add('client_id', 'Kamida mijoz, ta\'minotchi , xarajat turiyoki boshqa manba tanlanishi kerak');
             }
 
-            if ($type && $type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && !$clientId) {
+            if ($type && $type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && ! $clientId) {
                 $validator->errors()->add('client_id', 'Mijoz to\'lovi uchun mijoz tanlanishi kerak');
             }
 
-            if ($type && $type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && !$supplierId) {
+            if ($type && $type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && ! $supplierId) {
                 $validator->errors()->add('supplier_id', 'Ta\'minotchi to\'lovi uchun ta\'minotchi tanlanishi kerak');
             }
 
@@ -61,11 +61,11 @@ class UpdatePaymentRequest extends MainRequest
                 $validator->errors()->add('client_id', 'Ta\'minotchi to\'lovi uchun mijoz tanlanmasligi kerak');
             }
 
-            if ($type && $type === PaymentTypesEnum::OTHER_PAYMENT_INPUT->value && !$otherSourceId) {
+            if ($type && $type === PaymentTypesEnum::OTHER_PAYMENT_INPUT->value && ! $otherSourceId) {
                 $validator->errors()->add('other_source_id', 'Boshqa manba to\'lovi uchun boshqa manba tanlanishi kerak');
             }
 
-            if ($type && $type === PaymentTypesEnum::COST_PAYMENT_INPUT->value && !$costTypeId) {
+            if ($type && $type === PaymentTypesEnum::COST_PAYMENT_INPUT->value && ! $costTypeId) {
                 $validator->errors()->add('cost_type_id', 'Xarajat to\'lovi uchun xarajat turi tanlanishi kerak');
             }
         });

@@ -18,9 +18,10 @@ class PaymentTypeService
             return $this->paymentTypeRepository->index($data);
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'To\'lov turlarini olishda xatolik yuz berdi'
+                'message' => 'To\'lov turlarini olishda xatolik yuz berdi',
             ];
         }
     }
@@ -31,9 +32,10 @@ class PaymentTypeService
             return $this->paymentTypeRepository->getAllActive();
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'Faol to\'lov turlarini olishda xatolik yuz berdi'
+                'message' => 'Faol to\'lov turlarini olishda xatolik yuz berdi',
             ];
         }
     }
@@ -43,23 +45,24 @@ class PaymentTypeService
         try {
             $paymentType = $this->paymentTypeRepository->store($data);
 
-            if (!$paymentType) {
+            if (! $paymentType) {
                 return [
                     'status' => 'error',
-                    'message' => 'To\'lov turini qo\'shishda xatolik yuz berdi'
+                    'message' => 'To\'lov turini qo\'shishda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'To\'lov turi muvaffaqiyatli qo\'shildi',
-                'data' => $paymentType
+                'data' => $paymentType,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'To\'lov turini qo\'shishda xatolik yuz berdi'
+                'message' => 'To\'lov turini qo\'shishda xatolik yuz berdi',
             ];
         }
     }
@@ -68,31 +71,32 @@ class PaymentTypeService
     {
         try {
             $paymentType = $this->paymentTypeRepository->getById($id);
-            if (!$paymentType) {
+            if (! $paymentType) {
                 return [
                     'status' => 'error',
                     'message' => 'To\'lov turi topilmadi',
-                    'status_code' => 404
+                    'status_code' => 404,
                 ];
             }
             $updatedPaymentType = $this->paymentTypeRepository->update($paymentType, $data);
-            if (!$updatedPaymentType) {
+            if (! $updatedPaymentType) {
                 return [
                     'status' => 'error',
-                    'message' => 'To\'lov turi ma\'lumotlarini yangilashda xatolik yuz berdi'
+                    'message' => 'To\'lov turi ma\'lumotlarini yangilashda xatolik yuz berdi',
                 ];
             }
 
             return [
                 'status' => 'success',
                 'message' => 'To\'lov turi ma\'lumotlari muvaffaqiyatli yangilandi',
-                'data' => $updatedPaymentType
+                'data' => $updatedPaymentType,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'To\'lov turi ma\'lumotlarini yangilashda xatolik yuz berdi'
+                'message' => 'To\'lov turi ma\'lumotlarini yangilashda xatolik yuz berdi',
             ];
         }
     }
@@ -105,13 +109,14 @@ class PaymentTypeService
             return [
                 'status' => 'success',
                 'message' => 'To\'lov turi faolligi muvaffaqiyatli o\'zgartirildi',
-                'data' => $paymentType
+                'data' => $paymentType,
             ];
         } catch (\Throwable $e) {
             $this->telegramNotifier->sendError($e, request());
+
             return [
                 'status' => 'error',
-                'message' => 'To\'lov turi faolligini o\'zgartirishda xatolik yuz berdi'
+                'message' => 'To\'lov turi faolligini o\'zgartirishda xatolik yuz berdi',
             ];
         }
     }

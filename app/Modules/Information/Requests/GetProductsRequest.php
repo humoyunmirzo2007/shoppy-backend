@@ -29,7 +29,7 @@ class GetProductsRequest extends MainRequest
             'page.integer' => 'Page son bo\'lishi kerak',
             'page.min' => 'Page kamida 1 bo\'lishi kerak',
             'filters.category_id.integer' => 'Kategoriya ID son bo\'lishi kerak',
-            'filters.category_id.exists' => 'Bunday kategoriya mavjud emas'
+            'filters.category_id.exists' => 'Bunday kategoriya mavjud emas',
         ];
     }
 }

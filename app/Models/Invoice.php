@@ -15,7 +15,7 @@ class Invoice extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'history' => 'array'
+        'history' => 'array',
     ];
 
     public function invoiceProducts(): HasMany

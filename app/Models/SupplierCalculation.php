@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\Sortable;
 use App\Modules\Warehouse\Enums\SupplierCalculationTypesEnum;
+use App\Traits\Sortable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Invoice;
 
 class SupplierCalculation extends Model
 {
@@ -19,7 +18,6 @@ class SupplierCalculation extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 
     public function supplier(): BelongsTo
     {
@@ -51,6 +49,7 @@ class SupplierCalculation extends Model
             ->timezone(config('app.timezone'))
             ->format('d.m.Y, H:i:s');
     }
+
     protected $casts = [
         'type' => SupplierCalculationTypesEnum::class,
     ];

@@ -10,6 +10,7 @@ class UpdateCategoryRequest extends MainRequest
     public function rules(): array
     {
         $categoryId = $this->route('id');
+
         return [
             'name' => [
                 'required',
@@ -24,7 +25,7 @@ class UpdateCategoryRequest extends MainRequest
         return [
             'name.required' => 'Kategoriya nomini kiritish majburiy',
             'name.unique' => 'Bu kategoriya nomi allaqachon ro\'yxatdan o\'tgan',
-            'name.max' => 'Kategoriya nomi 255 ta belgidan oshmasligi kerak'
+            'name.max' => 'Kategoriya nomi 255 ta belgidan oshmasligi kerak',
         ];
     }
 }

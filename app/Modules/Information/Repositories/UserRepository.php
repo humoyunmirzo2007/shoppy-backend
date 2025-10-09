@@ -26,7 +26,7 @@ class UserRepository implements UserInterface
                     $query->orWhere('full_name', 'ilike', "%{$search}%");
                 });
             })
-            ->when(!empty($filters['position']), function ($query) use ($filters) {
+            ->when(! empty($filters['position']), function ($query) use ($filters) {
                 $query->where('position', $filters['position']);
             })
             ->sortable($sort)
@@ -77,10 +77,9 @@ class UserRepository implements UserInterface
     public function invertActive(int $id)
     {
         $user = $this->user->find($id);
-        $user->is_active = !$user->is_active;
+        $user->is_active = ! $user->is_active;
         $user->save();
 
         return $user;
     }
-
 }

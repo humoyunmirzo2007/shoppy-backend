@@ -16,7 +16,7 @@ class GetPaymentByIdRequest extends MainRequest
     public function prepareForValidation()
     {
         $this->merge([
-            'id' => $this->route('id')
+            'id' => $this->route('id'),
         ]);
 
         parent::prepareForValidation();
