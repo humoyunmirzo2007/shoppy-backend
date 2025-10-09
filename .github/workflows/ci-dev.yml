@@ -1,17 +1,17 @@
-name: Deploy to Server
+name: Deploy to Dev Server
 
 on:
   push:
-    branches: [master]
+    branches: [develop]
   pull_request:
-    branches: [master]
+    branches: [develop]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to server
+      - name: Deploy to dev server
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.HOST }}
@@ -21,4 +21,4 @@ jobs:
           script: |
             cd /home/main
             chmod +x deploy-backend.sh
-            ./deploy-backend.sh
+            ./deploy-backend.shs

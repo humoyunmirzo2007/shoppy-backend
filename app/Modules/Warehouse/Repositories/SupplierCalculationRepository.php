@@ -8,14 +8,16 @@ use Carbon\Carbon;
 
 class SupplierCalculationRepository implements SupplierCalculationInterface
 {
-    public function __construct(protected SupplierCalculation $supplierCalculation) {}
+    public function __construct(protected SupplierCalculation $supplierCalculation)
+    {
+    }
 
     public function getBySupplierId(int $supplierId, array $data)
     {
         $filters = $data['filters'] ?? [];
 
         return $this->supplierCalculation->query()
-            ->select('id', 'supplier_id', 'value', 'type', 'updated_at', 'date')
+            ->select('id', 'supplier_id', 'value', 'type', 'updated_at', 'date', 'invoice_id', 'payment_id')
             ->where('supplier_id', $supplierId)
             ->when(! empty($filters['from_date']), function ($query) use ($filters) {
                 $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');

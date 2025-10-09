@@ -14,6 +14,8 @@ class SupplierCalculationResource extends JsonResource
             'value' => abs($this->value),
             'type' => $this->type,
             'date' => Carbon::parse($this->date)->format('d.m.Y'),
+            'invoice_id' => $this->invoice_id ?? null,
+            'payment_id' => $this->payment_id ?? null,
             'updated_at' => Carbon::parse($this->updated_at)->format('d.m.Y, H:i:s'),
         ];
     }

@@ -8,14 +8,16 @@ use Carbon\Carbon;
 
 class ClientCalculationRepository implements ClientCalculationInterface
 {
-    public function __construct(protected ClientCalculation $clientCalculation) {}
+    public function __construct(protected ClientCalculation $clientCalculation)
+    {
+    }
 
     public function getByClientId(int $clientId, array $data)
     {
         $filters = $data['filters'] ?? [];
 
         return $this->clientCalculation->query()
-            ->select('id', 'value', 'type', 'updated_at', 'date')
+            ->select('id', 'value', 'type', 'updated_at', 'date', 'trade_id', 'payment_id')
             ->where('client_id', $clientId)
             ->when(! empty($filters['from_date']), function ($query) use ($filters) {
                 $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');

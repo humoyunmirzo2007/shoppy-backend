@@ -1,0 +1,20 @@
+name: Migrate fresh and seed to
+
+on:
+  workflow_dispatch: 
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Migrate Database
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.HOST }}
+          username: main
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /home/main
+            chmod +x migrate.sh
+            ./migrate.sh
