@@ -8,9 +8,7 @@ use Carbon\Carbon;
 
 class SupplierCalculationRepository implements SupplierCalculationInterface
 {
-    public function __construct(protected SupplierCalculation $supplierCalculation)
-    {
-    }
+    public function __construct(protected SupplierCalculation $supplierCalculation) {}
 
     public function getBySupplierId(int $supplierId, array $data)
     {

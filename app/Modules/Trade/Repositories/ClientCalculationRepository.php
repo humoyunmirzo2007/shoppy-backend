@@ -8,9 +8,7 @@ use Carbon\Carbon;
 
 class ClientCalculationRepository implements ClientCalculationInterface
 {
-    public function __construct(protected ClientCalculation $clientCalculation)
-    {
-    }
+    public function __construct(protected ClientCalculation $clientCalculation) {}
 
     public function getByClientId(int $clientId, array $data)
     {
