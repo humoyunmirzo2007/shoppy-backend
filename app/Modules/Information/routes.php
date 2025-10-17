@@ -27,15 +27,6 @@ Route::group(['prefix' => 'users', 'middleware' => ['auth:sanctum']], function (
     Route::put('/invert-active/{id}', [UserController::class, 'invertActive']);
 });
 
-Route::group(['prefix' => 'categories', 'middleware' => ['auth:sanctum']], function () {
-    Route::get('/', [CategoryController::class, 'index']);
-    Route::get('/all-names', [CategoryController::class, 'getAll'])->middleware(['reject_request']);
-    Route::get('/all-active', [CategoryController::class, 'getAllActive'])->middleware('reject_request');
-    Route::post('/create', [CategoryController::class, 'store']);
-    Route::put('/update/{id}', [CategoryController::class, 'update']);
-    Route::put('/invert-active/{id}', [CategoryController::class, 'invertActive']);
-});
-
 Route::group(['prefix' => 'suppliers', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [SupplierController::class, 'getAll']);
     Route::get('/all-active', [SupplierController::class, 'getAllActive'])->middleware('reject_request');
@@ -88,4 +79,14 @@ Route::group(['prefix' => 'payment-types', 'middleware' => ['auth:sanctum']], fu
     Route::post('/create', [PaymentTypeController::class, 'store']);
     Route::put('/update/{id}', [PaymentTypeController::class, 'update']);
     Route::put('/invert-active/{id}', [PaymentTypeController::class, 'invertActive']);
+});
+
+Route::group(['prefix' => 'categories', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [CategoryController::class, 'index']);
+    Route::get('/active', [CategoryController::class, 'active']);
+    Route::get('/{id}', [CategoryController::class, 'show']);
+    Route::get('/{id}/with-parents', [CategoryController::class, 'showWithParents']);
+    Route::post('/create', [CategoryController::class, 'store']);
+    Route::put('/update/{category}', [CategoryController::class, 'update']);
+    Route::put('/toggle-active/{id}', [CategoryController::class, 'toggleActive']);
 });

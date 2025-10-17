@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
@@ -12,12 +13,20 @@ class Category extends Model
 
     protected $guarded = [];
 
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $sortable = ['id', 'name', 'is_active', 'sort_order', 'created_at', 'updated_at'];
 
-    protected $sortable = ['id', 'name', 'is_active'];
-
-    public function products(): HasMany
+    public function parent(): BelongsTo
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function firstParent(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'first_parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id');
     }
 }

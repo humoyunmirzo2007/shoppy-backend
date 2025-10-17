@@ -8,7 +8,7 @@ use Throwable;
 
 class TelegramBugNotifier
 {
-    public function sendMessage($message)
+    public static function sendMessage($message)
     {
         $token = config('services.telegram.bot_token');
         $chat_id = config('services.telegram.chat_id');
@@ -41,7 +41,7 @@ class TelegramBugNotifier
         }
     }
 
-    public function sendError(Throwable $e, $request = null)
+    public static function sendError(Throwable $e, $request = null)
     {
         $message = "🚨 <b>Xatolik yuz berdi!</b>\n\n".
             "📝 <b>Xatolik:</b>\n<pre>".$e->getMessage()."</pre>\n".
@@ -51,16 +51,16 @@ class TelegramBugNotifier
 
         // Request ma'lumotlarini qo'shish
         if ($request) {
-            $message .= $this->formatRequestData($request)."\n";
+            $message .= self::formatRequestData($request)."\n";
         }
 
-        return $this->sendMessage($message);
+        return self::sendMessage($message);
     }
 
     /**
      * Request ma'lumotlarini formatlash
      */
-    private function formatRequestData($request)
+    private static function formatRequestData($request)
     {
         $data = "📥 <b>Request ma'lumotlari:</b>\n";
 
@@ -81,13 +81,13 @@ class TelegramBugNotifier
             if (method_exists($request, 'all')) {
                 $allData = $request->all();
                 if (! empty($allData)) {
-                    $jsonData = $this->formatJsonData($allData);
+                    $jsonData = self::formatJsonData($allData);
                     $data .= "📋 <b>Request:</b>\n<pre>".$jsonData."</pre>\n";
                 }
             }
         } elseif (is_array($request)) {
             // Array format
-            $jsonData = $this->formatJsonData($request);
+            $jsonData = self::formatJsonData($request);
             $data .= "📋 <b>Request Data:</b>\n<pre>".$jsonData."</pre>\n";
         } else {
             // String format
@@ -100,7 +100,7 @@ class TelegramBugNotifier
     /**
      * JSON ma'lumotlarini chiroyli formatlash
      */
-    private function formatJsonData($data)
+    private static function formatJsonData($data)
     {
         $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 

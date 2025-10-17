@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use App\Commands;
-use App\Helpers\TelegramBugNotifier;
-use App\Modules\Bot\Services\BotService;
 use App\Modules\Cashbox\Interfaces\MoneyInputInterface;
 use App\Modules\Cashbox\Interfaces\MoneyOutputInterface;
 use App\Modules\Cashbox\Interfaces\OtherCalculationInterface;
@@ -27,7 +25,6 @@ use App\Modules\Information\Repositories\PaymentTypeRepository;
 use App\Modules\Information\Repositories\ProductRepository;
 use App\Modules\Information\Repositories\SupplierRepository;
 use App\Modules\Information\Repositories\UserRepository;
-use App\Modules\Information\Services\ClientService;
 use App\Modules\Trade\Interfaces\ClientCalculationInterface;
 use App\Modules\Trade\Interfaces\TradeInterface;
 use App\Modules\Trade\Interfaces\TradeProductInterface;
@@ -67,14 +64,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(MoneyInputInterface::class, MoneyInputRepository::class);
         $this->app->singleton(MoneyOutputInterface::class, MoneyOutputRepository::class);
         $this->app->singleton(OtherCalculationInterface::class, OtherCalculationRepository::class);
-
-        // Bot services
-        $this->app->singleton(BotService::class, function ($app) {
-            return new BotService(
-                $app->make(ClientService::class),
-                $app->make(TelegramBugNotifier::class)
-            );
-        });
     }
 
     /**

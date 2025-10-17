@@ -6,19 +6,15 @@ use App\Models\Category;
 
 interface CategoryInterface
 {
-    public function index(array $data);
+    public function getAll(array $data, ?array $fields = ['*']);
 
-    public function getAll();
+    public function getById(int $id, ?array $fields = ['*']);
 
-    public function getAllActive();
-
-    public function getById(int $id);
+    public function getByIdWithParents(int $id, ?array $fields = ['*']);
 
     public function store(array $data);
 
     public function update(Category $category, array $data);
 
     public function invertActive(int $id);
-
-    public function getByNameOrCreate(string $name);
 }

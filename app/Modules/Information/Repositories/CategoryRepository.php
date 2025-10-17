@@ -4,82 +4,127 @@ namespace App\Modules\Information\Repositories;
 
 use App\Models\Category;
 use App\Modules\Information\Interfaces\CategoryInterface;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CategoryRepository implements CategoryInterface
 {
     public function __construct(protected Category $category) {}
 
-    public function index(array $data)
+    /**
+     * Barcha kategoriyalarni olish
+     */
+    public function getAll(array $data, ?array $fields = ['*']): LengthAwarePaginator
     {
-        $search = $data['search'] ?? null;
         $limit = $data['limit'] ?? 15;
+        $page = $data['page'] ?? 1;
         $sort = $data['sort'] ?? ['id' => 'desc'];
 
-        return $this->category->query()
-            ->select('id', 'name', 'is_active')
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($query) use ($search) {
-                    if (is_numeric($search)) {
-                        $query->where('id', $search);
-                    }
-                    $query->orWhere('name', 'ilike', "%$search%");
-                });
-            })
+        return $this->category
+            ->select($fields)
             ->sortable($sort)
-            ->simplePaginate($limit);
+            ->paginate($limit, ['*'], 'page', $page);
     }
 
-    public function getAll()
+    /**
+     * ID bo'yicha kategoriyani olish
+     */
+    public function getById(int $id, ?array $fields = ['*']): ?Category
     {
-        return $this->category->query()
-            ->select('id', 'name')
+        return $this->category->select($fields)->find($id);
+    }
+
+    /**
+     * ID bo'yicha kategoriyani to'liq hierarchical chain bilan olish
+     */
+    public function getByIdWithParents(int $id, ?array $fields = ['*']): ?Category
+    {
+        $category = $this->category->select($fields)->find($id);
+
+        if (! $category) {
+            return null;
+        }
+
+        // First parent va uning barcha children'larini to'liq tree ko'rinishida olish
+        if ($category->first_parent_id) {
+            $firstParentWithChildren = $this->getCategoryWithAllChildren($category->first_parent_id, $fields);
+
+            if ($firstParentWithChildren) {
+                return $firstParentWithChildren;
+            }
+        }
+
+        return $category;
+    }
+
+    /**
+     * Kategoriya va uning barcha children'larini recursive olish
+     */
+    private function getCategoryWithAllChildren(int $categoryId, ?array $fields = ['*']): ?Category
+    {
+        $category = $this->category->select($fields)->find($categoryId);
+
+        if (! $category) {
+            return null;
+        }
+
+        // Children'larni olish
+        $children = $this->category->select($fields)
+            ->where('parent_id', $categoryId)
+            ->orderBy('sort_order')
             ->get();
+
+        // Har bir child uchun recursive children'larni olish
+        $childrenWithSubChildren = $children->map(function ($child) use ($fields) {
+            $childWithChildren = $this->getCategoryWithAllChildren($child->id, $fields);
+
+            return $childWithChildren ?: $child;
+        });
+
+        // Dynamic property sifatida qo'shish
+        $category->setAttribute('children', $childrenWithSubChildren);
+
+        return $category;
     }
 
-    public function getAllActive()
+    /**
+     * Yangi kategoriya yaratish
+     */
+    public function store(array $data): Category
     {
-        return $this->category->query()
-            ->select('id', 'name')
+        return $this->category->create($data);
+    }
+
+    /**
+     * Kategoriyani yangilash
+     */
+    public function update(Category $category, array $data): bool
+    {
+        return $category->update($data);
+    }
+
+    /**
+     * Kategoriya faol holatini teskari qilish
+     */
+    public function invertActive(int $id): bool
+    {
+        $category = $this->getById($id);
+        if (! $category) {
+            return false;
+        }
+
+        return $category->update(['is_active' => ! $category->is_active]);
+    }
+
+    /**
+     * Faol kategoriyalarni olish
+     */
+    public function getActiveCategories(?array $fields = ['*']): Collection
+    {
+        return $this->category
+            ->select($fields)
             ->where('is_active', true)
+            ->orderBy('sort_order')
             ->get();
-    }
-
-    public function getById(int $id)
-    {
-        return $this->category->find($id);
-    }
-
-    public function store(array $data)
-    {
-        $category = $this->category->create([
-            ...$data,
-            'is_active' => true,
-        ]);
-
-        return $category;
-    }
-
-    public function update(Category $category, array $data)
-    {
-        $category->update($data);
-
-        return $category;
-    }
-
-    public function invertActive(int $id)
-    {
-        $category = $this->category->find($id);
-        $category->is_active = ! $category->is_active;
-        $category->save();
-
-        return $category;
-    }
-
-    public function getByNameOrCreate(string $name)
-    {
-        return $this->category->firstOrCreate(
-            ['name' => $name],
-            ['is_active' => true]
-        );
     }
 }
