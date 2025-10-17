@@ -20,7 +20,10 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->decimal('residue', 10, 2)->default(0);
             $table->decimal('price', 10, 2)->default(0);
+            $table->decimal('input_price', 10, 2)->default(0);
             $table->decimal('markup', 10, 2)->default(0);
+            $table->decimal('wholesale_price', 10, 2)->default(0);
+            $table->decimal('wholesale_markup', 10, 2)->default(0);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 

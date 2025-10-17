@@ -13,14 +13,21 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('phone_number', 12)->unique();
+            $table->string('first_name');
+            $table->string('last_name')->nullable();
+            $table->string('username')->nullable()->unique();
+            $table->string('phone_number')->unique();
             $table->decimal('debt', 10, 2)->default(0);
+            $table->string('chat_id')->unique();
             $table->boolean('is_active')->default(true);
+            $table->string('avatar')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
-            $table->index('name');
+            $table->index('first_name');
+            $table->index('last_name')->nullable();
+            $table->index('username');
+            $table->index('chat_id');
             $table->index('phone_number');
         });
     }

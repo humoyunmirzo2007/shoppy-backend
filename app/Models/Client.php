@@ -13,5 +13,5 @@ class Client extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    protected $sortable = ['id', 'name', 'phone_number', 'debt', 'is_active'];
+    protected $sortable = ['id', 'name', 'phone_number', 'debt', 'is_active', 'telegram_id', 'telegram_username'];
 }

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->restrictOnDelete();
             $table->decimal('price', 10, 2);
+            $table->decimal('input_price', 10, 2)->default(0);
+            $table->decimal('wholesale_price', 10, 2)->default(0);
             $table->decimal('total_price', 10, 2);
             $table->decimal('count', 10, 1);
             $table->date('date');
@@ -23,6 +25,7 @@ return new class extends Migration
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             $table->index('invoice_id');
+            $table->index('product_id');
         });
     }
 

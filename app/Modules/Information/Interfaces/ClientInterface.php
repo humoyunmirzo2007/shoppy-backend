@@ -12,6 +12,8 @@ interface ClientInterface
 
     public function getById(int $id);
 
+    public function getByChatId(string $chatId);
+
     public function store(array $data);
 
     public function update(Client $client, array $data);

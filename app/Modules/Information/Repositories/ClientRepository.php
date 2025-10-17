@@ -62,6 +62,11 @@ class ClientRepository implements ClientInterface
         return $this->client->find($id);
     }
 
+    public function getByChatId(string $chatId)
+    {
+        return $this->client->where('chat_id', $chatId)->first();
+    }
+
     public function store(array $data)
     {
         $client = $this->client->create([

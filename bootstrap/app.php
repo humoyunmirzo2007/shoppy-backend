@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
             foreach (
                 [
+                    'Bot',
                     'Information',
                     'Warehouse',
                     'Trade',

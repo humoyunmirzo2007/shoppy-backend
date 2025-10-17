@@ -1,0 +1,34 @@
+{
+    "timestamp": "2025-10-14 00:28:19",
+    "level": "INFO",
+    "context": "local",
+    "message": "Telegram webhook ma'lumotlari",
+    "data": {
+        "update_id": 953914159,
+        "message": {
+            "message_id": 152,
+            "from": {
+                "id": 7031122393,
+                "is_bot": false,
+                "first_name": "Humoyunmirzo",
+                "username": "khumoyunmirzo_web",
+                "language_code": "en"
+            },
+            "chat": {
+                "id": 7031122393,
+                "first_name": "Humoyunmirzo",
+                "username": "khumoyunmirzo_web",
+                "type": "private"
+            },
+            "date": 1760383699,
+            "text": "/start",
+            "entities": [
+                {
+                    "offset": 0,
+                    "length": 6,
+                    "type": "bot_command"
+                }
+            ]
+        }
+    }
+}

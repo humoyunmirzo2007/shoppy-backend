@@ -26,6 +26,14 @@ return new class extends Migration
             $table->string('type'); // PaymentTypesEnum yoki CostTypesEnum values
             $table->date('date')->nullable();
             $table->timestamps();
+
+            $table->index(['user_id', 'date']);
+            $table->index(['operation_type', 'date']);
+            $table->index('payment_type_id');
+            $table->index('other_source_id');
+            $table->index('cost_type_id');
+            $table->index('client_id');
+            $table->index('supplier_id');
         });
     }
 

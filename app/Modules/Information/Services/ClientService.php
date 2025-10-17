@@ -54,6 +54,34 @@ class ClientService
         }
     }
 
+    public function getByChatId(string $chatId)
+    {
+        try {
+            $client = $this->clientRepository->getByChatId($chatId);
+
+            if (! $client) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Mijoz topilmadi',
+                    'status_code' => 404,
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'message' => 'Mijoz muvaffaqiyatli topildi',
+                'data' => $client,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'Mijozni olishda xatolik yuz berdi',
+            ];
+        }
+    }
+
     public function store(array $data)
     {
         try {
