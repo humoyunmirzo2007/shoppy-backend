@@ -21,9 +21,9 @@ class GetProductByIdRequest extends MainRequest
     public function messages()
     {
         return [
-            'product_id.required' => 'Tovar ID si majburiy',
-            'product_id.integer' => 'Tovar ID si son bo\'lishi kerak',
-            'product_id.exists' => 'Bunday tovar mavjud emas',
+            'product_id.required' => 'Mahsulot ID si majburiy',
+            'product_id.integer' => 'Mahsulot ID si son bo\'lishi kerak',
+            'product_id.exists' => 'Bunday mahsulot mavjud emas',
         ];
     }
 }

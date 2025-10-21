@@ -132,4 +132,60 @@ class OtherSourceService
             return null;
         }
     }
+
+    public function getById(int $id): array
+    {
+        try {
+            $otherSource = $this->otherSourceRepository->findById($id);
+
+            if (! $otherSource) {
+                return [
+                    'success' => false,
+                    'message' => 'Manba topilmadi',
+                ];
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Manba muvaffaqiyatli olindi',
+                'data' => $otherSource,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'success' => false,
+                'message' => 'Manbani olishda xatolik yuz berdi',
+            ];
+        }
+    }
+
+    public function delete(int $id): array
+    {
+        try {
+            $otherSource = $this->otherSourceRepository->findById($id);
+
+            if (! $otherSource) {
+                return [
+                    'success' => false,
+                    'message' => 'Manba topilmadi',
+                ];
+            }
+
+            $this->otherSourceRepository->delete($otherSource);
+
+            return [
+                'success' => true,
+                'message' => 'Manba muvaffaqiyatli o\'chirildi',
+                'data' => null,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'success' => false,
+                'message' => 'Manbani o\'chirishda xatolik yuz berdi',
+            ];
+        }
+    }
 }

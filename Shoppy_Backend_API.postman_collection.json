@@ -1,0 +1,2281 @@
+{
+    "info": {
+        "_postman_id": "shoppy-backend-api",
+        "name": "Shoppy Backend API - Barcha CRUD Operatsiyalar",
+        "description": "Shoppy Backend API uchun to'liq CRUD operatsiyalar to'plami",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{auth_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/api",
+            "type": "string"
+        },
+        {
+            "key": "auth_token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "🔐 Autentifikatsiya",
+            "item": [
+                {
+                    "name": "Kirish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"login\": \"admin@example.com\",\n    \"password\": \"password123\",\n    \"captcha\": \"1234\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "Chiqish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/auth/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "logout"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mening ma'lumotlarim",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/auth/me",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "me"]
+                        }
+                    }
+                },
+                {
+                    "name": "Captcha olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/auth/generate-captcha",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "generate-captcha"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "👥 Foydalanuvchilar",
+            "item": [
+                {
+                    "name": "Foydalanuvchilar ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/users",
+                            "host": ["{{base_url}}"],
+                            "path": ["users"]
+                        }
+                    }
+                },
+                {
+                    "name": "Barcha foydalanuvchilar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/users/get-all",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", "get-all"]
+                        }
+                    }
+                },
+                {
+                    "name": "Foydalanuvchi ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/users/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi foydalanuvchi qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Foydalanuvchi\",\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\",\n    \"role\": \"user\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/users/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Foydalanuvchi ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Ism\",\n    \"email\": \"updated@example.com\",\n    \"role\": \"admin\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/users/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Parolni yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"current_password\": \"eski_parol\",\n    \"new_password\": \"yangi_parol123\",\n    \"new_password_confirmation\": \"yangi_parol123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/users/update-password",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", "update-password"]
+                        }
+                    }
+                },
+                {
+                    "name": "Foydalanuvchini o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/users/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Foydalanuvchi holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/users/invert-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", "invert-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🏢 Yetkazib beruvchilar",
+            "item": [
+                {
+                    "name": "Yetkazib beruvchilar ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/suppliers",
+                            "host": ["{{base_url}}"],
+                            "path": ["suppliers"]
+                        }
+                    }
+                },
+                {
+                    "name": "Faol yetkazib beruvchilar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/suppliers/all-active",
+                            "host": ["{{base_url}}"],
+                            "path": ["suppliers", "all-active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Qarzdor yetkazib beruvchilar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/suppliers/all-with-debt",
+                            "host": ["{{base_url}}"],
+                            "path": ["suppliers", "all-with-debt"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yetkazib beruvchi ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/suppliers/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["suppliers", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi yetkazib beruvchi qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Yetkazib Beruvchi\",\n    \"phone\": \"+998901234567\",\n    \"address\": \"Toshkent shahar\",\n    \"description\": \"Yetkazib beruvchi haqida ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/suppliers/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["suppliers", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yetkazib beruvchi ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Yetkazib Beruvchi\",\n    \"phone\": \"+998901234568\",\n    \"address\": \"Samarqand shahar\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/suppliers/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["suppliers", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yetkazib beruvchini o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/suppliers/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["suppliers", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yetkazib beruvchi holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/suppliers/invert-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["suppliers", "invert-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "👤 Mijozlar",
+            "item": [
+                {
+                    "name": "Mijozlar ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/clients",
+                            "host": ["{{base_url}}"],
+                            "path": ["clients"]
+                        }
+                    }
+                },
+                {
+                    "name": "Faol mijozlar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/clients/all-active",
+                            "host": ["{{base_url}}"],
+                            "path": ["clients", "all-active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Qarzdor mijozlar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/clients/all-with-debt",
+                            "host": ["{{base_url}}"],
+                            "path": ["clients", "all-with-debt"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mijoz ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/clients/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["clients", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi mijoz qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Mijoz\",\n    \"phone\": \"+998901234567\",\n    \"address\": \"Toshkent shahar\",\n    \"description\": \"Mijoz haqida ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/clients/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["clients", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mijoz ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Mijoz\",\n    \"phone\": \"+998901234568\",\n    \"address\": \"Samarqand shahar\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/clients/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["clients", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mijozni o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/clients/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["clients", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mijoz holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/clients/invert-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["clients", "invert-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "💰 Xarajat turlari",
+            "item": [
+                {
+                    "name": "Xarajat turlari ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/cost-types",
+                            "host": ["{{base_url}}"],
+                            "path": ["cost-types"]
+                        }
+                    }
+                },
+                {
+                    "name": "Faol xarajat turlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/cost-types/all-active",
+                            "host": ["{{base_url}}"],
+                            "path": ["cost-types", "all-active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Xarajat turi ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/cost-types/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["cost-types", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi xarajat turi qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Xarajat Turi\",\n    \"description\": \"Xarajat turi haqida ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/cost-types/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["cost-types", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Xarajat turi ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Xarajat Turi\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/cost-types/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["cost-types", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Xarajat turini o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/cost-types/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["cost-types", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Xarajat turi holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/cost-types/invert-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["cost-types", "invert-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📦 Mahsulotlar",
+            "item": [
+                {
+                    "name": "Mahsulotlar ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/products",
+                            "host": ["{{base_url}}"],
+                            "path": ["products"]
+                        }
+                    }
+                },
+                {
+                    "name": "Qoldiq mahsulotlar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/products/residues",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "residues"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/products/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi mahsulot qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Mahsulot\",\n    \"description\": \"Mahsulot haqida ma'lumot\",\n    \"price\": 100000,\n    \"cost_price\": 80000,\n    \"category_id\": 1,\n    \"brand_id\": 1,\n    \"supplier_id\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/products/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Mahsulot\",\n    \"description\": \"Yangilangan ma'lumot\",\n    \"price\": 120000,\n    \"cost_price\": 90000,\n    \"category_id\": 1,\n    \"brand_id\": 1,\n    \"supplier_id\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/products/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulotni o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/products/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/products/invert-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "invert-active", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulotlar shablonini yuklab olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/products/download-template",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "download-template"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulotlarni import qilish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/products/import",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "import"]
+                        }
+                    }
+                },
+                {
+                    "name": "Narx yangilash shablonini yuklab olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/products/download-update-price-template",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "products",
+                                "download-update-price-template"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Shablon orqali narxlarni yangilash",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/products/update-prices-from-template",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "update-prices-from-template"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📋 Boshqa manbalar",
+            "item": [
+                {
+                    "name": "Boshqa manbalar ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/other-sources",
+                            "host": ["{{base_url}}"],
+                            "path": ["other-sources"]
+                        }
+                    }
+                },
+                {
+                    "name": "Tur bo'yicha faol manbalar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/other-sources/by-type-active",
+                            "host": ["{{base_url}}"],
+                            "path": ["other-sources", "by-type-active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Manba ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/other-sources/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["other-sources", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi manba qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Manba\",\n    \"type\": \"income\",\n    \"description\": \"Manba haqida ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/other-sources/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["other-sources", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Manba ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Manba\",\n    \"type\": \"expense\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/other-sources/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["other-sources", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Manbani o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/other-sources/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["other-sources", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Manba holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/other-sources/invert-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["other-sources", "invert-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "💳 To'lov turlari",
+            "item": [
+                {
+                    "name": "To'lov turlari ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payment-types",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-types"]
+                        }
+                    }
+                },
+                {
+                    "name": "Faol to'lov turlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payment-types/all-active",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-types", "all-active"]
+                        }
+                    }
+                },
+                {
+                    "name": "To'lov turi ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payment-types/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-types", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi to'lov turi qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi To'lov Turi\",\n    \"description\": \"To'lov turi haqida ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/payment-types/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-types", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "To'lov turi ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan To'lov Turi\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/payment-types/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-types", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "To'lov turini o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payment-types/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-types", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "To'lov turi holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/payment-types/invert-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["payment-types", "invert-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📂 Kategoriyalar",
+            "item": [
+                {
+                    "name": "Kategoriyalar ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/categories",
+                            "host": ["{{base_url}}"],
+                            "path": ["categories"]
+                        }
+                    }
+                },
+                {
+                    "name": "Faol kategoriyalar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/categories/active",
+                            "host": ["{{base_url}}"],
+                            "path": ["categories", "active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Kategoriya ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/categories/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["categories", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Kategoriya va ota kategoriyalar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/categories/1/with-parents",
+                            "host": ["{{base_url}}"],
+                            "path": ["categories", "1", "with-parents"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi kategoriya qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Kategoriya\",\n    \"parent_id\": null,\n    \"description\": \"Kategoriya haqida ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/categories/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["categories", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Kategoriya ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Kategoriya\",\n    \"parent_id\": 1,\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/categories/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["categories", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Kategoriyani o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/categories/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["categories", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Kategoriya holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/categories/toggle-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["categories", "toggle-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🏷️ Brendlar",
+            "item": [
+                {
+                    "name": "Brendlar ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/brands",
+                            "host": ["{{base_url}}"],
+                            "path": ["brands"]
+                        }
+                    }
+                },
+                {
+                    "name": "Faol brendlar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/brands/active",
+                            "host": ["{{base_url}}"],
+                            "path": ["brands", "active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Brend ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/brands/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["brands", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi brend qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Brend\",\n    \"description\": \"Brend haqida ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/brands/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["brands", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Brend ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Brend\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/brands/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["brands", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Brendni o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/brands/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["brands", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Brend holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/brands/toggle-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["brands", "toggle-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🔧 Atributlar",
+            "item": [
+                {
+                    "name": "Atributlar ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attributes",
+                            "host": ["{{base_url}}"],
+                            "path": ["attributes"]
+                        }
+                    }
+                },
+                {
+                    "name": "Faol atributlar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attributes/active",
+                            "host": ["{{base_url}}"],
+                            "path": ["attributes", "active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Atribut ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attributes/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["attributes", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi atribut qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangi Atribut\",\n    \"type\": \"text\",\n    \"description\": \"Atribut haqida ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/attributes/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["attributes", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Atribut ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Atribut\",\n    \"type\": \"select\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/attributes/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["attributes", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Atributni o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attributes/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["attributes", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Atribut holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attributes/toggle-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["attributes", "toggle-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📝 Atribut qiymatlari",
+            "item": [
+                {
+                    "name": "Atribut qiymatlari ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attribute-values",
+                            "host": ["{{base_url}}"],
+                            "path": ["attribute-values"]
+                        }
+                    }
+                },
+                {
+                    "name": "Atribut bo'yicha qiymatlar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attribute-values/by-attribute/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["attribute-values", "by-attribute", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Faol atribut qiymatlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attribute-values/active",
+                            "host": ["{{base_url}}"],
+                            "path": ["attribute-values", "active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Atribut qiymati ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attribute-values/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["attribute-values", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi atribut qiymati qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"attribute_id\": 1,\n    \"value\": \"Yangi Qiymat\",\n    \"description\": \"Qiymat haqida ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/attribute-values/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["attribute-values", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Atribut qiymati ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"attribute_id\": 1,\n    \"value\": \"Yangilangan Qiymat\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/attribute-values/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["attribute-values", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Atribut qiymatini o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attribute-values/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["attribute-values", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Atribut qiymati holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attribute-values/toggle-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["attribute-values", "toggle-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🔄 Mahsulot variantlari",
+            "item": [
+                {
+                    "name": "Mahsulot variantlari ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/product-variants",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-variants"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot bo'yicha variantlar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/product-variants/by-product/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-variants", "by-product", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Faol mahsulot variantlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/product-variants/active",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-variants", "active"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot varianti ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/product-variants/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-variants", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi mahsulot varianti qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"product_id\": 1,\n    \"sku\": \"SKU-001\",\n    \"price\": 150000,\n    \"cost_price\": 120000,\n    \"quantity\": 100,\n    \"attributes\": [\n        {\n            \"attribute_id\": 1,\n            \"value_id\": 1\n        },\n        {\n            \"attribute_id\": 2,\n            \"value_id\": 2\n        }\n    ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/product-variants/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-variants", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot varianti ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"product_id\": 1,\n    \"sku\": \"SKU-001-UPDATED\",\n    \"price\": 160000,\n    \"cost_price\": 130000,\n    \"quantity\": 150,\n    \"attributes\": [\n        {\n            \"attribute_id\": 1,\n            \"value_id\": 1\n        },\n        {\n            \"attribute_id\": 2,\n            \"value_id\": 3\n        }\n    ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/product-variants/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-variants", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot variantini o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/product-variants/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-variants", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot varianti holatini o'zgartirish",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/product-variants/toggle-active/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-variants", "toggle-active", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "📦 Variant Attributes CRUD",
+            "item": [
+                {
+                    "name": "Barcha variant atributlarini olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/variant-attributes?page=1&limit=15",
+                            "host": ["{{base_url}}"],
+                            "path": ["variant-attributes"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "15"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Variant atributini ID bo'yicha olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/variant-attributes/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["variant-attributes", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot varianti bo'yicha atributlarni olish",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/variant-attributes/by-variant/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["variant-attributes", "by-variant", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Yangi variant atributini yaratish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"product_variant_id\": 1,\n    \"attribute_value_id\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/variant-attributes/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["variant-attributes", "create"]
+                        }
+                    }
+                },
+                {
+                    "name": "Variant atributini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"product_variant_id\": 1,\n    \"attribute_value_id\": 2\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/variant-attributes/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["variant-attributes", "update", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Variant atributini o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/variant-attributes/delete/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["variant-attributes", "delete", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot varianti bo'yicha barcha atributlarni o'chirish",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/variant-attributes/delete-by-variant/1",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "variant-attributes",
+                                "delete-by-variant",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

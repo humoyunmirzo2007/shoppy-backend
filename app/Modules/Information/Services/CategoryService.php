@@ -195,4 +195,27 @@ class CategoryService
             ];
         }
     }
+
+    /**
+     * Kategoriyani o'chirish
+     */
+    public function delete(Category $category): array
+    {
+        try {
+            $success = $this->categoryRepository->delete($category);
+
+            return [
+                'success' => $success,
+                'data' => null,
+            ];
+        } catch (\Exception $e) {
+            TelegramBugNotifier::sendError($e, request());
+
+            return [
+                'success' => false,
+                'message' => 'Kategoriyani o\'chirishda xatolik yuz berdi',
+                'data' => null,
+            ];
+        }
+    }
 }

@@ -81,4 +81,21 @@ class ClientController
             $data['message']
         );
     }
+
+    public function show(GetClientByIdRequest $request, int $id)
+    {
+        $data = $this->clientService->getById($id);
+
+        if ($data['status'] === 'error') {
+            return Response::error(
+                message: $data['message'],
+                status: 404
+            );
+        }
+
+        return Response::success(
+            $data['data'],
+            $data['message']
+        );
+    }
 }

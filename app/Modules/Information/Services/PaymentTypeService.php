@@ -120,4 +120,61 @@ class PaymentTypeService
             ];
         }
     }
+
+    public function getById(int $id)
+    {
+        try {
+            $paymentType = $this->paymentTypeRepository->getById($id);
+
+            if (! $paymentType) {
+                return [
+                    'status' => 'error',
+                    'message' => 'To\'lov turi topilmadi',
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'message' => 'To\'lov turi muvaffaqiyatli olindi',
+                'data' => $paymentType,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'To\'lov turini olishda xatolik yuz berdi',
+            ];
+        }
+    }
+
+    public function delete(int $id)
+    {
+        try {
+            $paymentType = $this->paymentTypeRepository->getById($id);
+
+            if (! $paymentType) {
+                return [
+                    'status' => 'error',
+                    'message' => 'To\'lov turi topilmadi',
+                    'status_code' => 404,
+                ];
+            }
+
+            $this->paymentTypeRepository->delete($paymentType);
+
+            return [
+                'status' => 'success',
+                'message' => 'To\'lov turi muvaffaqiyatli o\'chirildi',
+                'data' => null,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'To\'lov turini o\'chirishda xatolik yuz berdi',
+            ];
+        }
+    }
 }

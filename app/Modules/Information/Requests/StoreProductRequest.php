@@ -2,44 +2,64 @@
 
 namespace App\Modules\Information\Requests;
 
-use App\Http\Requests\MainRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProductRequest extends MainRequest
+class StoreProductRequest extends FormRequest
 {
+    /**
+     * Request ni tasdiqlash huquqini tekshirish
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Validation qoidalari
+     */
     public function rules(): array
     {
-
         return [
             'name' => [
                 'required',
+                'string',
                 'max:255',
-                'unique:products',
+            ],
+            'description' => [
+                'nullable',
+                'string',
+                'max:1000',
             ],
             'category_id' => [
                 'required',
                 'integer',
                 'exists:categories,id',
             ],
-            'unit' => [
+            'brand_id' => [
                 'required',
-                'not_in:""',
+                'integer',
+                'exists:brands,id',
             ],
         ];
     }
 
+    /**
+     * Validation xabarlari
+     */
     public function messages(): array
     {
         return [
-            'name.required' => 'Tovar nomini kiritish majburiy',
-            'name.unique' => 'Bu tovar nomi allaqachon ro\'yxatdan o\'tgan',
-            'name.max' => 'Tovar nomi 255 ta belgidan oshmasligi kerak',
-
-            'category_id.required' => 'Kategoriya tanlanmagan',
-            'category_id.integer' => 'Kategoriya ID son bo\'lishi kerak',
+            'name.required' => 'Mahsulot nomi majburiy',
+            'name.string' => 'Mahsulot nomi matn ko\'rinishida bo\'lishi kerak',
+            'name.max' => 'Mahsulot nomi maksimal 255 ta belgi bo\'lishi kerak',
+            'description.string' => 'Mahsulot tavsifi matn ko\'rinishida bo\'lishi kerak',
+            'description.max' => 'Mahsulot tavsifi maksimal 1000 ta belgi bo\'lishi kerak',
+            'category_id.required' => 'Kategoriya majburiy',
+            'category_id.integer' => 'Kategoriya ID si son bo\'lishi kerak',
             'category_id.exists' => 'Tanlangan kategoriya mavjud emas',
-
-            'unit.required' => 'O\'lchov birligi majburiy',
-            'unit.not_in' => 'O\'lchov birligini to\'g\'ri kiriting',
+            'brand_id.required' => 'Brend majburiy',
+            'brand_id.integer' => 'Brend ID si son bo\'lishi kerak',
+            'brand_id.exists' => 'Tanlangan brend mavjud emas',
         ];
     }
 }

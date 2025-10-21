@@ -120,4 +120,61 @@ class CostTypeService
             ];
         }
     }
+
+    public function getById(int $id)
+    {
+        try {
+            $costType = $this->costTypeRepository->getById($id);
+
+            if (! $costType) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Xarajat turi topilmadi',
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'message' => 'Xarajat turi muvaffaqiyatli olindi',
+                'data' => $costType,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'Xarajat turini olishda xatolik yuz berdi',
+            ];
+        }
+    }
+
+    public function delete(int $id)
+    {
+        try {
+            $costType = $this->costTypeRepository->getById($id);
+
+            if (! $costType) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Xarajat turi topilmadi',
+                    'status_code' => 404,
+                ];
+            }
+
+            $this->costTypeRepository->delete($costType);
+
+            return [
+                'status' => 'success',
+                'message' => 'Xarajat turi muvaffaqiyatli o\'chirildi',
+                'data' => null,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'Xarajat turini o\'chirishda xatolik yuz berdi',
+            ];
+        }
+    }
 }

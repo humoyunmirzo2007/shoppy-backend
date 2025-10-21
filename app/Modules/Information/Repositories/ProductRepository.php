@@ -4,120 +4,80 @@ namespace App\Modules\Information\Repositories;
 
 use App\Models\Product;
 use App\Modules\Information\Interfaces\ProductInterface;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductRepository implements ProductInterface
 {
     public function __construct(protected Product $product) {}
 
-    public function getAll(array $data, array $fields = ['*'], ?bool $withLimit = true)
+    /**
+     * Barcha mahsulotlarni olish
+     */
+    public function getAll(array $data, ?array $fields = ['*']): LengthAwarePaginator
     {
-        $search = $data['search'] ?? null;
         $limit = $data['limit'] ?? 15;
+        $page = $data['page'] ?? 1;
         $sort = $data['sort'] ?? ['id' => 'desc'];
-        $filters = $data['filters'] ?? [];
 
-        $query = $this->product->query()
-            ->select($fields)
-            ->with(['category:id,name'])
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($query) use ($search) {
-                    if (is_numeric($search)) {
-                        $query->where('id', $search);
-                    }
-                    $query->orWhere('name', 'ilike', "%$search%");
-                });
-            })
-            ->when(! empty($filters['category_id']), function ($query) use ($filters) {
-                $query->where('category_id', $filters['category_id']);
-            })
-            ->sortable($sort);
+        $query = $this->product->select($fields)
+            ->with(['category', 'brand']);
 
-        if (! $withLimit) {
-            return $query->get();
+        // Qidiruv
+        if (isset($data['search']) && ! empty($data['search'])) {
+            $search = $data['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'ilike', "%{$search}%")
+                    ->orWhere('description', 'ilike', "%{$search}%");
+            });
         }
 
-        return $query->simplePaginate($limit);
-    }
-
-    public function getById(int $id, array $fields = ['*'])
-    {
-        $query = $this->product->query()->select($fields);
-
-        // Add category relationship if needed fields include category data
-        if (in_array('*', $fields) || in_array('category_id', $fields)) {
-            $query->with(['category:id,name']);
+        // Kategoriya bo'yicha filtrlash
+        if (isset($data['category_id']) && ! empty($data['category_id'])) {
+            $query->where('category_id', $data['category_id']);
         }
 
-        return $query->findOrFail($id);
+        // Brend bo'yicha filtrlash
+        if (isset($data['brand_id']) && ! empty($data['brand_id'])) {
+            $query->where('brand_id', $data['brand_id']);
+        }
+
+        return $query->orderBy($sort['field'] ?? 'id', $sort['direction'] ?? 'desc')
+            ->paginate($limit, ['*'], 'page', $page);
     }
 
-    public function store(array $data)
+    /**
+     * ID bo'yicha mahsulotni olish
+     */
+    public function getById(int $id, ?array $fields = ['*']): ?Product
     {
-        $product = $this->product->create($data);
-
-        return $this->product->with(['category:id,name'])
-            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'price')
-            ->find($product->id);
-    }
-
-    public function update(Product $product, array $data)
-    {
-        $product->update($data);
-
-        return $this->product->with(['category:id,name'])
-            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'price')
-            ->find($product->id);
-    }
-
-    public function invertActive(int $id)
-    {
-        $product = $this->product->find($id);
-        $product->is_active = ! $product->is_active;
-        $product->save();
-
-        return $this->product->with(['category:id,name'])
-            ->select('id', 'name', 'unit', 'is_active', 'category_id', 'price')
+        return $this->product->select($fields)
+            ->with(['category', 'brand', 'variants.attributeValues.attribute'])
             ->find($id);
     }
 
-    public function import(array $insertProducts, array $updateProducts): void
+    /**
+     * Yangi mahsulot yaratish
+     */
+    public function store(array $data): Product
     {
-        DB::transaction(function () use ($insertProducts, $updateProducts) {
-            if (! empty($insertProducts)) {
-                $this->product->insert($insertProducts);
-            }
-
-            foreach ($updateProducts as $productData) {
-                $product = $this->product->find($productData['id']);
-                if ($product) {
-                    unset($productData['id']);
-                    $product->update($productData);
-                }
-            }
-        });
+        return $this->product->create($data);
     }
 
-    public function findByName(string $name): ?Product
+    /**
+     * Mahsulotni yangilash
+     */
+    public function update(Product $product, array $data): Product
     {
-        return $this->product->where('name', $name)->first();
+        $product->update($data);
+
+        return $product->fresh();
     }
 
-    public function getForCheckResidue(array $ids)
+    /**
+     * Mahsulotni o'chirish
+     */
+    public function delete(Product $product): bool
     {
-        return $this->product
-            ->whereIn('id', $ids)
-            ->select('id', 'residue')
-            ->get()
-            ->keyBy('id');
-    }
-
-    public function upsert(array $data, array $uniqueBy, array $updates): void
-    {
-        $this->product->upsert(
-            $data,
-            $uniqueBy,
-            $updates
-        );
+        return $product->delete();
     }
 }

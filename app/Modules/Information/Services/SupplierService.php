@@ -137,4 +137,61 @@ class SupplierService
             ];
         }
     }
+
+    public function getById(int $id)
+    {
+        try {
+            $supplier = $this->supplierRepository->getById($id);
+
+            if (!$supplier) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Ta\'minotchi topilmadi',
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'message' => 'Ta\'minotchi muvaffaqiyatli olindi',
+                'data' => $supplier,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'Ta\'minotchini olishda xatolik yuz berdi',
+            ];
+        }
+    }
+
+    public function delete(int $id)
+    {
+        try {
+            $supplier = $this->supplierRepository->getById($id);
+
+            if (!$supplier) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Ta\'minotchi topilmadi',
+                    'status_code' => 404,
+                ];
+            }
+
+            $this->supplierRepository->delete($supplier);
+
+            return [
+                'status' => 'success',
+                'message' => 'Ta\'minotchi muvaffaqiyatli o\'chirildi',
+                'data' => null,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'Ta\'minotchini o\'chirishda xatolik yuz berdi',
+            ];
+        }
+    }
 }

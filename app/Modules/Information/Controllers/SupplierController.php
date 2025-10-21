@@ -81,4 +81,21 @@ class SupplierController
             $data['message']
         );
     }
+
+    public function show(GetSupplierByIdRequest $request, int $id)
+    {
+        $data = $this->supplierService->getById($id);
+
+        if ($data['status'] === 'error') {
+            return Response::error(
+                message: $data['message'],
+                status: 404
+            );
+        }
+
+        return Response::success(
+            $data['data'],
+            $data['message']
+        );
+    }
 }

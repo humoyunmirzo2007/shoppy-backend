@@ -88,4 +88,21 @@ class UserController
             $data['message']
         );
     }
+
+    public function show(GetUserByIdRequest $request, int $id)
+    {
+        $data = $this->userService->getById($id);
+
+        if ($data['status'] === 'error') {
+            return Response::error(
+                message: $data['message'],
+                status: 404
+            );
+        }
+
+        return Response::success(
+            $data['data'],
+            $data['message']
+        );
+    }
 }

@@ -153,4 +153,61 @@ class UserService
             ];
         }
     }
+
+    public function getById(int $id)
+    {
+        try {
+            $user = $this->userRepository->getById($id);
+
+            if (!$user) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Foydalanuvchi topilmadi',
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'message' => 'Foydalanuvchi muvaffaqiyatli olindi',
+                'data' => $user,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'Foydalanuvchini olishda xatolik yuz berdi',
+            ];
+        }
+    }
+
+    public function delete(int $id)
+    {
+        try {
+            $user = $this->userRepository->getById($id);
+
+            if (!$user) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Foydalanuvchi topilmadi',
+                    'status_code' => 404,
+                ];
+            }
+
+            $this->userRepository->delete($id);
+
+            return [
+                'status' => 'success',
+                'message' => 'Foydalanuvchi muvaffaqiyatli o\'chirildi',
+                'data' => null,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'Foydalanuvchini o\'chirishda xatolik yuz berdi',
+            ];
+        }
+    }
 }

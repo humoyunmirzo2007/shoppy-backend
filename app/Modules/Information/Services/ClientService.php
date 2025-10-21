@@ -165,4 +165,61 @@ class ClientService
             ];
         }
     }
+
+    public function getById(int $id)
+    {
+        try {
+            $client = $this->clientRepository->getById($id);
+
+            if (!$client) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Mijoz topilmadi',
+                ];
+            }
+
+            return [
+                'status' => 'success',
+                'message' => 'Mijoz muvaffaqiyatli olindi',
+                'data' => $client,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'Mijozni olishda xatolik yuz berdi',
+            ];
+        }
+    }
+
+    public function delete(int $id)
+    {
+        try {
+            $client = $this->clientRepository->getById($id);
+
+            if (!$client) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Mijoz topilmadi',
+                    'status_code' => 404,
+                ];
+            }
+
+            $this->clientRepository->delete($client);
+
+            return [
+                'status' => 'success',
+                'message' => 'Mijoz muvaffaqiyatli o\'chirildi',
+                'data' => null,
+            ];
+        } catch (\Throwable $e) {
+            $this->telegramNotifier->sendError($e, request());
+
+            return [
+                'status' => 'error',
+                'message' => 'Mijozni o\'chirishda xatolik yuz berdi',
+            ];
+        }
+    }
 }

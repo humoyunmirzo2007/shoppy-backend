@@ -274,5 +274,14 @@ class DatabaseSeeder extends Seeder
 
         DB::table('categories')->insert($categories);
 
+        // Boshqa seederlarni chaqirish
+        $this->call([
+            AttributesSeeder::class,
+            BrandsSeeder::class,
+            AttributeValuesSeeder::class,
+            ProductsSeeder::class,
+            ProductVariantsSeeder::class,
+            VariantAttributesSeeder::class,
+        ]);
     }
 }

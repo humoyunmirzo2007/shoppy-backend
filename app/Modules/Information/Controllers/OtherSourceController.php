@@ -75,4 +75,21 @@ class OtherSourceController
             $data['message'] ?? '',
         );
     }
+
+    public function show(int $id)
+    {
+        $data = $this->otherSourceService->getById($id);
+
+        if ($data['success'] === false) {
+            return Response::error(
+                message: $data['message'] ?? '',
+                status: 404
+            );
+        }
+
+        return Response::success(
+            $data['data'] ?? [],
+            $data['message'] ?? ''
+        );
+    }
 }

@@ -71,4 +71,21 @@ class PaymentTypeController
             $data['message'],
         );
     }
+
+    public function show(GetPaymentTypeByIdRequest $request, int $id)
+    {
+        $data = $this->paymentTypeService->getById($id);
+
+        if ($data['status'] === 'error') {
+            return Response::error(
+                message: $data['message'],
+                status: 404
+            );
+        }
+
+        return Response::success(
+            $data['data'],
+            $data['message']
+        );
+    }
 }

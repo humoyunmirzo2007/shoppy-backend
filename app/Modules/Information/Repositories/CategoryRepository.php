@@ -16,14 +16,33 @@ class CategoryRepository implements CategoryInterface
      */
     public function getAll(array $data, ?array $fields = ['*']): LengthAwarePaginator
     {
+        $search = $data['search'] ?? null;
         $limit = $data['limit'] ?? 15;
-        $page = $data['page'] ?? 1;
         $sort = $data['sort'] ?? ['id' => 'desc'];
+        $filters = $data['filters'] ?? [];
 
-        return $this->category
+        return $this->category->query()
             ->select($fields)
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    if (is_numeric($search)) {
+                        $query->where('id', $search);
+                    }
+                    $query->orWhere('name', 'ilike', "%$search%")
+                        ->orWhere('description', 'ilike', "%$search%");
+                });
+            })
+            ->when(! empty($filters['is_active']), function ($query) use ($filters) {
+                $query->where('is_active', $filters['is_active']);
+            })
+            ->when(! empty($filters['parent_id']), function ($query) use ($filters) {
+                $query->where('parent_id', $filters['parent_id']);
+            })
+            ->when(! empty($filters['first_parent_id']), function ($query) use ($filters) {
+                $query->where('first_parent_id', $filters['first_parent_id']);
+            })
             ->sortable($sort)
-            ->paginate($limit, ['*'], 'page', $page);
+            ->simplePaginate($limit);
     }
 
     /**
