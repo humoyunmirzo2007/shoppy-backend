@@ -36,14 +36,6 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    /**
-     * Mahsulot variantlari bilan bog'lanish
-     */
-    public function variants(): HasMany
-    {
-        return $this->hasMany(ProductVariant::class);
-    }
-
     protected $hidden = ['created_at', 'updated_at'];
 
     protected $sortable = ['id', 'name', 'unit', 'category_id', 'brand_id', 'is_active', 'price', 'wholesale_price'];

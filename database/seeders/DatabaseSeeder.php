@@ -280,8 +280,6 @@ class DatabaseSeeder extends Seeder
             BrandsSeeder::class,
             AttributeValuesSeeder::class,
             ProductsSeeder::class,
-            ProductVariantsSeeder::class,
-            VariantAttributesSeeder::class,
         ]);
     }
 }
