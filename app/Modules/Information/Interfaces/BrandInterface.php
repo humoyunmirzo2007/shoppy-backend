@@ -6,11 +6,15 @@ use App\Models\Brand;
 
 interface BrandInterface
 {
-    public function getAll(array $data, ?array $fields = ['*']);
+    public function getAll(array $data);
 
-    public function getById(int $id, ?array $fields = ['*']);
+    public function getById(int $id);
 
-    public function store(array $data);
+    public function create(array $data);
 
-    public function update(Brand $brand, array $data);
+    public function update(array $data, Brand $brand);
+
+    public function invertActive(Brand $brand);
+
+    public function allActive();
 }

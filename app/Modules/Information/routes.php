@@ -10,10 +10,8 @@ use App\Modules\Information\Controllers\CostTypeController;
 use App\Modules\Information\Controllers\OtherSourceController;
 use App\Modules\Information\Controllers\PaymentTypeController;
 use App\Modules\Information\Controllers\ProductController;
-use App\Modules\Information\Controllers\ProductVariantController;
 use App\Modules\Information\Controllers\SupplierController;
 use App\Modules\Information\Controllers\UserController;
-use App\Modules\Information\Controllers\VariantAttributeController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'auth'], function () {
@@ -62,19 +60,6 @@ Route::group(['prefix' => 'cost-types', 'middleware' => ['auth:sanctum']], funct
     Route::put('/invert-active/{id}', [CostTypeController::class, 'invertActive']);
 });
 
-Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], function () {
-    Route::get('/', [ProductController::class, 'getAll']);
-    Route::get('/residues', [ProductController::class, 'getForResidues']);
-    Route::get('/{id}', [ProductController::class, 'show']);
-    Route::post('/create', [ProductController::class, 'store']);
-    Route::put('/update/{id}', [ProductController::class, 'update']);
-    Route::put('/invert-active/{id}', [ProductController::class, 'invertActive']);
-    Route::get('/download-template', [ProductController::class, 'downloadTemplate']);
-    Route::post('/import', [ProductController::class, 'import']);
-    Route::get('/download-update-price-template', [ProductController::class, 'downloadUpdatePriceTemplate']);
-    Route::post('/update-prices-from-template', [ProductController::class, 'updatePricesFromTemplate']);
-});
-
 Route::group(['prefix' => 'other-sources', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [OtherSourceController::class, 'getAll']);
     Route::get('/by-type-active', [OtherSourceController::class, 'getByTypeAllActive']);
@@ -113,44 +98,31 @@ Route::group(['prefix' => 'brands', 'middleware' => ['auth:sanctum']], function 
     Route::put('/toggle-active/{id}', [BrandController::class, 'toggleActive']);
 });
 
-// Attributes CRUD routes (Admin only)
 Route::group(['prefix' => 'attributes', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [AttributeController::class, 'index']);
-    Route::get('/active', [AttributeController::class, 'getAllActive']);
     Route::get('/{id}', [AttributeController::class, 'show']);
-    Route::post('/create', [AttributeController::class, 'store']);
-    Route::put('/update/{id}', [AttributeController::class, 'update']);
-    Route::put('/toggle-active/{id}', [AttributeController::class, 'toggleActive']);
+    Route::post('/', [AttributeController::class, 'store']);
+    Route::put('/{id}', [AttributeController::class, 'update']);
+    Route::patch('/{id}/invert-active', [AttributeController::class, 'invertActive']);
 });
 
-// Attribute Values CRUD routes (Admin only)
 Route::group(['prefix' => 'attribute-values', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [AttributeValueController::class, 'index']);
-    Route::get('/by-attribute/{attributeId}', [AttributeValueController::class, 'getByAttribute']);
-    Route::get('/active', [AttributeValueController::class, 'getAllActive']);
+    Route::get('/by-attribute/{attributeId}', [AttributeValueController::class, 'getByAttributeId']);
     Route::get('/{id}', [AttributeValueController::class, 'show']);
-    Route::post('/create', [AttributeValueController::class, 'store']);
-    Route::put('/update/{id}', [AttributeValueController::class, 'update']);
-    Route::put('/toggle-active/{id}', [AttributeValueController::class, 'toggleActive']);
+    Route::post('/', [AttributeValueController::class, 'store']);
+    Route::put('/{id}', [AttributeValueController::class, 'update']);
 });
 
-// Product Variants CRUD routes
-Route::group(['prefix' => 'product-variants', 'middleware' => ['auth:sanctum']], function () {
-    Route::get('/', [ProductVariantController::class, 'index']);
-    Route::get('/by-product/{productId}', [ProductVariantController::class, 'getByProduct']);
-    Route::get('/active', [ProductVariantController::class, 'getAllActive']);
-    Route::get('/{id}', [ProductVariantController::class, 'show']);
-    Route::post('/create', [ProductVariantController::class, 'store']);
-    Route::put('/update/{id}', [ProductVariantController::class, 'update']);
-    Route::put('/toggle-active/{id}', [ProductVariantController::class, 'toggleActive']);
-});
-
-// Variant Attributes CRUD routes
-Route::group(['prefix' => 'variant-attributes', 'middleware' => ['auth:sanctum']], function () {
-    Route::get('/', [VariantAttributeController::class, 'index']);
-    Route::get('/by-variant/{productVariantId}', [VariantAttributeController::class, 'getByVariant']);
-    Route::get('/{id}', [VariantAttributeController::class, 'show']);
-    Route::post('/create', [VariantAttributeController::class, 'store']);
-    Route::put('/update/{id}', [VariantAttributeController::class, 'update']);
-    Route::delete('/delete-by-variant/{productVariantId}', [VariantAttributeController::class, 'deleteByVariant']);
+Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [ProductController::class, 'index']);
+    Route::get('/residues', [ProductController::class, 'getForResidues']);
+    Route::get('/{id}', [ProductController::class, 'show']);
+    Route::post('/', [ProductController::class, 'store']);
+    Route::put('/{id}', [ProductController::class, 'update']);
+    Route::patch('/{id}/invert-active', [ProductController::class, 'invertActive']);
+    Route::get('/download-template', [ProductController::class, 'downloadTemplate']);
+    Route::post('/import', [ProductController::class, 'import']);
+    Route::get('/download-update-price-template', [ProductController::class, 'downloadUpdatePriceTemplate']);
+    Route::post('/update-prices-from-template', [ProductController::class, 'updatePricesFromTemplate']);
 });

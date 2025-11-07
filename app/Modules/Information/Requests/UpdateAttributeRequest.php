@@ -7,51 +7,31 @@ use Illuminate\Validation\Rule;
 
 class UpdateAttributeRequest extends FormRequest
 {
-    /**
-     * Request ni tasdiqlash huquqini tekshirish
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Validation qoidalari
-     */
     public function rules(): array
     {
-        $attributeId = $this->route('attribute');
+        $attributeId = $this->route('id');
 
         return [
-            'name' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('attributes', 'name')->ignore($attributeId),
-            ],
-            'type' => [
-                'sometimes',
-                'required',
-                'string',
-                'in:select,text,number,textarea,checkbox,radio',
-            ],
+            'name' => ['required', 'string', 'max:255', Rule::unique('attributes', 'name')->ignore($attributeId)],
+            'type' => ['required', 'string', 'max:255'],
         ];
     }
 
-    /**
-     * Validation xabarlari
-     */
     public function messages(): array
     {
         return [
-            'name.required' => 'Atribut nomi majburiy',
+            'name.required' => 'Atribut nomi kiritilishi shart',
             'name.string' => 'Atribut nomi matn ko\'rinishida bo\'lishi kerak',
-            'name.max' => 'Atribut nomi maksimal 255 ta belgi bo\'lishi kerak',
-            'name.unique' => 'Bu nomdagi atribut allaqachon mavjud',
-            'type.required' => 'Atribut turi majburiy',
+            'name.max' => 'Atribut nomi maksimal 255 belgidan oshmasligi kerak',
+            'name.unique' => 'Bu atribut nomi allaqachon mavjud',
+            'type.required' => 'Atribut turi kiritilishi shart',
             'type.string' => 'Atribut turi matn ko\'rinishida bo\'lishi kerak',
-            'type.in' => 'Atribut turi quyidagilardan biri bo\'lishi kerak: select, text, number, textarea, checkbox, radio',
+            'type.max' => 'Atribut turi maksimal 255 belgidan oshmasligi kerak',
         ];
     }
 }

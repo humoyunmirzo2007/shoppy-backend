@@ -2,30 +2,23 @@
 
 namespace App\Models;
 
+use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AttributeValue extends Model
 {
+    use Sortable;
+
     protected $fillable = [
         'attribute_id',
         'value',
     ];
 
-    /**
-     * Atribut bilan bog'lanish
-     */
     public function attribute(): BelongsTo
     {
         return $this->belongsTo(Attribute::class);
     }
 
-    /**
-     * Variant atributlari bilan bog'lanish
-     */
-    public function variantAttributes(): HasMany
-    {
-        return $this->hasMany(VariantAttribute::class);
-    }
+    protected $sortable = ['id', 'attribute_id', 'value', 'created_at', 'updated_at'];
 }

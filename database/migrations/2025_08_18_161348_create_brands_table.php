@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->comment('Brend nomi');
-            $table->timestamps();
+            $table->string('name')->unique()->index();
+            $table->boolean('is_active')->default(true)->index();
+            $table->timestamp('created_at')->useCurrent()->index();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

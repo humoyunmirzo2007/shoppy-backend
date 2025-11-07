@@ -3,118 +3,119 @@
 namespace App\Modules\Information\Controllers;
 
 use App\Helpers\Response;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\DefaultResource;
 use App\Models\Category;
 use App\Modules\Information\Requests\GetCategoriesRequest;
 use App\Modules\Information\Requests\GetCategoryByIdRequest;
 use App\Modules\Information\Requests\StoreCategoryRequest;
 use App\Modules\Information\Requests\UpdateCategoryRequest;
 use App\Modules\Information\Services\CategoryService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CategoryController
+class CategoryController extends Controller
 {
-    public function __construct(protected CategoryService $categoryService) {}
+    public function __construct(private CategoryService $categoryService) {}
 
     /**
      * Barcha kategoriyalarni olish
      */
-    public function index(GetCategoriesRequest $request): JsonResponse
+    public function index(GetCategoriesRequest $request)
     {
         $data = $request->validated();
 
         $result = $this->categoryService->getAll($data, ['*']);
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Kategoriyalar muvaffaqiyatli olindi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Kategoriyalarni olishda xatolik yuz berdi');
+        return DefaultResource::collection($result['data']);
     }
 
     /**
      * ID bo'yicha kategoriyani olish
      */
-    public function show(GetCategoryByIdRequest $request, int $id): JsonResponse
+    public function show(GetCategoryByIdRequest $request, int $id)
     {
         $result = $this->categoryService->getById($id, ['*']);
 
-        if ($result['success'] && $result['data']) {
-            return Response::success($result['data'], 'Kategoriya muvaffaqiyatli olindi');
+        if (! $result['success']) {
+            return Response::error($result['message'], 404);
         }
 
-        return Response::error($result['message'] ?? 'Kategoriya topilmadi', 404);
+        return DefaultResource::make($result['data']);
     }
 
     /**
      * ID bo'yicha kategoriyani parent chain bilan olish
      */
-    public function showWithParents(GetCategoryByIdRequest $request, int $id): JsonResponse
+    public function showWithParents(GetCategoryByIdRequest $request, int $id)
     {
         $result = $this->categoryService->getByIdWithParents($id, ['*']);
 
-        if ($result['success'] && $result['data']) {
-            return Response::success($result['data'], 'Kategoriya parent chain bilan muvaffaqiyatli olindi');
+        if (! $result['success']) {
+            return Response::error($result['message'], 404);
         }
 
-        return Response::error($result['message'] ?? 'Kategoriya topilmadi', 404);
+        return DefaultResource::make($result['data']);
     }
 
     /**
      * Yangi kategoriya yaratish
      */
-    public function store(StoreCategoryRequest $request): JsonResponse
+    public function store(StoreCategoryRequest $request)
     {
         $data = $request->validated();
         $result = $this->categoryService->store($data);
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Kategoriya muvaffaqiyatli yaratildi', 201);
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Kategoriya yaratishda xatolik yuz berdi');
+        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve(), 201);
     }
 
     /**
      * Kategoriyani yangilash
      */
-    public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
         $data = $request->validated();
         $result = $this->categoryService->update($category, $data);
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Kategoriya muvaffaqiyatli yangilandi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Kategoriya yangilashda xatolik yuz berdi');
+        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve());
     }
 
     /**
      * Kategoriya faol holatini teskari qilish
      */
-    public function toggleActive(int $id): JsonResponse
+    public function toggleActive(int $id)
     {
         $result = $this->categoryService->invertActive($id);
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Kategoriya holati muvaffaqiyatli o\'zgartirildi');
+        if (! $result['success']) {
+            return Response::error($result['message'], 404);
         }
 
-        return Response::error($result['message'] ?? 'Kategoriya topilmadi', 404);
+        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve());
     }
 
     /**
      * Faol kategoriyalarni olish
      */
-    public function active(Request $request): JsonResponse
+    public function active(Request $request)
     {
         $result = $this->categoryService->getActiveCategories(['*']);
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Faol kategoriyalar muvaffaqiyatli olindi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Faol kategoriyalarni olishda xatolik yuz berdi');
+        return DefaultResource::collection($result['data']);
     }
 }

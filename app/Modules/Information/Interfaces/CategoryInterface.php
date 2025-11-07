@@ -17,4 +17,6 @@ interface CategoryInterface
     public function update(Category $category, array $data);
 
     public function invertActive(int $id);
+
+    public function getActiveCategories(?array $fields = ['*']);
 }

@@ -1,0 +1,72 @@
+---
+alwaysApply: true
+---
+
+1.  Controller, Model, Repository fayllarda logika yozilmasin. Faqatgina service fayllarda logika yozilsin
+2.  Service fayllardagi barcha funksiyalar try-catch blokiga o'ralsin va catch ichida doim TelegramBot::sendError(requet(), $e) chaqirilsin
+3.  Barcha fayllarda DI (Dependency Injection) dan foydalanish majburiy. User::find, User::inert deb yozish mumkin emas. Model, Interface, Repository, Service va Controller orqali amalga oshirilsin.
+4.  Bazaga ortiqcha so'rov yuborilmasin
+5.  Request fayllarning har bir validationiga o'zbek tilida message yozilsin.
+6.  Ma'lumotlarni get, index yoki getAll qilishda yoki boshqalarida ham agar filter ishlatilsa, (ularda doim search ishlatilishi shart, mos columnlar bo'yicha) ushbu ko'rinishda qilinsin:
+    $search = $data['search'] ?? null;
+    $limit = $data['limit'] ?? 100;
+    $sort = $data['sort'] ?? ['id' => 'desc'];
+    $filters = $data['filters'] ?? [];
+
+        return $this->model->
+            ->select(...)
+            ->where('type', $type)
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    if (is_numeric($search)) {
+                        $query->where('id', $search);
+                    }
+                    $query->orWhere('number', 'ilike', "%$search%")
+                        ->orWhereHas('client', function ($q) use ($search) {
+                            $q->where('name', 'ilike', "%$search%");
+                        });
+                });
+            })
+            ->when(! empty($filters['from_date']), function ($query) use ($filters) {
+                $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');
+                $query->whereDate('date', '>=', $from);
+            })
+            ->when(! empty($filters['to_date']), function ($query) use ($filters) {
+                $to = Carbon::createFromFormat('d.m.Y', $filters['to_date'])->format('Y-m-d');
+                $query->whereDate('date', '<=', $to);
+            })
+            ->when(
+                ! empty($filters['client_id']),
+                fn ($q) => $q->whereHas('client', fn ($sq) => $sq->where('id', $filters['client_id']))
+            )
+            ->when(! empty($filters['status']), fn ($q) => $q->where('status', $filters['status']))
+            ->when(
+                ! empty($filters['user_id']),
+                fn ($q) => $q->whereHas('user', fn ($uq) => $uq->where('id', $filters['user_id']))
+            )
+            ->when(! empty($filters['price_from']), fn ($q) => $q->where('total_price', '>=', $filters['price_from']))
+            ->when(! empty($filters['price_to']), fn ($q) => $q->where('total_price', '<=', $filters['price_to']))
+            ->sortable($sort)
+            ->paginate($limit);
+
+7.  serviceda agar success bo'lsa :
+    return [
+    'success'=> true,
+    'message'=> '...'
+    'data'=> ...
+    ]
+
+agar error bo'lsa esa:
+
+return [
+'success' => false,
+'message' => '...'
+]
+
+bo'lishi kerak. va controllerda esa agar data success false bo'lsa Response::error bilan return qilimnishi kerak, aks xolda Response::success. Agar getAll, all-active va shunga o'xshashlari bo'lsa esa DefaultResource::collection, agar single bo'lsa DefaultResource::make qilib return qilinishi kerak.
+
+8. Har bir CRUD uchun POSTMAN.json fayliga yozilsin. U shunday bo'lsinki, Shoppy API nomi bilan collection ochilsin. Unda auth ham bo'lsin, auth, logout, get-me. auth qilinsa token automatic tarzda bearer token qiymatiga yozib qo'yilsin. Har bir title o'zbek tilida, mos ikonkalar bilan yozilsin. har biri authni Inherit from parent qilsin. Ularni ham joylashuvi app/Modules ichida ular qanday joylashtirilgan bo'lsa, postman collectionga ha shunday yozilsin. Har birini content-typesi va accept qiymati headersga yozilsin. bodylar mos yozuvlar bilan o'zbek tilida to'ldirilsin. Filterlanadigan ma'lumotlar bo'lsa paramsga yozilsin, lekin use qilinmasin (checkbox check qilinmasin)
+9. Har bir qilingan CRUD POSTMAN.json fayliga yozib ketilsin.
+10. Migrationlarda tablelarni create qilinsa kerakli columnlarga index qo'yilsin
+11. CRUD qilinsa, DatabaseSeeder fayliga mos qilib, 10 ta seed data yozib ber
+12. Circular dependencyga yo'l qo'yilmasin

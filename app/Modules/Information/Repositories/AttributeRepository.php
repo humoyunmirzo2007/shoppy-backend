@@ -4,19 +4,15 @@ namespace App\Modules\Information\Repositories;
 
 use App\Models\Attribute;
 use App\Modules\Information\Interfaces\AttributeInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class AttributeRepository implements AttributeInterface
 {
-    public function __construct(protected Attribute $attribute) {}
+    public function __construct(private Attribute $attribute) {}
 
-    /**
-     * Barcha atributlarni olish
-     */
-    public function getAll(array $data, ?array $fields = ['*']): LengthAwarePaginator
+    public function getAll(array $data, ?array $fields = ['*'])
     {
         $search = $data['search'] ?? null;
-        $limit = $data['limit'] ?? 15;
+        $limit = $data['limit'] ?? 100;
         $sort = $data['sort'] ?? ['id' => 'desc'];
         $filters = $data['filters'] ?? [];
 
@@ -38,32 +34,32 @@ class AttributeRepository implements AttributeInterface
                 $query->where('type', $filters['type']);
             })
             ->sortable($sort)
-            ->simplePaginate($limit);
+            ->paginate($limit);
     }
 
-    /**
-     * ID bo'yicha atributni olish
-     */
     public function getById(int $id, ?array $fields = ['*']): ?Attribute
     {
         return $this->attribute->select($fields)->find($id);
     }
 
-    /**
-     * Yangi atribut yaratish
-     */
     public function store(array $data): Attribute
     {
         return $this->attribute->create($data);
     }
 
-    /**
-     * Atributni yangilash
-     */
-    public function update(Attribute $attribute, array $data): Attribute
+    public function update(Attribute $attribute, array $data)
     {
         $attribute->update($data);
 
         return $attribute->fresh();
+    }
+
+    public function invertActive(Attribute $attribute)
+    {
+        $attribute->is_active = ! $attribute->is_active;
+
+        $attribute->save();
+
+        return $attribute;
     }
 }

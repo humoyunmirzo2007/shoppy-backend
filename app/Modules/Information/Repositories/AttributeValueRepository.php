@@ -10,40 +10,34 @@ class AttributeValueRepository implements AttributeValueInterface
 {
     public function __construct(protected AttributeValue $attributeValue) {}
 
-    /**
-     * Barcha atribut qiymatlarini olish
-     */
     public function getAll(array $data, ?array $fields = ['*']): LengthAwarePaginator
     {
         $search = $data['search'] ?? null;
-        $limit = $data['limit'] ?? 15;
+        $limit = $data['limit'] ?? 100;
         $sort = $data['sort'] ?? ['id' => 'desc'];
         $filters = $data['filters'] ?? [];
 
         return $this->attributeValue->query()
             ->select($fields)
-            ->with(['attribute'])
+            ->with(['attribute:id,name'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {
                         $query->where('id', $search);
                     }
-                    $query->orWhere('value', 'ilike', "%$search%");
+                    $query->orWhere('value', 'ilike', "%$search%")
+                        ->orWhereHas('attribute', function ($q) use ($search) {
+                            $q->where('name', 'ilike', "%$search%");
+                        });
                 });
             })
             ->when(! empty($filters['attribute_id']), function ($query) use ($filters) {
                 $query->where('attribute_id', $filters['attribute_id']);
             })
-            ->when(! empty($filters['is_active']), function ($query) use ($filters) {
-                $query->where('is_active', $filters['is_active']);
-            })
             ->sortable($sort)
-            ->simplePaginate($limit);
+            ->paginate($limit);
     }
 
-    /**
-     * ID bo'yicha atribut qiymatini olish
-     */
     public function getById(int $id, ?array $fields = ['*']): ?AttributeValue
     {
         return $this->attributeValue->select($fields)
@@ -51,21 +45,23 @@ class AttributeValueRepository implements AttributeValueInterface
             ->find($id);
     }
 
-    /**
-     * Yangi atribut qiymatini yaratish
-     */
     public function store(array $data): AttributeValue
     {
         return $this->attributeValue->create($data);
     }
 
-    /**
-     * Atribut qiymatini yangilash
-     */
     public function update(AttributeValue $attributeValue, array $data): AttributeValue
     {
         $attributeValue->update($data);
 
         return $attributeValue->fresh();
+    }
+
+    public function getByAttributeId(int $id, ?array $fields = ['*'])
+    {
+        return $this->attributeValue->select($fields)
+            ->with(['attribute'])
+            ->where('attribute_id', $id)
+            ->get();
     }
 }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->comment('Atribut nomi (rang, o\'lcham, material...)');
             $table->string('type')->default('select')->comment('Atribut turi (select, text, number...)');
+            $table->boolean('is_active')->default(true)->comment('Atribut holati');
             $table->timestamps();
         });
     }

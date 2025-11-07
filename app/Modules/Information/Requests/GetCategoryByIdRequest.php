@@ -2,28 +2,22 @@
 
 namespace App\Modules\Information\Requests;
 
-use App\Http\Requests\MainRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class GetCategoryByIdRequest extends MainRequest
+class GetCategoryByIdRequest extends FormRequest
 {
-    public function rules()
+    public function authorize(): bool
     {
-        return [
-            'category_id' => ['required', 'integer', 'exists:categories,id'],
-        ];
+        return true;
     }
 
-    public function validationData()
+    public function rules(): array
     {
-        return ['category_id' => $this->route('id')];
+        return [];
     }
 
-    public function messages()
+    public function messages(): array
     {
-        return [
-            'category_id.required' => 'Kategoriya ID si majburiy',
-            'category_id.integer' => 'Kategoriya ID si son bo\'lishi kerak',
-            'category_id.exists' => 'Bunday kategoriya mavjud emas',
-        ];
+        return [];
     }
 }

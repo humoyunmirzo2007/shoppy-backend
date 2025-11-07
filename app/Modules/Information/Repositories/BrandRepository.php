@@ -4,24 +4,21 @@ namespace App\Modules\Information\Repositories;
 
 use App\Models\Brand;
 use App\Modules\Information\Interfaces\BrandInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Carbon\Carbon;
 
 class BrandRepository implements BrandInterface
 {
-    public function __construct(protected Brand $brand) {}
+    public function __construct(private Brand $brand) {}
 
-    /**
-     * Barcha brendlarni olish
-     */
-    public function getAll(array $data, ?array $fields = ['*']): LengthAwarePaginator
+    public function getAll(array $data)
     {
         $search = $data['search'] ?? null;
-        $limit = $data['limit'] ?? 15;
+        $limit = $data['limit'] ?? 100;
         $sort = $data['sort'] ?? ['id' => 'desc'];
         $filters = $data['filters'] ?? [];
 
-        return $this->brand->query()
-            ->select($fields)
+        return $this->brand
+            ->select('*')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {
@@ -30,36 +27,50 @@ class BrandRepository implements BrandInterface
                     $query->orWhere('name', 'ilike', "%$search%");
                 });
             })
-            ->when(! empty($filters['is_active']), function ($query) use ($filters) {
-                $query->where('is_active', $filters['is_active']);
+            ->when(! empty($filters['from_date']), function ($query) use ($filters) {
+                $from = Carbon::createFromFormat('d.m.Y', $filters['from_date'])->format('Y-m-d');
+                $query->whereDate('created_at', '>=', $from);
             })
+            ->when(! empty($filters['to_date']), function ($query) use ($filters) {
+                $to = Carbon::createFromFormat('d.m.Y', $filters['to_date'])->format('Y-m-d');
+                $query->whereDate('created_at', '<=', $to);
+            })
+            ->when(! empty($filters['is_active']), fn ($q) => $q->where('is_active', $filters['is_active']))
             ->sortable($sort)
-            ->simplePaginate($limit);
+            ->paginate($limit);
     }
 
-    /**
-     * ID bo'yicha brendni olish
-     */
-    public function getById(int $id, ?array $fields = ['*']): ?Brand
+    public function getById(int $id)
     {
-        return $this->brand->select($fields)->find($id);
+        return $this->brand->where('id', $id)->first();
     }
 
-    /**
-     * Yangi brend yaratish
-     */
-    public function store(array $data): Brand
+    public function create(array $data)
     {
         return $this->brand->create($data);
     }
 
-    /**
-     * Brendni yangilash
-     */
-    public function update(Brand $brand, array $data): Brand
+    public function update(array $data, Brand $brand)
     {
         $brand->update($data);
 
-        return $brand->fresh();
+        return $brand;
+    }
+
+    public function invertActive(Brand $brand)
+    {
+        $brand->is_active = ! $brand->is_active;
+        $brand->save();
+
+        return $brand;
+    }
+
+    public function allActive()
+    {
+        return $this->brand
+            ->select('id', 'name')
+            ->where('is_active', true)
+            ->orderBy('name', 'asc')
+            ->get();
     }
 }

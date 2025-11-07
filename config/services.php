@@ -15,11 +15,11 @@ return [
     */
 
     'postmark' => [
-        'token' => env('POSTMARK_TOKEN'),
+        'key' => env('POSTMARK_API_KEY'),
     ],
 
     'resend' => [
-        'key' => env('RESEND_KEY'),
+        'key' => env('RESEND_API_KEY'),
     ],
 
     'ses' => [
@@ -36,8 +36,8 @@ return [
     ],
 
     'telegram' => [
-        'shoppy_uz_bot_token' => env('SHOPPY_UZ_BOT_TOKEN'),
-        'bot_token' => env('SHOPPY_UZ_BOT_TOKEN'),
-        'chat_id' => env('TELEGRAM_CHAT_ID'),
+        'telegram_bug_log_bot_token' => env('TELEGRAM_BUG_LOG_BOT_TOKEN'),
+        'telegram_bug_log_group_chat_id' => env('TELEGRAM_BUG_LOG_GROUP_CHAT_ID'),
     ],
+
 ];

@@ -3,133 +3,80 @@
 namespace App\Modules\Information\Controllers;
 
 use App\Helpers\Response;
-use App\Models\AttributeValue;
-use App\Modules\Information\Requests\GetAttributeValueByIdRequest;
-use App\Modules\Information\Requests\GetAttributeValuesRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\DefaultResource;
 use App\Modules\Information\Requests\StoreAttributeValueRequest;
 use App\Modules\Information\Requests\UpdateAttributeValueRequest;
 use App\Modules\Information\Services\AttributeValueService;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-class AttributeValueController
+class AttributeValueController extends Controller
 {
-    public function __construct(protected AttributeValueService $attributeValueService) {}
+    public function __construct(private AttributeValueService $attributeValueService) {}
 
-    /**
-     * Barcha atribut qiymatlarini olish
-     */
-    public function index(GetAttributeValuesRequest $request): JsonResponse
+    public function index(Request $request)
     {
-        $data = $request->validated();
+        $data = [
+            'search' => $request->get('search'),
+            'limit' => $request->get('limit', 100),
+            'sort' => $request->get('sort', ['id' => 'desc']),
+            'filters' => $request->get('filters', []),
+        ];
 
-        $result = $this->attributeValueService->getAll($data, ['*']);
+        $result = $this->attributeValueService->getAll($data);
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Atribut qiymatlari muvaffaqiyatli olindi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Atribut qiymatlarini olishda xatolik yuz berdi');
+        return DefaultResource::collection($result['data']);
     }
 
-    /**
-     * ID bo'yicha atribut qiymatini olish
-     */
-    public function show(GetAttributeValueByIdRequest $request, int $id): JsonResponse
+    public function show(int $id)
     {
-        $result = $this->attributeValueService->getById($id, ['*']);
+        $result = $this->attributeValueService->getById($id);
 
-        if ($result['success'] && $result['data']) {
-            return Response::success($result['data'], 'Atribut qiymati muvaffaqiyatli olindi');
-        }
-
-        return Response::error($result['message'] ?? 'Atribut qiymati topilmadi', 404);
+        return DefaultResource::make($result['data']);
     }
 
-    /**
-     * Yangi atribut qiymatini yaratish
-     */
-    public function store(StoreAttributeValueRequest $request): JsonResponse
+    public function getByAttributeId(int $attributeId)
     {
-        $data = $request->validated();
-        $result = $this->attributeValueService->store($data);
+        $result = $this->attributeValueService->getByAttributeId($attributeId);
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Atribut qiymati muvaffaqiyatli yaratildi', 201);
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Atribut qiymatini yaratishda xatolik yuz berdi');
+        return DefaultResource::collection($result['data']);
     }
 
-    /**
-     * Atribut qiymatini yangilash
-     */
-    public function update(UpdateAttributeValueRequest $request, AttributeValue $attributeValue): JsonResponse
+    public function store(StoreAttributeValueRequest $request)
     {
-        $data = $request->validated();
-        $result = $this->attributeValueService->update($attributeValue, $data);
+        $result = $this->attributeValueService->store($request->validated());
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Atribut qiymati muvaffaqiyatli yangilandi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Atribut qiymatini yangilashda xatolik yuz berdi');
+        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve(), 201);
     }
 
-    /**
-     * Atribut qiymatini o'chirish
-     */
-    public function destroy(AttributeValue $attributeValue): JsonResponse
+    public function update(UpdateAttributeValueRequest $request, int $id)
     {
-        $result = $this->attributeValueService->delete($attributeValue);
+        $result = $this->attributeValueService->getById($id);
 
-        if ($result['success']) {
-            return Response::success(null, 'Atribut qiymati muvaffaqiyatli o\'chirildi');
+        if (! $result['success']) {
+            return Response::error($result['message'], 404);
         }
 
-        return Response::error($result['message'] ?? 'Atribut qiymatini o\'chirishda xatolik yuz berdi');
-    }
+        $attributeValue = $result['data'];
 
-    /**
-     * Atribut bo'yicha qiymatlarni olish
-     */
-    public function getByAttribute(int $attributeId): JsonResponse
-    {
-        $data = ['attribute_id' => $attributeId];
-        $result = $this->attributeValueService->getAll($data, ['*']);
+        $result = $this->attributeValueService->update($attributeValue, $request->validated());
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Atribut qiymatlari muvaffaqiyatli olindi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Atribut qiymatlarini olishda xatolik yuz berdi');
-    }
-
-    /**
-     * Faol atribut qiymatlarini olish
-     */
-    public function getAllActive(): JsonResponse
-    {
-        $data = ['is_active' => true];
-        $result = $this->attributeValueService->getAll($data, ['*']);
-
-        if ($result['success']) {
-            return Response::success($result['data'], 'Faol atribut qiymatlari muvaffaqiyatli olindi');
-        }
-
-        return Response::error($result['message'] ?? 'Faol atribut qiymatlarini olishda xatolik yuz berdi');
-    }
-
-    /**
-     * Atribut qiymati holatini o'zgartirish
-     */
-    public function toggleActive(int $id): JsonResponse
-    {
-        $result = $this->attributeValueService->toggleActive($id);
-
-        if ($result['success']) {
-            return Response::success($result['data'], 'Atribut qiymati holati muvaffaqiyatli o\'zgartirildi');
-        }
-
-        return Response::error($result['message'] ?? 'Atribut qiymati holatini o\'zgartirishda xatolik yuz berdi');
+        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve());
     }
 }

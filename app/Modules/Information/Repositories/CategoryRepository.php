@@ -11,9 +11,6 @@ class CategoryRepository implements CategoryInterface
 {
     public function __construct(protected Category $category) {}
 
-    /**
-     * Barcha kategoriyalarni olish
-     */
     public function getAll(array $data, ?array $fields = ['*']): LengthAwarePaginator
     {
         $search = $data['search'] ?? null;
@@ -42,20 +39,14 @@ class CategoryRepository implements CategoryInterface
                 $query->where('first_parent_id', $filters['first_parent_id']);
             })
             ->sortable($sort)
-            ->simplePaginate($limit);
+            ->paginate($limit);
     }
 
-    /**
-     * ID bo'yicha kategoriyani olish
-     */
     public function getById(int $id, ?array $fields = ['*']): ?Category
     {
         return $this->category->select($fields)->find($id);
     }
 
-    /**
-     * ID bo'yicha kategoriyani to'liq hierarchical chain bilan olish
-     */
     public function getByIdWithParents(int $id, ?array $fields = ['*']): ?Category
     {
         $category = $this->category->select($fields)->find($id);
@@ -64,7 +55,6 @@ class CategoryRepository implements CategoryInterface
             return null;
         }
 
-        // First parent va uning barcha children'larini to'liq tree ko'rinishida olish
         if ($category->first_parent_id) {
             $firstParentWithChildren = $this->getCategoryWithAllChildren($category->first_parent_id, $fields);
 
@@ -76,9 +66,6 @@ class CategoryRepository implements CategoryInterface
         return $category;
     }
 
-    /**
-     * Kategoriya va uning barcha children'larini recursive olish
-     */
     private function getCategoryWithAllChildren(int $categoryId, ?array $fields = ['*']): ?Category
     {
         $category = $this->category->select($fields)->find($categoryId);
@@ -87,44 +74,34 @@ class CategoryRepository implements CategoryInterface
             return null;
         }
 
-        // Children'larni olish
         $children = $this->category->select($fields)
             ->where('parent_id', $categoryId)
             ->orderBy('sort_order')
             ->get();
 
-        // Har bir child uchun recursive children'larni olish
         $childrenWithSubChildren = $children->map(function ($child) use ($fields) {
             $childWithChildren = $this->getCategoryWithAllChildren($child->id, $fields);
 
             return $childWithChildren ?: $child;
         });
 
-        // Dynamic property sifatida qo'shish
         $category->setAttribute('children', $childrenWithSubChildren);
 
         return $category;
     }
 
-    /**
-     * Yangi kategoriya yaratish
-     */
     public function store(array $data): Category
     {
         return $this->category->create($data);
     }
 
-    /**
-     * Kategoriyani yangilash
-     */
-    public function update(Category $category, array $data): bool
+    public function update(Category $category, array $data): Category
     {
-        return $category->update($data);
+        $category->update($data);
+
+        return $category->fresh();
     }
 
-    /**
-     * Kategoriya faol holatini teskari qilish
-     */
     public function invertActive(int $id): bool
     {
         $category = $this->getById($id);
@@ -135,9 +112,6 @@ class CategoryRepository implements CategoryInterface
         return $category->update(['is_active' => ! $category->is_active]);
     }
 
-    /**
-     * Faol kategoriyalarni olish
-     */
     public function getActiveCategories(?array $fields = ['*']): Collection
     {
         return $this->category

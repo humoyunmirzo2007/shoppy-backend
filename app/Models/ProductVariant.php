@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductVariant extends Model
 {
+    use Sortable;
+
     protected $fillable = [
         'product_id',
         'sku',
@@ -15,6 +18,8 @@ class ProductVariant extends Model
         'stock',
         'image_url',
     ];
+
+    protected $sortable = ['id', 'product_id', 'sku', 'price', 'stock', 'created_at', 'updated_at'];
 
     protected $casts = [
         'price' => 'decimal:2',

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('attribute_values', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('attribute_id')->constrained('attributes')->onDelete('cascade')->comment('Atribut ID');
-            $table->string('value')->comment('Atribut qiymati (qizil, M, paxta...)');
+            $table->foreignId('attribute_id')->constrained('attributes')->onDelete('cascade')->index();
+            $table->string('value')->index();
             $table->timestamps();
         });
     }

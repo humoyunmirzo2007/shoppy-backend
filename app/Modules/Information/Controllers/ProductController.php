@@ -3,7 +3,6 @@
 namespace App\Modules\Information\Controllers;
 
 use App\Helpers\Response;
-use App\Models\Product;
 use App\Modules\Information\Requests\GetProductByIdRequest;
 use App\Modules\Information\Requests\GetProductsRequest;
 use App\Modules\Information\Requests\StoreProductRequest;
@@ -63,8 +62,15 @@ class ProductController
     /**
      * Mahsulotni yangilash
      */
-    public function update(UpdateProductRequest $request, Product $product): JsonResponse
+    public function update(UpdateProductRequest $request, int $id): JsonResponse
     {
+        $result = $this->productService->getById($id, ['*']);
+
+        if (! $result['success'] || ! $result['data']) {
+            return Response::error($result['message'] ?? 'Mahsulot topilmadi', 404);
+        }
+
+        $product = $result['data'];
         $data = $request->validated();
         $result = $this->productService->update($product, $data);
 
@@ -78,8 +84,15 @@ class ProductController
     /**
      * Mahsulotni o'chirish
      */
-    public function destroy(Product $product): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
+        $result = $this->productService->getById($id, ['*']);
+
+        if (! $result['success'] || ! $result['data']) {
+            return Response::error($result['message'] ?? 'Mahsulot topilmadi', 404);
+        }
+
+        $product = $result['data'];
         $result = $this->productService->delete($product);
 
         if ($result['success']) {

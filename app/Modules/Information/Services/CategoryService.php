@@ -2,17 +2,14 @@
 
 namespace App\Modules\Information\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Models\Category;
 use App\Modules\Information\Interfaces\CategoryInterface;
 
 class CategoryService
 {
-    public function __construct(protected CategoryInterface $categoryRepository) {}
+    public function __construct(private CategoryInterface $categoryRepository) {}
 
-    /**
-     * Barcha kategoriyalarni olish
-     */
     public function getAll(array $data, ?array $fields = ['*']): array
     {
         try {
@@ -20,71 +17,75 @@ class CategoryService
 
             return [
                 'success' => true,
+                'message' => 'Kategoriyalar muvaffaqiyatli olindi',
                 'data' => $categories,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
                 'message' => 'Kategoriyalarni olishda xatolik yuz berdi',
-                'data' => [],
             ];
         }
     }
 
-    /**
-     * ID bo'yicha kategoriyani olish
-     */
     public function getById(int $id, ?array $fields = ['*']): array
     {
         try {
             $category = $this->categoryRepository->getById($id, $fields);
+            if (! $category) {
+                return [
+                    'success' => false,
+                    'message' => 'Kategoriya topilmadi',
+                ];
+            }
 
             return [
                 'success' => true,
+                'message' => 'Kategoriya muvaffaqiyatli olindi',
                 'data' => $category,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
                 'message' => 'Kategoriyani olishda xatolik yuz berdi',
-                'data' => null,
             ];
         }
     }
 
-    /**
-     * ID bo'yicha kategoriyani to'liq hierarchical chain bilan olish
-     */
     public function getByIdWithParents(int $id, ?array $fields = ['*']): array
     {
         try {
             $category = $this->categoryRepository->getByIdWithParents($id, $fields);
+            if (! $category) {
+                return [
+                    'success' => false,
+                    'message' => 'Kategoriya topilmadi',
+                ];
+            }
 
             return [
                 'success' => true,
+                'message' => 'Kategoriya parent chain bilan muvaffaqiyatli olindi',
                 'data' => $category,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
                 'message' => 'Kategoriyani olishda xatolik yuz berdi',
-                'data' => null,
             ];
         }
     }
 
-    /**
-     * Yangi kategoriya yaratish
-     */
     public function store(array $data): array
     {
         try {
+            $data['is_active'] = true;
             // Agar parent_id berilgan bo'lsa, first_parent_id ni aniqlash
             if (isset($data['parent_id']) && $data['parent_id']) {
                 $parentResult = $this->getById($data['parent_id']);
@@ -98,26 +99,23 @@ class CategoryService
 
             return [
                 'success' => true,
+                'message' => 'Kategoriya muvaffaqiyatli yaratildi',
                 'data' => $category,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
                 'message' => 'Kategoriya yaratishda xatolik yuz berdi',
-                'data' => null,
             ];
         }
     }
 
-    /**
-     * Kategoriyani yangilash
-     */
     public function update(Category $category, array $data): array
     {
         try {
-            // Agar parent_id o'zgartirilgan bo'lsa, first_parent_id ni yangilash
+            unset($data['is_active']);
             if (isset($data['parent_id'])) {
                 if ($data['parent_id']) {
                     $parentResult = $this->getById($data['parent_id']);
@@ -130,91 +128,75 @@ class CategoryService
                 }
             }
 
-            $success = $this->categoryRepository->update($category, $data);
+            $updatedCategory = $this->categoryRepository->update($category, $data);
 
             return [
-                'success' => $success,
-                'data' => $success ? $this->categoryRepository->getById($category->id) : null,
+                'success' => true,
+                'message' => 'Kategoriya muvaffaqiyatli yangilandi',
+                'data' => $updatedCategory,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
                 'message' => 'Kategoriya yangilashda xatolik yuz berdi',
-                'data' => null,
             ];
         }
     }
 
-    /**
-     * Kategoriya faol holatini teskari qilish
-     */
     public function invertActive(int $id): array
     {
         try {
+            $category = $this->categoryRepository->getById($id);
+            if (! $category) {
+                return [
+                    'success' => false,
+                    'message' => 'Kategoriya topilmadi',
+                ];
+            }
+
             $success = $this->categoryRepository->invertActive($id);
+            if (! $success) {
+                return [
+                    'success' => false,
+                    'message' => 'Kategoriya holati o\'zgartirilmadi',
+                ];
+            }
+
+            $category = $this->categoryRepository->getById($id);
 
             return [
-                'success' => $success,
-                'data' => $success ? $this->categoryRepository->getById($id) : null,
+                'success' => true,
+                'message' => 'Kategoriya holati muvaffaqiyatli o\'zgartirildi',
+                'data' => $category,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
                 'message' => 'Kategoriya holatini o\'zgartirishda xatolik yuz berdi',
-                'data' => null,
             ];
         }
     }
 
-    /**
-     * Faol kategoriyalarni olish
-     */
     public function getActiveCategories(?array $fields = ['*']): array
     {
         try {
-            $categories = Category::select($fields)
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->get();
+            $categories = $this->categoryRepository->getActiveCategories($fields);
 
             return [
                 'success' => true,
+                'message' => 'Faol kategoriyalar muvaffaqiyatli olindi',
                 'data' => $categories,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
                 'message' => 'Faol kategoriyalarni olishda xatolik yuz berdi',
-                'data' => [],
-            ];
-        }
-    }
-
-    /**
-     * Kategoriyani o'chirish
-     */
-    public function delete(Category $category): array
-    {
-        try {
-            $success = $this->categoryRepository->delete($category);
-
-            return [
-                'success' => $success,
-                'data' => null,
-            ];
-        } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
-
-            return [
-                'success' => false,
-                'message' => 'Kategoriyani o\'chirishda xatolik yuz berdi',
-                'data' => null,
             ];
         }
     }

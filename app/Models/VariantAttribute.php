@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
+use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VariantAttribute extends Model
 {
+    use Sortable;
+
     protected $fillable = [
         'product_variant_id',
         'attribute_value_id',
     ];
+
+    protected $sortable = ['id', 'product_variant_id', 'attribute_value_id', 'created_at', 'updated_at'];
 
     /**
      * Variant bilan bog'lanish

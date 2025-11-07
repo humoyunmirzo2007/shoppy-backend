@@ -3,118 +3,87 @@
 namespace App\Modules\Information\Controllers;
 
 use App\Helpers\Response;
-use App\Models\Brand;
-use App\Modules\Information\Requests\GetBrandByIdRequest;
-use App\Modules\Information\Requests\GetBrandsRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\DefaultResource;
 use App\Modules\Information\Requests\StoreBrandRequest;
 use App\Modules\Information\Requests\UpdateBrandRequest;
 use App\Modules\Information\Services\BrandService;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-class BrandController
+class BrandController extends Controller
 {
-    public function __construct(protected BrandService $brandService) {}
+    public function __construct(private BrandService $brandService) {}
 
-    /**
-     * Barcha brendlarni olish
-     */
-    public function index(GetBrandsRequest $request): JsonResponse
+    public function index(Request $request)
     {
-        $data = $request->validated();
+        $data = [
+            'search' => $request->get('search'),
+            'limit' => $request->get('limit', 100),
+            'sort' => $request->get('sort', ['id' => 'desc']),
+            'filters' => $request->get('filters', []),
+        ];
 
-        $result = $this->brandService->getAll($data, ['*']);
+        $result = $this->brandService->getAll($data);
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Brendlar muvaffaqiyatli olindi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Brendlarni olishda xatolik yuz berdi');
+        return DefaultResource::collection($result['data']);
     }
 
-    /**
-     * ID bo'yicha brendni olish
-     */
-    public function show(GetBrandByIdRequest $request, int $id): JsonResponse
+    public function show(int $id)
     {
-        $result = $this->brandService->getById($id, ['*']);
+        $result = $this->brandService->getById($id);
 
-        if ($result['success'] && $result['data']) {
-            return Response::success($result['data'], 'Brend muvaffaqiyatli olindi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Brend topilmadi', 404);
+        return DefaultResource::make($result['data']);
     }
 
-    /**
-     * Yangi brend yaratish
-     */
-    public function store(StoreBrandRequest $request): JsonResponse
+    public function store(StoreBrandRequest $request)
     {
-        $data = $request->validated();
-        $result = $this->brandService->store($data);
+        $result = $this->brandService->create($request->validated());
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Brend muvaffaqiyatli yaratildi', 201);
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Brend yaratishda xatolik yuz berdi');
+        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve(), 201);
     }
 
-    /**
-     * Brendni yangilash
-     */
-    public function update(UpdateBrandRequest $request, Brand $brand): JsonResponse
+    public function update(UpdateBrandRequest $request, int $id)
     {
-        $data = $request->validated();
-        $result = $this->brandService->update($brand, $data);
+        $result = $this->brandService->update($request->validated(), $id);
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Brend muvaffaqiyatli yangilandi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Brendni yangilashda xatolik yuz berdi');
+        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve());
     }
 
-    /**
-     * Brendni o'chirish
-     */
-    public function destroy(Brand $brand): JsonResponse
+    public function invertActive(int $id)
     {
-        $result = $this->brandService->delete($brand);
+        $result = $this->brandService->invertActive($id);
 
-        if ($result['success']) {
-            return Response::success(null, 'Brend muvaffaqiyatli o\'chirildi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Brendni o\'chirishda xatolik yuz berdi');
+        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve());
     }
 
-    /**
-     * Faol brendlarni olish
-     */
-    public function getAllActive(): JsonResponse
+    public function allActive()
     {
-        $data = ['is_active' => true];
-        $result = $this->brandService->getAll($data, ['*']);
+        $result = $this->brandService->allActive();
 
-        if ($result['success']) {
-            return Response::success($result['data'], 'Faol brendlar muvaffaqiyatli olindi');
+        if (! $result['success']) {
+            return Response::error($result['message']);
         }
 
-        return Response::error($result['message'] ?? 'Faol brendlarni olishda xatolik yuz berdi');
-    }
-
-    /**
-     * Brend holatini o'zgartirish
-     */
-    public function toggleActive(int $id): JsonResponse
-    {
-        $result = $this->brandService->toggleActive($id);
-
-        if ($result['success']) {
-            return Response::success($result['data'], 'Brend holati muvaffaqiyatli o\'zgartirildi');
-        }
-
-        return Response::error($result['message'] ?? 'Brend holatini o\'zgartirishda xatolik yuz berdi');
+        return DefaultResource::collection($result['data']);
     }
 }

@@ -2,29 +2,41 @@
 
 namespace App\Modules\Information\Requests;
 
-use App\Http\Requests\MainRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class GetCategoriesRequest extends MainRequest
+class GetCategoriesRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         return [
             'search' => ['nullable', 'string'],
+            'limit' => ['nullable', 'integer', 'min:1', 'max:100'],
             'sort' => ['nullable', 'array'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:50'],
-            'page' => ['nullable', 'integer', 'min:1'],
+            'filters' => ['nullable', 'array'],
+            'filters.is_active' => ['nullable', 'boolean'],
+            'filters.parent_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'filters.first_parent_id' => ['nullable', 'integer', 'exists:categories,id'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'sort.array' => 'Saralash parametrlari noto\'g\'ri',
-            'limit.integer' => 'Limit son bo\'lishi kerak',
-            'limit.min' => 'Limit kamida 1 bo\'lishi kerak',
-            'limit.max' => 'Limit ko\'pi bilan 50 bo\'lishi kerak',
-            'page.integer' => 'Page son bo\'lishi kerak',
-            'page.min' => 'Page kamida 1 bo\'lishi kerak',
+            'limit.integer' => 'Har sahifadagi ma\'lumotlar soni butun son bo\'lishi kerak',
+            'limit.min' => 'Har sahifadagi ma\'lumotlar soni minimal 1 bo\'lishi kerak',
+            'limit.max' => 'Har sahifadagi ma\'lumotlar soni maksimal 100 bo\'lishi kerak',
+            'sort.array' => 'Tartiblash parametri massiv bo\'lishi kerak',
+            'filters.array' => 'Filtrlash parametri massiv bo\'lishi kerak',
+            'filters.is_active.boolean' => 'Faollik holati mantiqiy qiymat bo\'lishi kerak',
+            'filters.parent_id.integer' => 'Ota kategoriya ID raqam bo\'lishi kerak',
+            'filters.parent_id.exists' => 'Tanlangan ota kategoriya mavjud emas',
+            'filters.first_parent_id.integer' => 'Birinchi ota kategoriya ID raqam bo\'lishi kerak',
+            'filters.first_parent_id.exists' => 'Tanlangan birinchi ota kategoriya mavjud emas',
         ];
     }
 }
