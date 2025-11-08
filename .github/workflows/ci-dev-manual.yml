@@ -15,6 +15,6 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            cd /home/main
+            cd /home/main/develop
             chmod +x migrate.sh
             ./migrate.sh
