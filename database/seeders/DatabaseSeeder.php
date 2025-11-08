@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'full_name' => 'User',
+                'full_name' => 'User !',
                 'position' => 'User',
                 'username' => 'user',
                 'phone_number' => '9876543210',
