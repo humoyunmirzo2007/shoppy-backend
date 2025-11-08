@@ -21,4 +21,4 @@ jobs:
           script: |
             cd /home/main/develop
             chmod +x deploy-backend.sh
-            ./deploy-backend.shs
+            ./deploy-backend.sh
