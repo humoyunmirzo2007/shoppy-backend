@@ -72,7 +72,7 @@ class CategoryController extends Controller
             return Response::error($result['message']);
         }
 
-        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve(), 201);
+        return Response::success(message: $result['message'], data: DefaultResource::make($result['data'])->resolve(), status: 201);
     }
 
     /**
@@ -87,7 +87,7 @@ class CategoryController extends Controller
             return Response::error($result['message']);
         }
 
-        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve());
+        return Response::success(message: $result['message'], data: DefaultResource::make($result['data'])->resolve());
     }
 
     /**
@@ -101,7 +101,7 @@ class CategoryController extends Controller
             return Response::error($result['message'], 404);
         }
 
-        return Response::success($result['message'], DefaultResource::make($result['data'])->resolve());
+        return Response::success(message: $result['message'], data: DefaultResource::make($result['data'])->resolve());
     }
 
     /**

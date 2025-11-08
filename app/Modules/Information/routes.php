@@ -85,7 +85,7 @@ Route::group(['prefix' => 'categories', 'middleware' => ['auth:sanctum']], funct
     Route::get('/{id}/with-parents', [CategoryController::class, 'showWithParents']);
     Route::post('/create', [CategoryController::class, 'store']);
     Route::put('/update/{id}', [CategoryController::class, 'update']);
-    Route::put('/toggle-active/{id}', [CategoryController::class, 'toggleActive']);
+    Route::put('/invert-active/{id}', [CategoryController::class, 'toggleActive']);
 });
 
 // Brands CRUD routes
