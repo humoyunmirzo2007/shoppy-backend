@@ -1747,6 +1747,96 @@
             ]
         },
         {
+            "name": "📦 Mahsulot guruhlari",
+            "item": [
+                {
+                    "name": "Mahsulot guruhlari ro'yxati",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/product-groups?search=&limit=15&sort[id]=desc&filters[brand_id]=",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-groups"],
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "15",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort[id]",
+                                    "value": "desc",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "filters[brand_id]",
+                                    "value": "",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot guruhi ma'lumotlari",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/product-groups/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-groups", "1"]
+                        }
+                    }
+                },
+                {
+                    "name": "Mahsulot guruhi ma'lumotlarini yangilash",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Yangilangan Mahsulot Guruhi\",\n    \"brand_id\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/product-groups/update/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["product-groups", "update", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "name": "📝 Atribut qiymatlari",
             "item": [
                 {

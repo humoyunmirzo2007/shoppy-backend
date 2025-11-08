@@ -10,6 +10,7 @@ use App\Modules\Information\Controllers\CostTypeController;
 use App\Modules\Information\Controllers\OtherSourceController;
 use App\Modules\Information\Controllers\PaymentTypeController;
 use App\Modules\Information\Controllers\ProductController;
+use App\Modules\Information\Controllers\ProductGroupController;
 use App\Modules\Information\Controllers\SupplierController;
 use App\Modules\Information\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -125,4 +126,10 @@ Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], functio
     Route::post('/import', [ProductController::class, 'import']);
     Route::get('/download-update-price-template', [ProductController::class, 'downloadUpdatePriceTemplate']);
     Route::post('/update-prices-from-template', [ProductController::class, 'updatePricesFromTemplate']);
+});
+
+Route::group(['prefix' => 'product-groups', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [ProductGroupController::class, 'index']);
+    Route::get('/{id}', [ProductGroupController::class, 'show']);
+    Route::put('/update/{id}', [ProductGroupController::class, 'update']);
 });

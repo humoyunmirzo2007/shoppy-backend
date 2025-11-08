@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable()->index();
             $table->foreignId('brand_id')->constrained('brands')->onDelete('restrict');
+            $table->integer('products_count')->default(0);
             $table->timestamps();
         });
     }
