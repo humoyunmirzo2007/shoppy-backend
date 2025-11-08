@@ -9,22 +9,20 @@ class UpdateUserRequest extends MainRequest
 {
     public function rules(): array
     {
-        $position = $this->input('position');
-        $userId = $this->route('id');
+        $id = $this->route('id');
 
         return [
             'full_name' => ['required', 'string', 'max:255'],
             'username' => [
-                Rule::requiredIf($position !== 'MANAGER'),
                 'string',
                 'max:255',
-                Rule::unique('users')->ignore($userId),
+                Rule::unique('users')->ignore($id),
             ],
             'phone_number' => [
                 'required',
                 'string',
                 'max:12',
-                Rule::unique('users')->ignore($userId),
+                Rule::unique('users')->ignore($id),
             ],
             'password' => [
                 'nullable',

@@ -69,6 +69,36 @@ class DatabaseSeeder extends Seeder
         }
         DB::table('brands')->insert($brandInserts);
 
+        // ==================== PRODUCT GROUPS ====================
+        $brandsMap = DB::table('brands')->pluck('id', 'name');
+
+        $productGroups = [
+            ['Nike Sport', 'Nike'],
+            ['Adidas Classic', 'Adidas'],
+            ['iPhone Seriyasi', 'Apple'],
+            ['Galaxy Seriyasi', 'Samsung'],
+            ['Xiaomi Flagship', 'Xiaomi'],
+            ['LG Smart TV Seriyasi', 'LG'],
+            ['PlayStation Seriyasi', 'Sony'],
+            ['Bosch Premium', 'Bosch'],
+            ['HP Pavilion Seriyasi', 'HP'],
+            ['Lenovo ThinkPad Seriyasi', 'Lenovo'],
+            ['Dell Professional', 'Dell'],
+            ['Asus Gaming', 'Asus'],
+        ];
+
+        $productGroupsInsert = [];
+        foreach ($productGroups as $group) {
+            [$name, $brandName] = $group;
+            $productGroupsInsert[] = [
+                'name' => $name,
+                'brand_id' => $brandsMap[$brandName],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        DB::table('product_groups')->insert($productGroupsInsert);
+
         // ==================== ATTRIBUTES ====================
         $attributes = [
             ['Rang', 'select'], ['O\'lcham', 'select'], ['Material', 'select'], ['Jinsi', 'select'],
@@ -123,30 +153,42 @@ class DatabaseSeeder extends Seeder
         // ==================== PRODUCTS ====================
         $categoriesMap = DB::table('categories')->pluck('id', 'name');
         $brandsMap = DB::table('brands')->pluck('id', 'name');
+        $productGroupsMap = DB::table('product_groups')->pluck('id', 'name');
 
         $products = [
-            ['Erkaklar futbolkasi', '100% paxta, yozgi futbolka', 'Kiyim-kechak', 'Nike'],
-            ['iPhone 15 Pro', 'Apple iPhone 15 Pro smartfon', 'Elektronika', 'Apple'],
-            ['Samsung Galaxy S24', 'Samsung Galaxy S24 smartfon', 'Elektronika', 'Samsung'],
-            ['Ayollar ko\'ylagi', 'Zamonaviy ayollar ko\'ylagi', 'Kiyim-kechak', 'Adidas'],
-            ['LG Smart TV', '55 dyuymli LG Smart televizor', 'Maishiy texnika', 'LG'],
-            ['Xiaomi 14 Pro', 'Xiaomi 14 Pro smartfon', 'Elektronika', 'Xiaomi'],
-            ['HP Laptop', 'HP Pavilion noutbuk', 'Elektronika', 'HP'],
-            ['Lenovo ThinkPad', 'Lenovo ThinkPad noutbuk', 'Elektronika', 'Lenovo'],
-            ['Dell Monitor', 'Dell 24 dyuymli monitor', 'Elektronika', 'Dell'],
-            ['Asus ROG', 'Asus ROG gaming noutbuk', 'Elektronika', 'Asus'],
-            ['Sony PlayStation 5', 'Sony PlayStation 5 o\'yin konsoli', 'Elektronika', 'Sony'],
-            ['Bosch Muzlatkich', 'Bosch ikki kamerali muzlatkich', 'Maishiy texnika', 'Bosch'],
+            ['Erkaklar futbolkasi', '100% paxta, yozgi futbolka', 'Kiyim-kechak', 'Nike', 'Nike Sport', 'dona', 50000, 10, 55000, 52000],
+            ['iPhone 15 Pro', 'Apple iPhone 15 Pro smartfon', 'Elektronika', 'Apple', 'iPhone Seriyasi', 'dona', 15000000, 5, 16000000, 15500000],
+            ['Samsung Galaxy S24', 'Samsung Galaxy S24 smartfon', 'Elektronika', 'Samsung', 'Galaxy Seriyasi', 'dona', 12000000, 8, 13000000, 12500000],
+            ['Ayollar ko\'ylagi', 'Zamonaviy ayollar ko\'ylagi', 'Kiyim-kechak', 'Adidas', 'Adidas Classic', 'dona', 45000, 15, 50000, 47000],
+            ['LG Smart TV', '55 dyuymli LG Smart televizor', 'Maishiy texnika', 'LG', 'LG Smart TV Seriyasi', 'dona', 8000000, 3, 8500000, 8200000],
+            ['Xiaomi 14 Pro', 'Xiaomi 14 Pro smartfon', 'Elektronika', 'Xiaomi', 'Xiaomi Flagship', 'dona', 10000000, 7, 11000000, 10500000],
+            ['HP Laptop', 'HP Pavilion noutbuk', 'Elektronika', 'HP', 'HP Pavilion Seriyasi', 'dona', 12000000, 4, 13000000, 12500000],
+            ['Lenovo ThinkPad', 'Lenovo ThinkPad noutbuk', 'Elektronika', 'Lenovo', 'Lenovo ThinkPad Seriyasi', 'dona', 11000000, 6, 12000000, 11500000],
+            ['Dell Monitor', 'Dell 24 dyuymli monitor', 'Elektronika', 'Dell', 'Dell Professional', 'dona', 3000000, 10, 3200000, 3100000],
+            ['Asus ROG', 'Asus ROG gaming noutbuk', 'Elektronika', 'Asus', 'Asus Gaming', 'dona', 15000000, 3, 16000000, 15500000],
+            ['Sony PlayStation 5', 'Sony PlayStation 5 o\'yin konsoli', 'Elektronika', 'Sony', 'PlayStation Seriyasi', 'dona', 7000000, 5, 7500000, 7200000],
+            ['Bosch Muzlatkich', 'Bosch ikki kamerali muzlatkich', 'Maishiy texnika', 'Bosch', 'Bosch Premium', 'dona', 9000000, 2, 9500000, 9200000],
         ];
 
         $productsInsert = [];
-        foreach ($products as $prod) {
-            [$name, $desc, $catName, $brandName] = $prod;
+        foreach ($products as $index => $prod) {
+            [$name, $desc, $catName, $brandName, $groupName, $unit, $price, $residue, $wholesalePrice, $markupPrice] = $prod;
+
             $productsInsert[] = [
                 'name' => $name,
                 'description' => $desc,
                 'category_id' => $categoriesMap[$catName],
+                'product_group_id' => $productGroupsMap[$groupName],
                 'brand_id' => $brandsMap[$brandName],
+                'sku' => 'SKU-'.str_pad($index + 1, 6, '0', STR_PAD_LEFT),
+                'unit' => $unit,
+                'is_active' => true,
+                'residue' => $residue,
+                'price' => $price,
+                'markup' => $markupPrice - $price,
+                'wholesale_price' => $wholesalePrice,
+                'images' => null,
+                'main_image' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -154,34 +196,5 @@ class DatabaseSeeder extends Seeder
 
         DB::table('products')->insert($productsInsert);
 
-        // // ==================== PRODUCT ATTRIBUTE VALUES ====================
-        // $productsMap = DB::table('products')->pluck('id', 'name');
-        // $attributeValuesMap = DB::table('attribute_values')->pluck('id', 'value');
-
-        // // $productAttributes = [
-        // //     'iPhone 15 Pro' => ['Qora', '256 GB', '6.1"', 'Apple A17 Pro', '48 MP', 'iOS'],
-        // //     'Samsung Galaxy S24' => ['Oq', '512 GB', '6.7"', 'Snapdragon 8 Gen 3', '200 MP', 'Android', '5000 mAh'],
-        // //     'Erkaklar futbolkasi' => ['Ko\'k', 'L', 'Paxta', 'Erkak'],
-        // //     'Ayollar ko\'ylagi' => ['Qizil', 'M', 'Ipak', 'Ayol'],
-        // //     'HP Laptop' => ['Kulrang', '512 GB', '15"', 'Intel Core i7', 'Windows'],
-        // // ];
-
-        // // $productAttributeInsert = [];
-        // // foreach ($productAttributes as $productName => $vals) {
-        // //     $productId = $productsMap[$productName];
-        // //     foreach ($vals as $val) {
-        // //         if (! isset($attributeValuesMap[$val])) {
-        // //             continue;
-        // //         }
-        // //         $productAttributeInsert[] = [
-        // //             'product_id' => $productId,
-        // //             'attribute_value_id' => $attributeValuesMap[$val],
-        // //             'created_at' => now(),
-        // //             'updated_at' => now(),
-        // //         ];
-        // //     }
-        // // }
-
-        // DB::table('product_attribute_values')->insert($productAttributeInsert);
     }
 }
