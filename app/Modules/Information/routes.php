@@ -84,7 +84,7 @@ Route::group(['prefix' => 'categories', 'middleware' => ['auth:sanctum']], funct
     Route::get('/{id}', [CategoryController::class, 'show']);
     Route::get('/{id}/with-parents', [CategoryController::class, 'showWithParents']);
     Route::post('/create', [CategoryController::class, 'store']);
-    Route::put('/update/{category}', [CategoryController::class, 'update']);
+    Route::put('/update/{id}', [CategoryController::class, 'update']);
     Route::put('/toggle-active/{id}', [CategoryController::class, 'toggleActive']);
 });
 

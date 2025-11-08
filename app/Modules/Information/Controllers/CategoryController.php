@@ -5,7 +5,6 @@ namespace App\Modules\Information\Controllers;
 use App\Helpers\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DefaultResource;
-use App\Models\Category;
 use App\Modules\Information\Requests\GetCategoriesRequest;
 use App\Modules\Information\Requests\GetCategoryByIdRequest;
 use App\Modules\Information\Requests\StoreCategoryRequest;
@@ -79,10 +78,10 @@ class CategoryController extends Controller
     /**
      * Kategoriyani yangilash
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, int $id)
     {
         $data = $request->validated();
-        $result = $this->categoryService->update($category, $data);
+        $result = $this->categoryService->update($id, $data);
 
         if (! $result['success']) {
             return Response::error($result['message']);

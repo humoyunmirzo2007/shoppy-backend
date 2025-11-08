@@ -3,7 +3,6 @@
 namespace App\Modules\Information\Services;
 
 use App\Helpers\TelegramBot;
-use App\Models\Category;
 use App\Modules\Information\Interfaces\CategoryInterface;
 
 class CategoryService
@@ -112,9 +111,11 @@ class CategoryService
         }
     }
 
-    public function update(Category $category, array $data): array
+    public function update(int $id, array $data): array
     {
         try {
+            $category = $this->categoryRepository->getById($id);
+
             unset($data['is_active']);
             if (isset($data['parent_id'])) {
                 if ($data['parent_id']) {

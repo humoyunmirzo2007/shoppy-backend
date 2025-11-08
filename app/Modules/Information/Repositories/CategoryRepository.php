@@ -92,6 +92,7 @@ class CategoryRepository implements CategoryInterface
 
     public function store(array $data): Category
     {
+
         return $this->category->create($data);
     }
 

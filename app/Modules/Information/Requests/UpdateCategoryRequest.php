@@ -14,12 +14,12 @@ class UpdateCategoryRequest extends FormRequest
 
     public function rules(): array
     {
-        $categoryId = $this->route('id');
+        $id = $this->route('id');
 
         return [
-            'name' => ['required', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($categoryId)],
+            'name' => ['required', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($id)],
             'description' => ['nullable', 'string'],
-            'parent_id' => ['nullable', 'integer', 'exists:categories,id', Rule::notIn([$categoryId])],
+            'parent_id' => ['nullable', 'integer', 'exists:categories,id', Rule::notIn([$id])],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ];
     }
