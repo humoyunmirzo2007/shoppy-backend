@@ -2,7 +2,7 @@
 
 namespace App\Modules\Warehouse\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Modules\Cashbox\Enums\OtherCalculationTypesEnum;
 use App\Modules\Cashbox\Interfaces\OtherCalculationInterface;
 use App\Modules\Information\Interfaces\OtherSourceInterface;
@@ -26,7 +26,6 @@ class InvoiceService
         protected SupplierInterface $supplierRepository,
         protected OtherSourceInterface $otherSourceRepository,
         protected OtherCalculationInterface $otherCalculationRepository,
-        protected TelegramBugNotifier $telegramNotifier
     ) {}
 
     public function getByTypes(array $types, array $data)
@@ -34,7 +33,7 @@ class InvoiceService
         try {
             return $this->invoiceRepository->getByTypes($types, $data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -48,7 +47,7 @@ class InvoiceService
         try {
             return $this->invoiceRepository->getByIdWithProducts($id);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -74,7 +73,7 @@ class InvoiceService
                     ];
             }
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -100,7 +99,7 @@ class InvoiceService
                     ];
             }
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -139,7 +138,7 @@ class InvoiceService
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -197,7 +196,7 @@ class InvoiceService
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',

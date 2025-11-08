@@ -2,14 +2,13 @@
 
 namespace App\Modules\Warehouse\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Modules\Warehouse\Interfaces\SupplierCalculationInterface;
 
 class SupplierCalculationService
 {
     public function __construct(
-        protected SupplierCalculationInterface $supplierCalculationRepository,
-        protected TelegramBugNotifier $telegramNotifier
+        protected SupplierCalculationInterface $supplierCalculationRepository
     ) {}
 
     public function getBySupplierId(int $supplierId, array $data)
@@ -17,7 +16,7 @@ class SupplierCalculationService
         try {
             return $this->supplierCalculationRepository->getBySupplierId($supplierId, $data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',

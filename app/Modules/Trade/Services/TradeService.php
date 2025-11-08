@@ -2,7 +2,7 @@
 
 namespace App\Modules\Trade\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Modules\Information\Interfaces\ClientInterface;
 use App\Modules\Information\Interfaces\ProductInterface;
 use App\Modules\Trade\Enums\TradeTypesEnum;
@@ -21,7 +21,6 @@ class TradeService
         protected ProductInterface $productRepository,
         protected ClientCalculationInterface $clientCalculationRepository,
         protected ClientInterface $clientRepository,
-        protected TelegramBugNotifier $telegramNotifier
     ) {}
 
     public function getByType(string $type, array $data)
@@ -29,7 +28,7 @@ class TradeService
         try {
             return $this->tradeRepository->getByType($type, $data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -43,7 +42,7 @@ class TradeService
         try {
             return $this->tradeRepository->getByIdWithProducts($id);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -68,7 +67,7 @@ class TradeService
                     ];
             }
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -92,7 +91,7 @@ class TradeService
                     ];
             }
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -182,7 +181,7 @@ class TradeService
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -329,7 +328,7 @@ class TradeService
             ];
         } catch (\Throwable $e) {
             DB::rollBack();
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',

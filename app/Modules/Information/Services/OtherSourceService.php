@@ -2,7 +2,7 @@
 
 namespace App\Modules\Information\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Models\OtherSource;
 use App\Modules\Information\Interfaces\OtherSourceInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,8 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 class OtherSourceService
 {
     public function __construct(
-        private OtherSourceInterface $otherSourceRepository,
-        protected TelegramBugNotifier $telegramNotifier
+        private OtherSourceInterface $otherSourceRepository
     ) {}
 
     public function getAll(array $data)
@@ -19,7 +18,7 @@ class OtherSourceService
         try {
             return $this->otherSourceRepository->getAll($data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -35,7 +34,7 @@ class OtherSourceService
 
             return $this->otherSourceRepository->getByTypeAllActive($type);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -55,7 +54,7 @@ class OtherSourceService
                 'data' => $otherSource,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -84,7 +83,7 @@ class OtherSourceService
                 'data' => $otherSource,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -113,7 +112,7 @@ class OtherSourceService
                 'data' => $updatedOtherSource,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -127,7 +126,7 @@ class OtherSourceService
         try {
             return $this->otherSourceRepository->findById($id);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return null;
         }
@@ -151,7 +150,7 @@ class OtherSourceService
                 'data' => $otherSource,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -180,7 +179,7 @@ class OtherSourceService
                 'data' => null,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,

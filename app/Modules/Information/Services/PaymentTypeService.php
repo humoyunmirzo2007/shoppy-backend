@@ -2,14 +2,13 @@
 
 namespace App\Modules\Information\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Modules\Information\Interfaces\PaymentTypeInterface;
 
 class PaymentTypeService
 {
     public function __construct(
-        protected PaymentTypeInterface $paymentTypeRepository,
-        protected TelegramBugNotifier $telegramNotifier
+        protected PaymentTypeInterface $paymentTypeRepository
     ) {}
 
     public function index(array $data)
@@ -17,7 +16,7 @@ class PaymentTypeService
         try {
             return $this->paymentTypeRepository->index($data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -31,7 +30,7 @@ class PaymentTypeService
         try {
             return $this->paymentTypeRepository->getAllActive();
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -58,7 +57,7 @@ class PaymentTypeService
                 'data' => $paymentType,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -92,7 +91,7 @@ class PaymentTypeService
                 'data' => $updatedPaymentType,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -112,7 +111,7 @@ class PaymentTypeService
                 'data' => $paymentType,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -139,7 +138,7 @@ class PaymentTypeService
                 'data' => $paymentType,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -169,7 +168,7 @@ class PaymentTypeService
                 'data' => null,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',

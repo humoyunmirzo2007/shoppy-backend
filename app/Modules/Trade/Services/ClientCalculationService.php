@@ -2,14 +2,13 @@
 
 namespace App\Modules\Trade\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Modules\Trade\Interfaces\ClientCalculationInterface;
 
 class ClientCalculationService
 {
     public function __construct(
-        protected ClientCalculationInterface $clientCalculationRepository,
-        protected TelegramBugNotifier $telegramNotifier
+        protected ClientCalculationInterface $clientCalculationRepository
     ) {}
 
     public function getByClientId(int $clientId, array $data)
@@ -17,7 +16,7 @@ class ClientCalculationService
         try {
             return $this->clientCalculationRepository->getByClientId($clientId, $data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',

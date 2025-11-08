@@ -2,14 +2,13 @@
 
 namespace App\Modules\Information\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Modules\Information\Interfaces\SupplierInterface;
 
 class SupplierService
 {
     public function __construct(
-        protected SupplierInterface $supplierRepository,
-        protected TelegramBugNotifier $telegramNotifier
+        protected SupplierInterface $supplierRepository
     ) {}
 
     public function getAll(array $data)
@@ -17,7 +16,7 @@ class SupplierService
         try {
             return $this->supplierRepository->getAll($data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -31,7 +30,7 @@ class SupplierService
         try {
             return $this->supplierRepository->getAllActive();
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -45,7 +44,7 @@ class SupplierService
         try {
             return $this->supplierRepository->getAllWithDebt($data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -72,7 +71,7 @@ class SupplierService
                 'data' => $supplier,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -109,7 +108,7 @@ class SupplierService
                 'data' => $supplier,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -129,7 +128,7 @@ class SupplierService
                 'data' => $supplier,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -156,7 +155,7 @@ class SupplierService
                 'data' => $supplier,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -186,7 +185,7 @@ class SupplierService
                 'data' => null,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',

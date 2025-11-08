@@ -2,7 +2,7 @@
 
 namespace App\Modules\Cashbox\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Models\OtherCalculation;
 use App\Models\PaymentType;
 use App\Modules\Cashbox\Enums\CostTypesEnum;
@@ -15,7 +15,6 @@ class MoneyOutputService
 {
     public function __construct(
         protected MoneyOutputInterface $moneyOutputRepository,
-        protected TelegramBugNotifier $telegramNotifier
     ) {}
 
     public function getAllMoneyOutputs(array $data = []): array
@@ -25,7 +24,7 @@ class MoneyOutputService
 
             return ['success' => true, 'data' => $moneyOutputs];
         } catch (Exception $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return ['success' => false, 'message' => 'Chiqim operatsiyalarni olishda xatolik yuz berdi'];
         }
@@ -42,7 +41,7 @@ class MoneyOutputService
 
             return ['success' => true, 'data' => $moneyOutput];
         } catch (Exception $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return ['success' => false, 'message' => 'Chiqim operatsiyani olishda xatolik yuz berdi'];
         }
@@ -81,7 +80,7 @@ class MoneyOutputService
 
             return ['success' => true, 'data' => $moneyOutput, 'message' => 'Chiqim operatsiya muvaffaqiyatli yaratildi'];
         } catch (Exception $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return ['success' => false, 'message' => 'Chiqim operatsiya yaratishda xatolik yuz berdi'];
         }
@@ -182,7 +181,7 @@ class MoneyOutputService
 
             return ['success' => true, 'data' => $updatedMoneyOutput, 'message' => 'Chiqim operatsiya muvaffaqiyatli yangilandi'];
         } catch (Exception $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return ['success' => false, 'message' => 'Chiqim operatsiyani yangilashda xatolik yuz berdi'];
         }
@@ -208,7 +207,7 @@ class MoneyOutputService
 
             return ['success' => false, 'message' => 'Chiqim operatsiyani o\'chirishda xatolik yuz berdi'];
         } catch (Exception $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return ['success' => false, 'message' => 'Chiqim operatsiyani o\'chirishda xatolik yuz berdi'];
         }

@@ -2,14 +2,13 @@
 
 namespace App\Modules\Information\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Modules\Information\Interfaces\ClientInterface;
 
 class ClientService
 {
     public function __construct(
-        protected ClientInterface $clientRepository,
-        protected TelegramBugNotifier $telegramNotifier
+        protected ClientInterface $clientRepository
     ) {}
 
     public function getAll(array $data)
@@ -17,7 +16,7 @@ class ClientService
         try {
             return $this->clientRepository->getAll($data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -31,7 +30,7 @@ class ClientService
         try {
             return $this->clientRepository->getAllActive();
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -45,7 +44,7 @@ class ClientService
         try {
             return $this->clientRepository->getAllWithDebt($data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -73,7 +72,7 @@ class ClientService
                 'data' => $client,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -100,7 +99,7 @@ class ClientService
                 'data' => $client,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -137,7 +136,7 @@ class ClientService
                 'data' => $client,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -157,7 +156,7 @@ class ClientService
                 'data' => $client,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -184,7 +183,7 @@ class ClientService
                 'data' => $client,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -214,7 +213,7 @@ class ClientService
                 'data' => null,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',

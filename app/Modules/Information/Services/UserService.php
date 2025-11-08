@@ -2,7 +2,7 @@
 
 namespace App\Modules\Information\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Modules\Information\Interfaces\UserInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\Hash;
 class UserService
 {
     public function __construct(
-        protected UserInterface $userRepository,
-        protected TelegramBugNotifier $telegramNotifier
+        protected UserInterface $userRepository
     ) {}
 
     public function index(array $data)
@@ -19,7 +18,7 @@ class UserService
         try {
             return $this->userRepository->index($data);
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -33,7 +32,7 @@ class UserService
         try {
             return $this->userRepository->getAll();
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -60,7 +59,7 @@ class UserService
                 'data' => $user,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -97,7 +96,7 @@ class UserService
                 'data' => $updatedUser,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -125,7 +124,7 @@ class UserService
                 'message' => 'Parol muvaffaqiyatli yangilandi',
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -145,7 +144,7 @@ class UserService
                 'data' => $user,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -172,7 +171,7 @@ class UserService
                 'data' => $user,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',
@@ -202,7 +201,7 @@ class UserService
                 'data' => null,
             ];
         } catch (\Throwable $e) {
-            $this->telegramNotifier->sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'status' => 'error',

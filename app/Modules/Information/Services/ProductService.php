@@ -2,7 +2,7 @@
 
 namespace App\Modules\Information\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Models\Product;
 use App\Modules\Information\Interfaces\ProductInterface;
 
@@ -23,7 +23,7 @@ class ProductService
                 'data' => $products,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -46,7 +46,7 @@ class ProductService
                 'data' => $product,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -69,7 +69,7 @@ class ProductService
                 'data' => $product,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -92,7 +92,7 @@ class ProductService
                 'data' => $updatedProduct,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -115,7 +115,7 @@ class ProductService
                 'data' => null,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -149,7 +149,7 @@ class ProductService
                 'data' => $product,
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -171,7 +171,7 @@ class ProductService
                 'data' => 'Template download functionality',
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -193,7 +193,7 @@ class ProductService
                 'data' => 'Import functionality',
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -215,7 +215,7 @@ class ProductService
                 'data' => 'Price update template download functionality',
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,
@@ -237,7 +237,7 @@ class ProductService
                 'data' => 'Price update from template functionality',
             ];
         } catch (\Exception $e) {
-            TelegramBugNotifier::sendError($e, request());
+            TelegramBot::sendError(request(), $e);
 
             return [
                 'success' => false,

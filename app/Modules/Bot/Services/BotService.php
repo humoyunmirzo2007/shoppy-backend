@@ -2,7 +2,7 @@
 
 namespace App\Modules\Bot\Services;
 
-use App\Helpers\TelegramBugNotifier;
+use App\Helpers\TelegramBot;
 use App\Modules\Information\Services\ClientService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\Log;
 class BotService
 {
     public function __construct(
-        protected ClientService $clientService,
-        protected TelegramBugNotifier $telegramNotifier
+        protected ClientService $clientService
     ) {}
 
     /**
