@@ -82,7 +82,7 @@ Route::group(['prefix' => 'payment-types', 'middleware' => ['auth:sanctum']], fu
 
 Route::group(['prefix' => 'categories', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [CategoryController::class, 'index']);
-    Route::get('/active', [CategoryController::class, 'active']);
+    Route::get('/all-active', [CategoryController::class, 'active']);
     Route::get('/{id}', [CategoryController::class, 'show']);
     Route::get('/{id}/with-parents', [CategoryController::class, 'showWithParents']);
     Route::post('/create', [CategoryController::class, 'store']);

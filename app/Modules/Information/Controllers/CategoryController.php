@@ -109,7 +109,7 @@ class CategoryController extends Controller
      */
     public function active(Request $request)
     {
-        $result = $this->categoryService->getActiveCategories(['*']);
+        $result = $this->categoryService->getActiveCategories(['id', 'name_uz', 'name_ru']);
 
         if (! $result['success']) {
             return Response::error($result['message']);
