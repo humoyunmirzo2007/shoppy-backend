@@ -20,21 +20,42 @@ class ClientController
     {
         $data = $this->clientService->getAll($request->validated());
 
-        return DefaultResource::collection($data);
+        if (! $data['success']) {
+            return Response::error(
+                message: $data['message'],
+                status: 400
+            );
+        }
+
+        return DefaultResource::collection($data['data']);
     }
 
     public function getAllActive()
     {
         $data = $this->clientService->getAllActive();
 
-        return DefaultResource::collection($data);
+        if (! $data['success']) {
+            return Response::error(
+                message: $data['message'],
+                status: 400
+            );
+        }
+
+        return DefaultResource::collection($data['data']);
     }
 
     public function getAllWithDebt(GetClientsWithDebtRequest $request)
     {
         $data = $this->clientService->getAllWithDebt($request->validated());
 
-        return ClientWithDebtResource::collection($data);
+        if (! $data['success']) {
+            return Response::error(
+                message: $data['message'],
+                status: 400
+            );
+        }
+
+        return ClientWithDebtResource::collection($data['data']);
     }
 
     public function store(StoreClientRequest $request)

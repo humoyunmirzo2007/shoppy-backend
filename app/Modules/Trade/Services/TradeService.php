@@ -519,7 +519,7 @@ class TradeService
         if ($clientId) {
             $client = $this->clientRepository->getById($clientId);
 
-            return $client?->name ?? 'Unknown';
+            return $client?->full_name ?? 'Unknown';
         }
 
         return 'null';

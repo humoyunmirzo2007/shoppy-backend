@@ -12,16 +12,19 @@ class UpdateClientRequest extends MainRequest
         $clientId = $this->route('id');
 
         return [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('clients')->ignore($clientId),
-            ],
+            'first_name' => ['required', 'string', 'max:255'],
+            'middle_name' => ['nullable', 'string', 'max:255'],
+            'last_name' => ['nullable', 'string', 'max:255'],
             'phone_number' => [
                 'required',
                 'string',
                 'max:12',
+                Rule::unique('clients')->ignore($clientId),
+            ],
+            'chat_id' => [
+                'required',
+                'string',
+                'max:255',
                 Rule::unique('clients')->ignore($clientId),
             ],
         ];
@@ -30,12 +33,16 @@ class UpdateClientRequest extends MainRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Mijoz nomini kiritish majburiy',
-            'name.max' => 'Mijoz nomi 255 ta belgidan oshmasligi kerak',
-            'name.unique' => 'Bu mijoz nomi allaqachon ro\'yxatdan o\'tgan',
+            'first_name.required' => 'Mijoz ismini kiritish majburiy',
+            'first_name.max' => 'Mijoz ismi 255 ta belgidan oshmasligi kerak',
+            'middle_name.max' => 'Mijoz otasining ismi 255 ta belgidan oshmasligi kerak',
+            'last_name.max' => 'Mijoz familiyasi 255 ta belgidan oshmasligi kerak',
             'phone_number.required' => 'Mijoz telefon raqamini kiritish majburiy',
             'phone_number.max' => 'Mijoz telefon raqami 12 ta belgidan oshmasligi kerak',
             'phone_number.unique' => 'Bu mijoz telefon raqami allaqachon ro\'yxatdan o\'tgan',
+            'chat_id.required' => 'Mijoz chat ID sini kiritish majburiy',
+            'chat_id.max' => 'Mijoz chat ID si 255 ta belgidan oshmasligi kerak',
+            'chat_id.unique' => 'Bu mijoz chat ID si allaqachon ro\'yxatdan o\'tgan',
         ];
     }
 }

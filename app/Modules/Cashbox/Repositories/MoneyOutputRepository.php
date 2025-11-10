@@ -17,7 +17,7 @@ class MoneyOutputRepository implements MoneyOutputInterface
 
         return $this->moneyOperation->query()
             ->outputs()
-            ->with(['user:id,full_name', 'paymentType:id,name', 'costType:id,name', 'client:id,name', 'supplier:id,name'])
+            ->with(['user:id,full_name', 'paymentType:id,name', 'costType:id,name', 'client:id,first_name,middle_name,last_name', 'supplier:id,name'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {
@@ -26,7 +26,11 @@ class MoneyOutputRepository implements MoneyOutputInterface
                     }
                     $query->orWhere('description', 'ilike', "%$search%")
                         ->orWhereHas('user', fn ($q) => $q->where('full_name', 'ilike', "%$search%"))
-                        ->orWhereHas('client', fn ($q) => $q->where('name', 'ilike', "%$search%"))
+                        ->orWhereHas('client', function ($q) use ($search) {
+                            $q->where('first_name', 'ilike', "%$search%")
+                                ->orWhere('middle_name', 'ilike', "%$search%")
+                                ->orWhere('last_name', 'ilike', "%$search%");
+                        })
                         ->orWhereHas('supplier', fn ($q) => $q->where('name', 'ilike', "%$search%"))
                         ->orWhereHas('paymentType', fn ($q) => $q->where('name', 'ilike', "%$search%"))
                         ->orWhereHas('costType', fn ($q) => $q->where('name', 'ilike', "%$search%"));
@@ -47,7 +51,7 @@ class MoneyOutputRepository implements MoneyOutputInterface
     {
         return $this->moneyOperation
             ->outputs()
-            ->with(['user:id,full_name', 'paymentType:id,name', 'costType:id,name', 'client:id,name', 'supplier:id,name'])
+            ->with(['user:id,full_name', 'paymentType:id,name', 'costType:id,name', 'client:id,first_name,middle_name,last_name', 'supplier:id,name'])
             ->find($id);
     }
 

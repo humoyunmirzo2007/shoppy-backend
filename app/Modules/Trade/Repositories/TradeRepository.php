@@ -21,7 +21,7 @@ class TradeRepository implements TradeInterface
         return $this->trade->query()
             ->select('id', 'date', 'total_price', 'client_id', 'products_count', 'user_id', 'updated_at', 'history')
             ->with([
-                'client:id,name',
+                'client:id,first_name,middle_name,last_name',
                 'user:id,full_name',
             ])
             ->where('type', $type)

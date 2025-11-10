@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
+            $table->string('middle_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('username')->nullable()->unique();
             $table->string('phone_number')->unique();
@@ -25,7 +26,8 @@ return new class extends Migration
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             $table->index('first_name');
-            $table->index('last_name')->nullable();
+            $table->index('middle_name');
+            $table->index('last_name');
             $table->index('username');
             $table->index('chat_id');
             $table->index('phone_number');

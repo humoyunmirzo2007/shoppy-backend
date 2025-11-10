@@ -16,13 +16,16 @@ class ClientRepository implements ClientInterface
         $limit = $data['limit'] ?? 15;
 
         return $this->client->query()
-            ->select('id', 'name', 'phone_number', 'debt', 'is_active')
+            ->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'debt', 'is_active')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {
                         $query->where('id', $search);
                     }
-                    $query->orWhere('name', 'ilike', "%{$search}%");
+                    $query->orWhere('first_name', 'ilike', "%{$search}%")
+                        ->orWhere('middle_name', 'ilike', "%{$search}%")
+                        ->orWhere('last_name', 'ilike', "%{$search}%")
+                        ->orWhere('phone_number', 'ilike', "%{$search}%");
                 });
             })
             ->sortable($sort)
@@ -32,7 +35,7 @@ class ClientRepository implements ClientInterface
     public function getAllActive()
     {
         return $this->client->query()
-            ->select('id', 'name')
+            ->select('id', 'first_name', 'middle_name', 'last_name')
             ->where('is_active', true)
             ->get();
     }
@@ -44,13 +47,16 @@ class ClientRepository implements ClientInterface
         $limit = $data['limit'] ?? 15;
 
         return $this->client->query()
-            ->select('id', 'name', 'debt')
+            ->select('id', 'first_name', 'middle_name', 'last_name', 'debt')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {
                         $query->where('id', $search);
                     }
-                    $query->orWhere('name', 'ilike', "%{$search}%");
+                    $query->orWhere('first_name', 'ilike', "%{$search}%")
+                        ->orWhere('middle_name', 'ilike', "%{$search}%")
+                        ->orWhere('last_name', 'ilike', "%{$search}%")
+                        ->orWhere('phone_number', 'ilike', "%{$search}%");
                 });
             })
             ->sortable($sort)

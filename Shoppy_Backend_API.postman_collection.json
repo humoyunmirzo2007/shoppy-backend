@@ -570,7 +570,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Yangi Mijoz\",\n    \"phone\": \"+998901234567\",\n    \"address\": \"Toshkent shahar\",\n    \"description\": \"Mijoz haqida ma'lumot\"\n}"
+                            "raw": "{\n    \"first_name\": \"Akmal\",\n    \"middle_name\": \"Karim\",\n    \"last_name\": \"Karimov\",\n    \"phone_number\": \"998901234567\",\n    \"chat_id\": \"123456789\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/clients/create",
@@ -597,7 +597,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Yangilangan Mijoz\",\n    \"phone\": \"+998901234568\",\n    \"address\": \"Samarqand shahar\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                            "raw": "{\n    \"first_name\": \"Akmal\",\n    \"middle_name\": \"Karim\",\n    \"last_name\": \"Karimov\",\n    \"phone_number\": \"998901234567\",\n    \"chat_id\": \"123456789\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/clients/update/1",

@@ -14,12 +14,18 @@ class ClientService
     public function getAll(array $data)
     {
         try {
-            return $this->clientRepository->getAll($data);
+            $clients = $this->clientRepository->getAll($data);
+
+            return [
+                'success' => true,
+                'message' => 'Mijozlar muvaffaqiyatli olindi',
+                'data' => $clients,
+            ];
         } catch (\Throwable $e) {
             TelegramBot::sendError(request(), $e);
 
             return [
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Mijozlarni olishda xatolik yuz berdi',
             ];
         }
@@ -28,12 +34,18 @@ class ClientService
     public function getAllActive()
     {
         try {
-            return $this->clientRepository->getAllActive();
+            $clients = $this->clientRepository->getAllActive();
+
+            return [
+                'success' => true,
+                'message' => 'Faol mijozlar muvaffaqiyatli olindi',
+                'data' => $clients,
+            ];
         } catch (\Throwable $e) {
             TelegramBot::sendError(request(), $e);
 
             return [
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Faol mijozlarni olishda xatolik yuz berdi',
             ];
         }
@@ -42,12 +54,18 @@ class ClientService
     public function getAllWithDebt(array $data = [])
     {
         try {
-            return $this->clientRepository->getAllWithDebt($data);
+            $clients = $this->clientRepository->getAllWithDebt($data);
+
+            return [
+                'success' => true,
+                'message' => 'Qarzli mijozlar muvaffaqiyatli olindi',
+                'data' => $clients,
+            ];
         } catch (\Throwable $e) {
             TelegramBot::sendError(request(), $e);
 
             return [
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Qarzli mijozlarni olishda xatolik yuz berdi',
             ];
         }
@@ -170,7 +188,7 @@ class ClientService
         try {
             $client = $this->clientRepository->getById($id);
 
-            if (!$client) {
+            if (! $client) {
                 return [
                     'status' => 'error',
                     'message' => 'Mijoz topilmadi',
@@ -197,7 +215,7 @@ class ClientService
         try {
             $client = $this->clientRepository->getById($id);
 
-            if (!$client) {
+            if (! $client) {
                 return [
                     'status' => 'error',
                     'message' => 'Mijoz topilmadi',

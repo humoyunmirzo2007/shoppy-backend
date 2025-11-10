@@ -14,7 +14,10 @@ class TradeResource extends JsonResource
             'date' => $this->date,
             'client' => $this->client ? [
                 'id' => $this->client->id,
-                'name' => $this->client->name,
+                'first_name' => $this->client->first_name,
+                'middle_name' => $this->client->middle_name,
+                'last_name' => $this->client->last_name,
+                'full_name' => $this->client->full_name,
             ] : null,
             'user' => $this->user ? [
                 'id' => $this->user->id,
