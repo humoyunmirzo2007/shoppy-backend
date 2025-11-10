@@ -79,6 +79,12 @@ class ProductRepository implements ProductInterface
         return $this->product->select($fields)
             ->where('product_group_id', $productGroupId)
             ->where('is_active', true)
+            ->with([
+                'category:id,name_uz,name_ru', 'brand:id,name',
+                'productAttributes:id,product_id,attribute_value_id',
+                'productAttributes.attributeValue:id,value_uz,value_ru,attribute_id',
+                'productAttributes.attributeValue.attribute:id,name_uz,name_ru',
+            ])
             ->orderBy('id', 'asc')
             ->get();
     }

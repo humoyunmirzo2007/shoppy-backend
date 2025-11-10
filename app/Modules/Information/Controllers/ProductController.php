@@ -60,7 +60,7 @@ class ProductController
     {
         $productGroupId = $request->validated()['product_group_id'];
 
-        $fields = ['id', 'name', 'sku', 'price', 'wholesale_price', 'residue', 'is_active', 'images', 'main_image', 'category_id', 'brand_id', 'product_group_id', 'description'];
+        $fields = ['id', 'name_uz', 'name_ru', 'sku', 'price', 'wholesale_price', 'residue', 'is_active', 'images', 'main_image', 'category_id', 'brand_id', 'product_group_id', 'description_uz', 'description_ru'];
 
         $result = $this->productService->getByProductGroupId($productGroupId, $fields);
 
