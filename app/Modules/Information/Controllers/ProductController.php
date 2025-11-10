@@ -113,27 +113,6 @@ class ProductController
     }
 
     /**
-     * Mahsulotni o'chirish
-     */
-    public function destroy(int $id): JsonResponse
-    {
-        $result = $this->productService->getById($id, ['*']);
-
-        if (! $result['success'] || ! $result['data']) {
-            return Response::error($result['message'] ?? 'Mahsulot topilmadi', 404);
-        }
-
-        $product = $result['data'];
-        $result = $this->productService->delete($product);
-
-        if ($result['success']) {
-            return Response::success(null, 'Mahsulot muvaffaqiyatli o\'chirildi');
-        }
-
-        return Response::error($result['message'] ?? 'Mahsulotni o\'chirishda xatolik yuz berdi');
-    }
-
-    /**
      * Qoldiq mahsulotlarni olish
      */
     public function getForResidues(): JsonResponse
@@ -188,33 +167,5 @@ class ProductController
         }
 
         return Response::error($result['message'] ?? 'Mahsulotlarni import qilishda xatolik yuz berdi');
-    }
-
-    /**
-     * Narx yangilash shablonini yuklab olish
-     */
-    public function downloadUpdatePriceTemplate(): JsonResponse
-    {
-        $result = $this->productService->downloadUpdatePriceTemplate();
-
-        if ($result['success']) {
-            return Response::success($result['data'], 'Narx yangilash shablonini muvaffaqiyatli yuklab olindi');
-        }
-
-        return Response::error($result['message'] ?? 'Narx yangilash shablonini yuklab olishda xatolik yuz berdi');
-    }
-
-    /**
-     * Shablon orqali narxlarni yangilash
-     */
-    public function updatePricesFromTemplate(): JsonResponse
-    {
-        $result = $this->productService->updatePricesFromTemplate();
-
-        if ($result['success']) {
-            return Response::success($result['data'], 'Narxlar muvaffaqiyatli yangilandi');
-        }
-
-        return Response::error($result['message'] ?? 'Narxlarni yangilashda xatolik yuz berdi');
     }
 }

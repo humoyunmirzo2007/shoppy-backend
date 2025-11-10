@@ -1135,83 +1135,6 @@
                             "path": ["products", "download-template"]
                         }
                     }
-                },
-                {
-                    "name": "Mahsulotlarni import qilish",
-                    "request": {
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "file",
-                                    "type": "file",
-                                    "src": []
-                                }
-                            ]
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/products/import",
-                            "host": ["{{base_url}}"],
-                            "path": ["products", "import"]
-                        }
-                    }
-                },
-                {
-                    "name": "Narx yangilash shablonini yuklab olish",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/products/download-update-price-template",
-                            "host": ["{{base_url}}"],
-                            "path": [
-                                "products",
-                                "download-update-price-template"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "Shablon orqali narxlarni yangilash",
-                    "request": {
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "file",
-                                    "type": "file",
-                                    "src": []
-                                }
-                            ]
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/products/update-prices-from-template",
-                            "host": ["{{base_url}}"],
-                            "path": ["products", "update-prices-from-template"]
-                        }
-                    }
                 }
             ]
         },
@@ -2004,7 +1927,7 @@
                     }
                 },
                 {
-                    "name": "Mahsulot guruhi ma'lumotlarini yangilash",
+                    "name": "✏️ Mahsulot guruhi ma'lumotlarini yangilash",
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -2140,6 +2063,38 @@
                             "raw": "{{base_url}}/attribute-values/1",
                             "host": ["{{base_url}}"],
                             "path": ["attribute-values", "1"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "🌐 Tarjima",
+            "item": [
+                {
+                    "name": "Matnni tarjima qilish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"text\": \"Salom dunyo\",\n    \"source\": \"uz\",\n    \"target\": \"ru\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/translate",
+                            "host": ["{{base_url}}"],
+                            "path": ["translate"]
                         }
                     }
                 }

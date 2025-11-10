@@ -52,6 +52,6 @@ class ProductGroupRepository implements ProductGroupInterface
     {
         $productGroup->update($data);
 
-        return $productGroup;
+        return $productGroup->load(['brand:id,name']);
     }
 }

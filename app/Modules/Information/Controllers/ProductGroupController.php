@@ -56,6 +56,6 @@ class ProductGroupController extends Controller
             return Response::error($result['message']);
         }
 
-        return Response::success(message: $result['message'], data: DefaultResource::make($result['data'])->resolve());
+        return Response::success(DefaultResource::make($result['data']), $result['message']);
     }
 }

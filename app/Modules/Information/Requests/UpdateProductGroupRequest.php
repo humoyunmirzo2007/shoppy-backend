@@ -2,16 +2,11 @@
 
 namespace App\Modules\Information\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\MainRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateProductGroupRequest extends FormRequest
+class UpdateProductGroupRequest extends MainRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     public function rules(): array
     {
         $id = $this->route('id');

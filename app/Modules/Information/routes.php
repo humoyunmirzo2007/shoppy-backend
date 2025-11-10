@@ -12,6 +12,7 @@ use App\Modules\Information\Controllers\PaymentTypeController;
 use App\Modules\Information\Controllers\ProductController;
 use App\Modules\Information\Controllers\ProductGroupController;
 use App\Modules\Information\Controllers\SupplierController;
+use App\Modules\Information\Controllers\TranslateController;
 use App\Modules\Information\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -133,4 +134,8 @@ Route::group(['prefix' => 'product-groups', 'middleware' => ['auth:sanctum']], f
     Route::get('/', [ProductGroupController::class, 'index']);
     Route::get('/{id}', [ProductGroupController::class, 'show']);
     Route::put('/update/{id}', [ProductGroupController::class, 'update']);
+});
+
+Route::group(['prefix' => 'translate', 'middleware' => ['auth:sanctum']], function () {
+    Route::post('/', [TranslateController::class, 'translate']);
 });
