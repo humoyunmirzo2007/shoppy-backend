@@ -562,15 +562,15 @@ class TradeService
 
         // Added products
         foreach ($productChanges['added'] as $product) {
-            $productModel = $this->productRepository->getById($product['product_id'], ['name']);
-            $productName = $productModel?->name ?? 'Unknown';
+            $productModel = $this->productRepository->getById($product['product_id'], ['name_uz', 'name_ru']);
+            $productName = $productModel?->name_uz ?? 'Unknown';
             $description .= 'a@#'.$product['product_id'].'- '.$productName.': '.number_format(abs($product['count']), 0, '.', ' ').', '.number_format($product['price'], 0, '.', ' ').';';
         }
 
         // Updated products
         foreach ($productChanges['updated'] as $change) {
-            $productModel = $this->productRepository->getById($change['product_id'], ['name']);
-            $productName = $productModel?->name ?? 'Unknown';
+            $productModel = $this->productRepository->getById($change['product_id'], ['name_uz', 'name_ru']);
+            $productName = $productModel?->name_uz ?? 'Unknown';
             $description .= 'u@#'.$change['product_id'].'- '.$productName.': '.
                 number_format(abs($change['old_count']), 0, '.', ' ').' → '.number_format(abs($change['new_count']), 0, '.', ' ').', '.
                 number_format($change['old_price'], 0, '.', ' ').' → '.number_format($change['new_price'], 0, '.', ' ').';';
@@ -578,8 +578,8 @@ class TradeService
 
         // Removed products
         foreach ($productChanges['removed'] as $product) {
-            $productModel = $this->productRepository->getById($product['product_id'], ['name']);
-            $productName = $productModel?->name ?? 'Unknown';
+            $productModel = $this->productRepository->getById($product['product_id'], ['name_uz', 'name_ru']);
+            $productName = $productModel?->name_uz ?? 'Unknown';
             $description .= 'r@#'.$product['product_id'].'- '.$productName.': '.number_format(abs($product['count']), 0, '.', ' ').', '.number_format($product['price'], 0, '.', ' ').';';
         }
 

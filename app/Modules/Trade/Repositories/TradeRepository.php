@@ -63,8 +63,8 @@ class TradeRepository implements TradeInterface
                 'client:id,name',
                 'user:id,full_name',
                 'tradeProducts:id,trade_id,product_id,price,count,total_price',
-                'tradeProducts.product:id,name,category_id,residue',
-                'tradeProducts.product.category:id,name',
+                'tradeProducts.product:id,name_uz,name_ru,category_id,residue',
+                'tradeProducts.product.category:id,name_uz,name_ru',
             ])
             ->find($id);
     }

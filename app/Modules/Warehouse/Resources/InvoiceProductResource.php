@@ -21,10 +21,12 @@ class InvoiceProductResource extends JsonResource
             'product_id' => $this->product_id,
             'product' => $product ? [
                 'id' => $product->id,
-                'name' => $product->name,
+                'name_uz' => $product->name_uz,
+                'name_ru' => $product->name_ru,
                 'category' => $product->category ? [
                     'id' => $product->category->id,
-                    'name' => $product->category->name,
+                    'name_uz' => $product->category->name_uz,
+                    'name_ru' => $product->category->name_ru,
                 ] : null,
                 'residue' => $product->residue ?? null,
             ] : null,

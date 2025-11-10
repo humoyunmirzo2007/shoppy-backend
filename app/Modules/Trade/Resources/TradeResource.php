@@ -37,11 +37,13 @@ class TradeResource extends JsonResource
                         'total_price' => $tradeProduct->total_price,
                         'product' => $tradeProduct->product ? [
                             'id' => $tradeProduct->product->id,
-                            'name' => $tradeProduct->product->name,
+                            'name_uz' => $tradeProduct->product->name_uz,
+                            'name_ru' => $tradeProduct->product->name_ru,
                             'residue' => $tradeProduct->product->residue,
                             'category' => $tradeProduct->product->category ? [
                                 'id' => $tradeProduct->product->category->id,
-                                'name' => $tradeProduct->product->category->name,
+                                'name_uz' => $tradeProduct->product->category->name_uz,
+                                'name_ru' => $tradeProduct->product->category->name_ru,
                             ] : null,
                         ] : null,
                     ];

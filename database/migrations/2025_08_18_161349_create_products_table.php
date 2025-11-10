@@ -14,7 +14,8 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name_uz')->comment('Mahsulot nomi (o\'zbek)');
+            $table->string('name_ru')->comment('Mahsulot nomi (rus)');
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_group_id')->constrained()->cascadeOnDelete();
             $table->foreignId('brand_id')->constrained()->cascadeOnDelete();
@@ -27,7 +28,8 @@ return new class extends Migration
             $table->decimal('wholesale_price', 10, 2)->default(0);
             $table->jsonb('images')->nullable();
             $table->jsonb('main_image')->nullable();
-            $table->string('description', 500)->nullable();
+            $table->text('description_uz')->nullable()->comment('Mahsulot tavsifi (o\'zbek)');
+            $table->text('description_ru')->nullable()->comment('Mahsulot tavsifi (rus)');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
@@ -36,7 +38,9 @@ return new class extends Migration
             $table->index('price');
             $table->index('wholesale_price');
             $table->index('residue');
-            $table->index(['category_id', 'is_active', 'name']);
+            $table->index('name_uz');
+            $table->index('name_ru');
+            $table->index(['category_id', 'is_active']);
         });
 
         // Add check constraint for residue

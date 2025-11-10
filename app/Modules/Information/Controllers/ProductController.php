@@ -3,10 +3,13 @@
 namespace App\Modules\Information\Controllers;
 
 use App\Helpers\Response;
+use App\Http\Resources\DefaultResource;
 use App\Modules\Information\Requests\GetProductByIdRequest;
+use App\Modules\Information\Requests\GetProductsByGroupIdRequest;
 use App\Modules\Information\Requests\GetProductsRequest;
 use App\Modules\Information\Requests\StoreProductRequest;
 use App\Modules\Information\Requests\UpdateProductRequest;
+use App\Modules\Information\Resources\ProductResource;
 use App\Modules\Information\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 
@@ -24,7 +27,10 @@ class ProductController
         $result = $this->productService->getAll($data, ['*']);
 
         if ($result['success']) {
-            return Response::success($result['data'], 'Mahsulotlar muvaffaqiyatli olindi');
+            return Response::success(
+                DefaultResource::collection($result['data']),
+                'Mahsulotlar muvaffaqiyatli olindi'
+            );
         }
 
         return Response::error($result['message'] ?? 'Mahsulotlarni olishda xatolik yuz berdi');
@@ -38,10 +44,35 @@ class ProductController
         $result = $this->productService->getById($id, ['*']);
 
         if ($result['success'] && $result['data']) {
-            return Response::success($result['data'], 'Mahsulot muvaffaqiyatli olindi');
+            return Response::success(
+                ProductResource::make($result['data']),
+                'Mahsulot muvaffaqiyatli olindi'
+            );
         }
 
         return Response::error($result['message'] ?? 'Mahsulot topilmadi', 404);
+    }
+
+    /**
+     * Product group ID bo'yicha mahsulotlarni olish
+     */
+    public function getByProductGroupId(GetProductsByGroupIdRequest $request): JsonResponse
+    {
+        $productGroupId = $request->validated()['product_group_id'];
+
+        // Yengil query - faqat kerakli fieldlar
+        $fields = ['id', 'name', 'sku', 'price', 'wholesale_price', 'residue', 'is_active', 'images', 'main_image', 'category_id', 'brand_id', 'product_group_id', 'description'];
+
+        $result = $this->productService->getByProductGroupId($productGroupId, $fields);
+
+        if ($result['success']) {
+            return Response::success(
+                ProductResource::collection($result['data']),
+                'Mahsulotlar muvaffaqiyatli olindi'
+            );
+        }
+
+        return Response::error($result['message'] ?? 'Mahsulotlarni olishda xatolik yuz berdi');
     }
 
     /**

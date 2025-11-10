@@ -11,12 +11,13 @@ class Attribute extends Model
     use Sortable;
 
     protected $fillable = [
-        'name',
+        'name_uz',
+        'name_ru',
         'type',
         'is_active',
     ];
 
-    protected $sortable = ['id', 'name', 'type', 'is_active', 'created_at', 'updated_at'];
+    protected $sortable = ['id', 'name_uz', 'name_ru', 'type', 'is_active', 'created_at', 'updated_at'];
 
     /**
      * Atribut qiymatlari bilan bog'lanish

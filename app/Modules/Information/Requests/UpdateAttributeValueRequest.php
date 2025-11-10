@@ -15,7 +15,8 @@ class UpdateAttributeValueRequest extends FormRequest
     {
         return [
             'attribute_id' => ['required', 'integer', 'exists:attributes,id'],
-            'value' => ['required', 'string', 'max:255'],
+            'value_uz' => ['required', 'string', 'max:255'],
+            'value_ru' => ['required', 'string', 'max:255'],
         ];
     }
 
@@ -25,9 +26,12 @@ class UpdateAttributeValueRequest extends FormRequest
             'attribute_id.required' => 'Atribut ID kiritilishi shart',
             'attribute_id.integer' => 'Atribut ID raqam bo\'lishi kerak',
             'attribute_id.exists' => 'Tanlangan atribut mavjud emas',
-            'value.required' => 'Atribut qiymati kiritilishi shart',
-            'value.string' => 'Atribut qiymati matn ko\'rinishida bo\'lishi kerak',
-            'value.max' => 'Atribut qiymati maksimal 255 belgidan oshmasligi kerak',
+            'value_uz.required' => 'Atribut qiymati (o\'zbek) kiritilishi shart',
+            'value_uz.string' => 'Atribut qiymati (o\'zbek) matn ko\'rinishida bo\'lishi kerak',
+            'value_uz.max' => 'Atribut qiymati (o\'zbek) maksimal 255 belgidan oshmasligi kerak',
+            'value_ru.required' => 'Atribut qiymati (rus) kiritilishi shart',
+            'value_ru.string' => 'Atribut qiymati (rus) matn ko\'rinishida bo\'lishi kerak',
+            'value_ru.max' => 'Atribut qiymati (rus) maksimal 255 belgidan oshmasligi kerak',
         ];
     }
 }

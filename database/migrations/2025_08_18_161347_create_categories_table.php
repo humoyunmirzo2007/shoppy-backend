@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique()->comment('Kategoriya nomi');
+            $table->string('name_uz')->unique()->comment('Kategoriya nomi');
+            $table->string('name_ru')->unique()->comment('Kategoriya nomi');
             $table->text('description')->nullable()->comment('Kategoriya tavsifi');
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('cascade')->comment('Ota kategoriya ID');
             $table->foreignId('first_parent_id')->nullable()->constrained('categories')->onDelete('cascade')->comment('Birinchi ota kategoriya ID');

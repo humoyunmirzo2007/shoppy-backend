@@ -14,6 +14,11 @@ class ProductAttributeRepository implements ProductAttributeInterface
         return $this->productAttribute->create($data);
     }
 
+    public function storeBulk(array $data): bool
+    {
+        return $this->productAttribute->insert($data);
+    }
+
     public function update(ProductAttribute $productAttribute, array $data): ProductAttribute
     {
         $productAttribute->update($data);

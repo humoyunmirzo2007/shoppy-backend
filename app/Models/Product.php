@@ -36,7 +36,15 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
+    /**
+     * Mahsulot atributlari bilan bog'lanish
+     */
+    public function productAttributes(): HasMany
+    {
+        return $this->hasMany(ProductAttribute::class);
+    }
+
     protected $hidden = ['created_at', 'updated_at'];
 
-    protected $sortable = ['id', 'name', 'unit', 'category_id', 'brand_id', 'is_active', 'price', 'wholesale_price'];
+    protected $sortable = ['id', 'name_uz', 'name_ru', 'unit', 'category_id', 'brand_id', 'is_active', 'price', 'wholesale_price'];
 }

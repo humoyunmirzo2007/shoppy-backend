@@ -65,8 +65,8 @@ class InvoiceRepository implements InvoiceInterface
                 'otherSource:id,name',
                 'user:id,full_name',
                 'invoiceProducts:id,invoice_id,product_id,price,input_price,count,total_price,wholesale_price',
-                'invoiceProducts.product:id,name,category_id,residue',
-                'invoiceProducts.product.category:id,name',
+                'invoiceProducts.product:id,name_uz,name_ru,category_id,residue',
+                'invoiceProducts.product.category:id,name_uz,name_ru',
             ])
             ->find($id);
     }

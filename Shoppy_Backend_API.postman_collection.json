@@ -833,6 +833,33 @@
                     }
                 },
                 {
+                    "name": "Mahsulot guruhi bo'yicha mahsulotlar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/products/by-group-id?product_group_id=1",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "by-group-id"],
+                            "query": [
+                                {
+                                    "key": "product_group_id",
+                                    "value": "1",
+                                    "description": "Mahsulot guruhi ID si",
+                                    "disabled": false
+                                }
+                            ]
+                        },
+                        "description": "Mahsulot guruhi ID si bo'yicha barcha mahsulotlarni olish. Category, brand va attribute ma'lumotlari bilan birga qaytariladi."
+                    }
+                },
+                {
                     "name": "Mahsulot ma'lumotlari",
                     "request": {
                         "method": "GET",
@@ -862,13 +889,182 @@
                             },
                             {
                                 "key": "Content-Type",
-                                "value": "application/json",
+                                "value": "multipart/form-data",
                                 "type": "text"
                             }
                         ],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"name\": \"Yangi Mahsulot\",\n    \"description\": \"Mahsulot haqida ma'lumot\",\n    \"price\": 100000,\n    \"cost_price\": 80000,\n    \"category_id\": 1,\n    \"brand_id\": 1,\n    \"supplier_id\": 1\n}"
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Erkaklar futbolkasi",
+                                    "type": "text",
+                                    "description": "Mahsulot guruhi nomi (majburiy)"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "100% paxta, yozgi futbolka",
+                                    "type": "text",
+                                    "description": "Mahsulot guruhi tavsifi (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "category_id",
+                                    "value": "2",
+                                    "type": "text",
+                                    "description": "Kategoriya ID (majburiy)"
+                                },
+                                {
+                                    "key": "brand_id",
+                                    "value": "3",
+                                    "type": "text",
+                                    "description": "Brend ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][name_uz]",
+                                    "value": "Erkaklar futbolkasi - Qizil, M",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti nomi (o'zbek) (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][name_ru]",
+                                    "value": "Мужская футболка - Красный, M",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti nomi (rus) (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][price]",
+                                    "value": "120000",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti narxi (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "products[0][wholesale_price]",
+                                    "value": "100000",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti ulgurji narxi (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "products[0][description_uz]",
+                                    "value": "Qizil rang, M o'lcham",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti tavsifi (o'zbek) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "products[0][description_ru]",
+                                    "value": "Красный цвет, размер M",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti tavsifi (rus) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "products[0][main_image]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti asosiy rasm URL (ixtiyoriy)"
+                                },
+                                {
+                                    "key": "products[0][images][]",
+                                    "type": "file",
+                                    "src": [],
+                                    "description": "Birinchi mahsulot varianti rasmlari (ixtiyoriy, maksimal 4 ta, jpeg/jpg/png/webp, maksimal 5MB)"
+                                },
+                                {
+                                    "key": "products[0][attributes][0][attribute_id]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti birinchi atribut ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][attributes][0][value_id]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti birinchi atribut qiymati ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][attributes][1][attribute_id]",
+                                    "value": "2",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti ikkinchi atribut ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][attributes][1][value_id]",
+                                    "value": "3",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti ikkinchi atribut qiymati ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][name_uz]",
+                                    "value": "Erkaklar futbolkasi - Qizil, L",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti nomi (o'zbek) (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][name_ru]",
+                                    "value": "Мужская футболка - Красный, L",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti nomi (rus) (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][price]",
+                                    "value": "120000",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti narxi (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "products[1][wholesale_price]",
+                                    "value": "100000",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti ulgurji narxi (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "products[1][description_uz]",
+                                    "value": "Qizil rang, L o'lcham",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti tavsifi (o'zbek) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "products[1][description_ru]",
+                                    "value": "Красный цвет, размер L",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti tavsifi (rus) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "products[1][main_image]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti asosiy rasm URL (ixtiyoriy)"
+                                },
+                                {
+                                    "key": "products[1][images][]",
+                                    "type": "file",
+                                    "src": [],
+                                    "description": "Ikkinchi mahsulot varianti rasmlari (ixtiyoriy, maksimal 4 ta, jpeg/jpg/png/webp, maksimal 5MB)"
+                                },
+                                {
+                                    "key": "products[1][attributes][0][attribute_id]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti birinchi atribut ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][attributes][0][value_id]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti birinchi atribut qiymati ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][attributes][1][attribute_id]",
+                                    "value": "2",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti ikkinchi atribut ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][attributes][1][value_id]",
+                                    "value": "4",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti ikkinchi atribut qiymati ID (majburiy)"
+                                }
+                            ]
                         },
                         "url": {
                             "raw": "{{base_url}}/products",
@@ -895,7 +1091,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Yangilangan Mahsulot\",\n    \"description\": \"Yangilangan ma'lumot\",\n    \"price\": 120000,\n    \"cost_price\": 90000,\n    \"category_id\": 1,\n    \"brand_id\": 1,\n    \"supplier_id\": 1\n}"
+                            "raw": "{\n    \"name_uz\": \"Yangilangan Mahsulot\",\n    \"name_ru\": \"Обновленный Продукт\",\n    \"description_uz\": \"Yangilangan ma'lumot\",\n    \"description_ru\": \"Обновленная информация\",\n    \"category_id\": 1,\n    \"brand_id\": 1\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/products/1",
@@ -1410,7 +1606,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Yangi Kategoriya\",\n    \"parent_id\": null,\n    \"description\": \"Kategoriya haqida ma'lumot\"\n}"
+                            "raw": "{\n    \"name_uz\": \"Yangi Kategoriya\",\n    \"name_ru\": \"Новая Категория\",\n    \"parent_id\": null,\n    \"description\": \"Kategoriya haqida ma'lumot\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/categories/create",
@@ -1437,7 +1633,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Yangilangan Kategoriya\",\n    \"parent_id\": 1,\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                            "raw": "{\n    \"name_uz\": \"Yangilangan Kategoriya\",\n    \"name_ru\": \"Обновленная Категория\",\n    \"parent_id\": 1,\n    \"description\": \"Yangilangan ma'lumot\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/categories/update/1",
@@ -1690,7 +1886,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Yangi Atribut\",\n    \"type\": \"text\",\n    \"description\": \"Atribut haqida ma'lumot\"\n}"
+                            "raw": "{\n    \"name_uz\": \"Yangi Atribut\",\n    \"name_ru\": \"Новый Атрибут\",\n    \"type\": \"text\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attributes",
@@ -1717,7 +1913,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Yangilangan Atribut\",\n    \"type\": \"select\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                            "raw": "{\n    \"name_uz\": \"Yangilangan Atribut\",\n    \"name_ru\": \"Обновленный Атрибут\",\n    \"type\": \"select\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attributes/1",
@@ -1911,7 +2107,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"attribute_id\": 1,\n    \"value\": \"Yangi Qiymat\",\n    \"description\": \"Qiymat haqida ma'lumot\"\n}"
+                            "raw": "{\n    \"attribute_id\": 1,\n    \"value_uz\": \"Yangi Qiymat\",\n    \"value_ru\": \"Новое Значение\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attribute-values",
@@ -1938,7 +2134,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"attribute_id\": 1,\n    \"value\": \"Yangilangan Qiymat\",\n    \"description\": \"Yangilangan ma'lumot\"\n}"
+                            "raw": "{\n    \"attribute_id\": 1,\n    \"value_uz\": \"Yangilangan Qiymat\",\n    \"value_ru\": \"Обновленное Значение\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attribute-values/1",

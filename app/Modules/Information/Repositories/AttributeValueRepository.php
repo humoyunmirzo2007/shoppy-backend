@@ -19,15 +19,17 @@ class AttributeValueRepository implements AttributeValueInterface
 
         return $this->attributeValue->query()
             ->select($fields)
-            ->with(['attribute:id,name'])
+            ->with(['attribute:id,name_uz,name_ru'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     if (is_numeric($search)) {
                         $query->where('id', $search);
                     }
-                    $query->orWhere('value', 'ilike', "%$search%")
+                    $query->orWhere('value_uz', 'ilike', "%$search%")
+                        ->orWhere('value_ru', 'ilike', "%$search%")
                         ->orWhereHas('attribute', function ($q) use ($search) {
-                            $q->where('name', 'ilike', "%$search%");
+                            $q->where('name_uz', 'ilike', "%$search%")
+                                ->orWhere('name_ru', 'ilike', "%$search%");
                         });
                 });
             })

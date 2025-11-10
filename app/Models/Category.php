@@ -13,7 +13,7 @@ class Category extends Model
 
     protected $guarded = [];
 
-    protected $sortable = ['id', 'name', 'is_active', 'sort_order', 'created_at', 'updated_at'];
+    protected $sortable = ['id', 'name_uz', 'name_ru', 'is_active', 'sort_order', 'created_at', 'updated_at'];
 
     public function parent(): BelongsTo
     {

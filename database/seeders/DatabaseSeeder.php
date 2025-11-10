@@ -37,10 +37,16 @@ class DatabaseSeeder extends Seeder
 
         // ==================== CATEGORIES ====================
         $categoriesData = [
-            ['name' => 'Elektronika', 'description' => 'Elektronika mahsulotlari'],
-            ['name' => 'Maishiy texnika', 'description' => 'Maishiy texnika mahsulotlari'],
-            ['name' => 'Kiyim-kechak', 'description' => 'Kiyim-kechak va aksessuarlar'],
-            ['name' => 'Oziq-ovqat', 'description' => 'Oziq-ovqat mahsulotlari'],
+            ['name_uz' => 'Elektronika', 'name_ru' => 'Электроника', 'description' => 'Elektronika mahsulotlari'],
+            ['name_uz' => 'Maishiy texnika', 'name_ru' => 'Бытовая техника', 'description' => 'Maishiy texnika mahsulotlari'],
+            ['name_uz' => 'Kiyim-kechak', 'name_ru' => 'Одежда', 'description' => 'Kiyim-kechak va aksessuarlar'],
+            ['name_uz' => 'Oziq-ovqat', 'name_ru' => 'Продукты питания', 'description' => 'Oziq-ovqat mahsulotlari'],
+            ['name_uz' => 'Mebellar', 'name_ru' => 'Мебель', 'description' => 'Mebellar va interer buyumlari'],
+            ['name_uz' => 'Sport va dam olish', 'name_ru' => 'Спорт и отдых', 'description' => 'Sport anjomlari va dam olish mahsulotlari'],
+            ['name_uz' => 'Kosmetika va parfyumeriya', 'name_ru' => 'Косметика и парфюмерия', 'description' => 'Kosmetika va parfyumeriya mahsulotlari'],
+            ['name_uz' => 'Kitoblar va o\'quv materiallari', 'name_ru' => 'Книги и учебные материалы', 'description' => 'Kitoblar va o\'quv materiallari'],
+            ['name_uz' => 'Avtomobillar va ehtiyot qismlar', 'name_ru' => 'Автомобили и запчасти', 'description' => 'Avtomobillar va ehtiyot qismlar'],
+            ['name_uz' => 'Uy va bog\' uchun', 'name_ru' => 'Для дома и сада', 'description' => 'Uy va bog\' uchun mahsulotlar'],
         ];
 
         foreach ($categoriesData as &$cat) {
@@ -101,17 +107,26 @@ class DatabaseSeeder extends Seeder
 
         // ==================== ATTRIBUTES ====================
         $attributes = [
-            ['Rang', 'select'], ['O\'lcham', 'select'], ['Material', 'select'], ['Jinsi', 'select'],
-            ['Xotira', 'select'], ['Ekran o\'lchami', 'select'], ['Protsessor', 'select'],
-            ['Kamera', 'select'], ['Batareya', 'select'], ['Operatsion sistema', 'select'],
-            ['Og\'irlik', 'number'], ['Narx', 'number'],
+            ['Rang', 'Цвет', 'select'],
+            ['O\'lcham', 'Размер', 'select'],
+            ['Material', 'Материал', 'select'],
+            ['Jinsi', 'Пол', 'select'],
+            ['Xotira', 'Память', 'select'],
+            ['Ekran o\'lchami', 'Размер экрана', 'select'],
+            ['Protsessor', 'Процессор', 'select'],
+            ['Kamera', 'Камера', 'select'],
+            ['Batareya', 'Батарея', 'select'],
+            ['Operatsion sistema', 'Операционная система', 'select'],
+            ['Og\'irlik', 'Вес', 'number'],
+            ['Narx', 'Цена', 'number'],
         ];
 
         $attributeInserts = [];
         foreach ($attributes as $attr) {
             $attributeInserts[] = [
-                'name' => $attr[0],
-                'type' => $attr[1],
+                'name_uz' => $attr[0],
+                'name_ru' => $attr[1],
+                'type' => $attr[2],
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -120,19 +135,49 @@ class DatabaseSeeder extends Seeder
         DB::table('attributes')->insert($attributeInserts);
 
         // ==================== ATTRIBUTE VALUES ====================
-        $attributesMap = DB::table('attributes')->pluck('id', 'name');
+        $attributesMap = DB::table('attributes')->pluck('id', 'name_uz');
 
         $attributeValues = [
-            'Rang' => ['Qizil', 'Ko\'k', 'Yashil', 'Qora', 'Oq', 'Sariq', 'Pushti', 'Binafsha', 'Jigarrang', 'Kulrang'],
-            'O\'lcham' => ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', '28', '30', '32'],
-            'Material' => ['Paxta', 'Poliester', 'Ipak', 'Yun', 'Teridan', 'Plastik', 'Metall', 'Shisha', 'Karton', 'Qog\'oz'],
-            'Jinsi' => ['Erkak', 'Ayol', 'Uniseks', 'Bola'],
-            'Xotira' => ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB', '2 TB'],
-            'Ekran o\'lchami' => ['5.5"', '6.1"', '6.7"', '13"', '15"', '17"', '24"', '32"'],
-            'Protsessor' => ['Apple A17 Pro', 'Snapdragon 8 Gen 3', 'Intel Core i7'],
-            'Kamera' => ['48 MP', '200 MP'],
-            'Batareya' => ['3000 mAh', '4000 mAh', '5000 mAh', '6000 mAh'],
-            'Operatsion sistema' => ['iOS', 'Android', 'Windows', 'macOS', 'Linux'],
+            'Rang' => [
+                ['Qizil', 'Красный'], ['Ko\'k', 'Синий'], ['Yashil', 'Зеленый'], ['Qora', 'Черный'],
+                ['Oq', 'Белый'], ['Sariq', 'Желтый'], ['Pushti', 'Розовый'], ['Binafsha', 'Фиолетовый'],
+                ['Jigarrang', 'Коричневый'], ['Kulrang', 'Серый'],
+            ],
+            'O\'lcham' => [
+                ['XS', 'XS'], ['S', 'S'], ['M', 'M'], ['L', 'L'], ['XL', 'XL'], ['XXL', 'XXL'],
+                ['XXXL', 'XXXL'], ['28', '28'], ['30', '30'], ['32', '32'],
+            ],
+            'Material' => [
+                ['Paxta', 'Хлопок'], ['Poliester', 'Полиэстер'], ['Ipak', 'Шелк'], ['Yun', 'Шерсть'],
+                ['Teridan', 'Кожа'], ['Plastik', 'Пластик'], ['Metall', 'Металл'], ['Shisha', 'Стекло'],
+                ['Karton', 'Картон'], ['Qog\'oz', 'Бумага'],
+            ],
+            'Jinsi' => [
+                ['Erkak', 'Мужской'], ['Ayol', 'Женский'], ['Uniseks', 'Унисекс'], ['Bola', 'Детский'],
+            ],
+            'Xotira' => [
+                ['64 GB', '64 GB'], ['128 GB', '128 GB'], ['256 GB', '256 GB'], ['512 GB', '512 GB'],
+                ['1 TB', '1 TB'], ['2 TB', '2 TB'],
+            ],
+            'Ekran o\'lchami' => [
+                ['5.5"', '5.5"'], ['6.1"', '6.1"'], ['6.7"', '6.7"'], ['13"', '13"'],
+                ['15"', '15"'], ['17"', '17"'], ['24"', '24"'], ['32"', '32"'],
+            ],
+            'Protsessor' => [
+                ['Apple A17 Pro', 'Apple A17 Pro'], ['Snapdragon 8 Gen 3', 'Snapdragon 8 Gen 3'],
+                ['Intel Core i7', 'Intel Core i7'],
+            ],
+            'Kamera' => [
+                ['48 MP', '48 MP'], ['200 MP', '200 MP'],
+            ],
+            'Batareya' => [
+                ['3000 mAh', '3000 mAh'], ['4000 mAh', '4000 mAh'], ['5000 mAh', '5000 mAh'],
+                ['6000 mAh', '6000 mAh'],
+            ],
+            'Operatsion sistema' => [
+                ['iOS', 'iOS'], ['Android', 'Android'], ['Windows', 'Windows'], ['macOS', 'macOS'],
+                ['Linux', 'Linux'],
+            ],
         ];
 
         $attributeValuesInsert = [];
@@ -141,7 +186,8 @@ class DatabaseSeeder extends Seeder
             foreach ($values as $val) {
                 $attributeValuesInsert[] = [
                     'attribute_id' => $attrId,
-                    'value' => $val,
+                    'value_uz' => $val[0],
+                    'value_ru' => $val[1],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -151,32 +197,34 @@ class DatabaseSeeder extends Seeder
         DB::table('attribute_values')->insert($attributeValuesInsert);
 
         // ==================== PRODUCTS ====================
-        $categoriesMap = DB::table('categories')->pluck('id', 'name');
+        $categoriesMap = DB::table('categories')->pluck('id', 'name_uz');
         $brandsMap = DB::table('brands')->pluck('id', 'name');
         $productGroupsMap = DB::table('product_groups')->pluck('id', 'name');
 
         $products = [
-            ['Erkaklar futbolkasi', '100% paxta, yozgi futbolka', 'Kiyim-kechak', 'Nike', 'Nike Sport', 'dona', 50000, 10, 55000, 52000],
-            ['iPhone 15 Pro', 'Apple iPhone 15 Pro smartfon', 'Elektronika', 'Apple', 'iPhone Seriyasi', 'dona', 15000000, 5, 16000000, 15500000],
-            ['Samsung Galaxy S24', 'Samsung Galaxy S24 smartfon', 'Elektronika', 'Samsung', 'Galaxy Seriyasi', 'dona', 12000000, 8, 13000000, 12500000],
-            ['Ayollar ko\'ylagi', 'Zamonaviy ayollar ko\'ylagi', 'Kiyim-kechak', 'Adidas', 'Adidas Classic', 'dona', 45000, 15, 50000, 47000],
-            ['LG Smart TV', '55 dyuymli LG Smart televizor', 'Maishiy texnika', 'LG', 'LG Smart TV Seriyasi', 'dona', 8000000, 3, 8500000, 8200000],
-            ['Xiaomi 14 Pro', 'Xiaomi 14 Pro smartfon', 'Elektronika', 'Xiaomi', 'Xiaomi Flagship', 'dona', 10000000, 7, 11000000, 10500000],
-            ['HP Laptop', 'HP Pavilion noutbuk', 'Elektronika', 'HP', 'HP Pavilion Seriyasi', 'dona', 12000000, 4, 13000000, 12500000],
-            ['Lenovo ThinkPad', 'Lenovo ThinkPad noutbuk', 'Elektronika', 'Lenovo', 'Lenovo ThinkPad Seriyasi', 'dona', 11000000, 6, 12000000, 11500000],
-            ['Dell Monitor', 'Dell 24 dyuymli monitor', 'Elektronika', 'Dell', 'Dell Professional', 'dona', 3000000, 10, 3200000, 3100000],
-            ['Asus ROG', 'Asus ROG gaming noutbuk', 'Elektronika', 'Asus', 'Asus Gaming', 'dona', 15000000, 3, 16000000, 15500000],
-            ['Sony PlayStation 5', 'Sony PlayStation 5 o\'yin konsoli', 'Elektronika', 'Sony', 'PlayStation Seriyasi', 'dona', 7000000, 5, 7500000, 7200000],
-            ['Bosch Muzlatkich', 'Bosch ikki kamerali muzlatkich', 'Maishiy texnika', 'Bosch', 'Bosch Premium', 'dona', 9000000, 2, 9500000, 9200000],
+            ['Erkaklar futbolkasi', 'Мужская футболка', '100% paxta, yozgi futbolka', '100% хлопок, летняя футболка', 'Kiyim-kechak', 'Nike', 'Nike Sport', 'dona', 50000, 10, 55000, 52000],
+            ['iPhone 15 Pro', 'iPhone 15 Pro', 'Apple iPhone 15 Pro smartfon', 'Смартфон Apple iPhone 15 Pro', 'Elektronika', 'Apple', 'iPhone Seriyasi', 'dona', 15000000, 5, 16000000, 15500000],
+            ['Samsung Galaxy S24', 'Samsung Galaxy S24', 'Samsung Galaxy S24 smartfon', 'Смартфон Samsung Galaxy S24', 'Elektronika', 'Samsung', 'Galaxy Seriyasi', 'dona', 12000000, 8, 13000000, 12500000],
+            ['Ayollar ko\'ylagi', 'Женское платье', 'Zamonaviy ayollar ko\'ylagi', 'Современное женское платье', 'Kiyim-kechak', 'Adidas', 'Adidas Classic', 'dona', 45000, 15, 50000, 47000],
+            ['LG Smart TV', 'LG Smart TV', '55 dyuymli LG Smart televizor', '55-дюймовый LG Smart телевизор', 'Maishiy texnika', 'LG', 'LG Smart TV Seriyasi', 'dona', 8000000, 3, 8500000, 8200000],
+            ['Xiaomi 14 Pro', 'Xiaomi 14 Pro', 'Xiaomi 14 Pro smartfon', 'Смартфон Xiaomi 14 Pro', 'Elektronika', 'Xiaomi', 'Xiaomi Flagship', 'dona', 10000000, 7, 11000000, 10500000],
+            ['HP Laptop', 'HP Laptop', 'HP Pavilion noutbuk', 'Ноутбук HP Pavilion', 'Elektronika', 'HP', 'HP Pavilion Seriyasi', 'dona', 12000000, 4, 13000000, 12500000],
+            ['Lenovo ThinkPad', 'Lenovo ThinkPad', 'Lenovo ThinkPad noutbuk', 'Ноутбук Lenovo ThinkPad', 'Elektronika', 'Lenovo', 'Lenovo ThinkPad Seriyasi', 'dona', 11000000, 6, 12000000, 11500000],
+            ['Dell Monitor', 'Dell Monitor', 'Dell 24 dyuymli monitor', '24-дюймовый монитор Dell', 'Elektronika', 'Dell', 'Dell Professional', 'dona', 3000000, 10, 3200000, 3100000],
+            ['Asus ROG', 'Asus ROG', 'Asus ROG gaming noutbuk', 'Игровой ноутбук Asus ROG', 'Elektronika', 'Asus', 'Asus Gaming', 'dona', 15000000, 3, 16000000, 15500000],
+            ['Sony PlayStation 5', 'Sony PlayStation 5', 'Sony PlayStation 5 o\'yin konsoli', 'Игровая консоль Sony PlayStation 5', 'Elektronika', 'Sony', 'PlayStation Seriyasi', 'dona', 7000000, 5, 7500000, 7200000],
+            ['Bosch Muzlatkich', 'Bosch Холодильник', 'Bosch ikki kamerali muzlatkich', 'Двухкамерный холодильник Bosch', 'Maishiy texnika', 'Bosch', 'Bosch Premium', 'dona', 9000000, 2, 9500000, 9200000],
         ];
 
         $productsInsert = [];
         foreach ($products as $index => $prod) {
-            [$name, $desc, $catName, $brandName, $groupName, $unit, $price, $residue, $wholesalePrice, $markupPrice] = $prod;
+            [$nameUz, $nameRu, $descUz, $descRu, $catName, $brandName, $groupName, $unit, $price, $residue, $wholesalePrice, $markupPrice] = $prod;
 
             $productsInsert[] = [
-                'name' => $name,
-                'description' => $desc,
+                'name_uz' => $nameUz,
+                'name_ru' => $nameRu,
+                'description_uz' => $descUz,
+                'description_ru' => $descRu,
                 'category_id' => $categoriesMap[$catName],
                 'product_group_id' => $productGroupsMap[$groupName],
                 'brand_id' => $brandsMap[$brandName],

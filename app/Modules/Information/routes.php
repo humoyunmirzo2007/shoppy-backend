@@ -118,6 +118,7 @@ Route::group(['prefix' => 'attribute-values', 'middleware' => ['auth:sanctum']],
 Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/residues', [ProductController::class, 'getForResidues']);
+    Route::get('/by-group-id', [ProductController::class, 'getByProductGroupId']);
     Route::get('/{id}', [ProductController::class, 'show']);
     Route::post('/', [ProductController::class, 'store']);
     Route::put('/{id}', [ProductController::class, 'update']);

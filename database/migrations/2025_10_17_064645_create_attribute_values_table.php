@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('attribute_values', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attribute_id')->constrained('attributes')->onDelete('cascade')->index();
-            $table->string('value')->index();
+            $table->string('value_uz')->comment('Atribut qiymati (o\'zbek)');
+            $table->string('value_ru')->comment('Atribut qiymati (rus)');
             $table->timestamps();
+
+            $table->index('value_uz');
+            $table->index('value_ru');
         });
     }
 

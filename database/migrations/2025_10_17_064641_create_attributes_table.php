@@ -13,10 +13,16 @@ return new class extends Migration
     {
         Schema::create('attributes', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->comment('Atribut nomi (rang, o\'lcham, material...)');
+            $table->string('name_uz')->comment('Atribut nomi (o\'zbek)');
+            $table->string('name_ru')->comment('Atribut nomi (rus)');
             $table->string('type')->default('select')->comment('Atribut turi (select, text, number...)');
             $table->boolean('is_active')->default(true)->comment('Atribut holati');
             $table->timestamps();
+
+            $table->index('name_uz');
+            $table->index('name_ru');
+            $table->index('type');
+            $table->index('is_active');
         });
     }
 

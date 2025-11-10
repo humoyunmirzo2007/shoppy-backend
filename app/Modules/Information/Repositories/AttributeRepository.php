@@ -23,7 +23,8 @@ class AttributeRepository implements AttributeInterface
                     if (is_numeric($search)) {
                         $query->where('id', $search);
                     }
-                    $query->orWhere('name', 'ilike', "%$search%")
+                    $query->orWhere('name_uz', 'ilike', "%$search%")
+                        ->orWhere('name_ru', 'ilike', "%$search%")
                         ->orWhere('type', 'ilike', "%$search%");
                 });
             })

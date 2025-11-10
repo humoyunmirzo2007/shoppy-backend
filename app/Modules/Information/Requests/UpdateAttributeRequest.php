@@ -17,7 +17,8 @@ class UpdateAttributeRequest extends FormRequest
         $attributeId = $this->route('id');
 
         return [
-            'name' => ['required', 'string', 'max:255', Rule::unique('attributes', 'name')->ignore($attributeId)],
+            'name_uz' => ['required', 'string', 'max:255', Rule::unique('attributes', 'name_uz')->ignore($attributeId)],
+            'name_ru' => ['required', 'string', 'max:255', Rule::unique('attributes', 'name_ru')->ignore($attributeId)],
             'type' => ['required', 'string', 'max:255'],
         ];
     }
@@ -25,10 +26,14 @@ class UpdateAttributeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Atribut nomi kiritilishi shart',
-            'name.string' => 'Atribut nomi matn ko\'rinishida bo\'lishi kerak',
-            'name.max' => 'Atribut nomi maksimal 255 belgidan oshmasligi kerak',
-            'name.unique' => 'Bu atribut nomi allaqachon mavjud',
+            'name_uz.required' => 'Atribut nomi (o\'zbek) kiritilishi shart',
+            'name_uz.string' => 'Atribut nomi (o\'zbek) matn ko\'rinishida bo\'lishi kerak',
+            'name_uz.max' => 'Atribut nomi (o\'zbek) maksimal 255 belgidan oshmasligi kerak',
+            'name_uz.unique' => 'Bu atribut nomi (o\'zbek) allaqachon mavjud',
+            'name_ru.required' => 'Atribut nomi (rus) kiritilishi shart',
+            'name_ru.string' => 'Atribut nomi (rus) matn ko\'rinishida bo\'lishi kerak',
+            'name_ru.max' => 'Atribut nomi (rus) maksimal 255 belgidan oshmasligi kerak',
+            'name_ru.unique' => 'Bu atribut nomi (rus) allaqachon mavjud',
             'type.required' => 'Atribut turi kiritilishi shart',
             'type.string' => 'Atribut turi matn ko\'rinishida bo\'lishi kerak',
             'type.max' => 'Atribut turi maksimal 255 belgidan oshmasligi kerak',
