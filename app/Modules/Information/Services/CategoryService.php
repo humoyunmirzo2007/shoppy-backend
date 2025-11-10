@@ -85,7 +85,6 @@ class CategoryService
     {
         try {
             $data['is_active'] = true;
-            // Agar parent_id berilgan bo'lsa, first_parent_id ni aniqlash
             if (isset($data['parent_id']) && $data['parent_id']) {
                 $parentResult = $this->getById($data['parent_id']);
                 if ($parentResult['success'] && $parentResult['data']) {

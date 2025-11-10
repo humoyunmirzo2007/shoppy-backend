@@ -56,6 +56,46 @@ class UpdateProductRequest extends FormRequest
                 'integer',
                 'exists:brands,id',
             ],
+            'price' => [
+                'sometimes',
+                'required',
+                'numeric',
+                'min:0',
+            ],
+            'wholesale_price' => [
+                'sometimes',
+                'required',
+                'numeric',
+                'min:0',
+            ],
+            'images' => [
+                'sometimes',
+                'nullable',
+                'array',
+                'max:4',
+            ],
+            'images.*' => [
+                'nullable',
+                'file',
+                'image',
+                'mimes:jpeg,jpg,png,webp',
+                'max:5120',
+            ],
+            'main_image' => [
+                'sometimes',
+                'nullable',
+                'string',
+            ],
+            'attributes' => [
+                'sometimes',
+                'nullable',
+                'array',
+            ],
+            'attributes.*.value_id' => [
+                'required',
+                'integer',
+                'exists:attribute_values,id',
+            ],
         ];
     }
 
@@ -81,6 +121,22 @@ class UpdateProductRequest extends FormRequest
             'brand_id.required' => 'Brend majburiy',
             'brand_id.integer' => 'Brend ID si son bo\'lishi kerak',
             'brand_id.exists' => 'Tanlangan brend mavjud emas',
+            'price.required' => 'Narx majburiy',
+            'price.numeric' => 'Narx son bo\'lishi kerak',
+            'price.min' => 'Narx 0 dan kichik bo\'lmasligi kerak',
+            'wholesale_price.required' => 'Ulgurji narx majburiy',
+            'wholesale_price.numeric' => 'Ulgurji narx son bo\'lishi kerak',
+            'wholesale_price.min' => 'Ulgurji narx 0 dan kichik bo\'lmasligi kerak',
+            'images.array' => 'Rasmlar massiv ko\'rinishida bo\'lishi kerak',
+            'images.max' => 'Maksimal 4 ta rasm yuklash mumkin',
+            'images.*.file' => 'Rasm fayl bo\'lishi kerak',
+            'images.*.image' => 'Rasm fayl formati to\'g\'ri emas',
+            'images.*.mimes' => 'Rasm jpeg, jpg, png yoki webp formatida bo\'lishi kerak',
+            'images.*.max' => 'Rasm hajmi maksimal 5MB bo\'lishi kerak',
+            'attributes.array' => 'Atributlar massiv ko\'rinishida bo\'lishi kerak',
+            'attributes.*.value_id.required' => 'Atribut qiymati ID si majburiy',
+            'attributes.*.value_id.integer' => 'Atribut qiymati ID si son bo\'lishi kerak',
+            'attributes.*.value_id.exists' => 'Tanlangan atribut qiymati mavjud emas',
         ];
     }
 }

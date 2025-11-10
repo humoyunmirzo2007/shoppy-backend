@@ -107,7 +107,6 @@ class TradeService
 
             $trade = $this->tradeRepository->findById($id);
 
-            // Delete client calculation first
             $this->deleteClientCalculation($id);
 
             $result = $this->tradeRepository->delete($trade);
@@ -160,14 +159,12 @@ class TradeService
             $data['products_count'] = array_sum(array_column($products, 'count'));
             $data['total_price'] = $this->getTotalPrice($products);
 
-            // Date formatini o'zgartirish (dd.mm.yyyy -> Y-m-d)
             $data['date'] = Carbon::createFromFormat('d.m.Y', $data['date'])->format('Y-m-d');
 
             $trade = $this->tradeRepository->store($data);
 
             $this->tradeProductRepository->store($this->cleanAndPrepareTradeProducts($products, $trade->id));
 
-            // Create client calculation if client_id exists
             if (! empty($data['client_id'])) {
                 $this->createClientCalculation($trade, $data);
             }
@@ -212,9 +209,7 @@ class TradeService
 
         $savableProducts = array_merge($normalProducts, $productsForInsert, $productsForUpdate);
 
-        // TRADE bo'lsa, count manfiy qilish kerak
         if ($type === TradeTypesEnum::TRADE->value) {
-            // Qoldiq tekshirish (update uchun maxsus hisoblash)
             if (count($productsForUpdate) > 0) {
                 $residueNotEnough = $this->checkProductResiduesForUpdate($trade->id, $productsForUpdate);
                 if ($residueNotEnough) {
@@ -225,7 +220,6 @@ class TradeService
                 }
             }
 
-            // Yangi qo'shiladigan tovarlar uchun oddiy tekshirish
             if (count($productsForInsert) > 0) {
                 $residueNotEnough = $this->checkProductResidues($productsForInsert);
                 if ($residueNotEnough) {
@@ -266,11 +260,9 @@ class TradeService
         $data['products_count'] = array_sum(array_column($savableProducts, 'count'));
         $data['total_price'] = $this->getTotalPrice($savableProducts);
 
-        // Generate history entry before updating
         $productChanges = $this->getProductChanges($trade->id, $products);
         $historyEntry = $this->generateHistoryEntry($trade, $data, $productChanges);
 
-        // Get current history and add new entry only if there are changes
         $currentHistory = $trade->history ?? [];
         if (! empty($historyEntry['description'])) {
             $currentHistory[] = $historyEntry;
@@ -311,11 +303,9 @@ class TradeService
                 $this->tradeProductRepository->deleteByIds($productIdsForDelete);
             }
 
-            // Update client calculation if client_id exists
             if (! empty($data['client_id'])) {
                 $this->updateClientCalculation($updatedTrade, $data);
             } else {
-                // Delete calculation if client_id is null
                 $this->deleteClientCalculation($updatedTrade->id);
             }
 
@@ -354,21 +344,18 @@ class TradeService
 
     private function checkProductResiduesForUpdate(int $tradeId, array $products): ?string
     {
-        // Eski trade_products ni olish
         $oldTradeProducts = $this->tradeProductRepository->getByTradeId($tradeId);
         $oldProductsMap = collect($oldTradeProducts)->keyBy('product_id');
 
-        // Hozirgi product qoldiqlarini olish
         $productIds = collect($products)->pluck('product_id')->toArray();
         $residues = $this->productRepository->getForCheckResidue($productIds);
 
         foreach ($products as $product) {
             $productId = $product['product_id'];
-            $newCount = abs($product['count']); // Yangi count (musbat)
-            $oldCount = abs($oldProductsMap->get($productId)->count ?? 0); // Eski count (musbat)
+            $newCount = abs($product['count']);
+            $oldCount = abs($oldProductsMap->get($productId)->count ?? 0);
             $currentResidue = $residues[$productId]->residue ?? 0;
 
-            // Qo'shimcha sotiladigan miqdor
             $additionalCount = $newCount - $oldCount;
 
             if ($additionalCount > 0 && $additionalCount > $currentResidue) {
@@ -438,7 +425,7 @@ class TradeService
                 'client_id' => $data['client_id'],
                 'user_id' => $trade->user_id,
                 'trade_id' => $trade->id,
-                'type' => $trade->type->value, // Convert enum to string value
+                'type' => $trade->type->value,
                 'value' => $calculationValue,
                 'date' => $trade->date,
             ]);
@@ -454,15 +441,13 @@ class TradeService
             $this->clientCalculationRepository->update($existingCalculation->id, [
                 'client_id' => $data['client_id'],
                 'user_id' => $trade->user_id,
-                'type' => $trade->type->value, // Convert enum to string value
+                'type' => $trade->type->value,
                 'value' => $calculationValue,
                 'date' => $trade->date,
             ]);
         } elseif ($calculationValue !== null && ! $existingCalculation) {
-            // Create new calculation if it doesn't exist
             $this->createClientCalculation($trade, $data);
         } elseif ($calculationValue === null && $existingCalculation) {
-            // Delete calculation if no longer needed
             $this->clientCalculationRepository->delete($existingCalculation->id);
         }
     }
@@ -479,12 +464,12 @@ class TradeService
     private function getClientCalculationValue($type, $totalPrice)
     {
         if ($type === TradeTypesEnum::TRADE) {
-            return $totalPrice; // Positive for trade (client owes money)
+            return $totalPrice;
         } elseif ($type === TradeTypesEnum::RETURN_PRODUCT) {
-            return -$totalPrice; // Negative for return (reduce client debt)
+            return -$totalPrice;
         }
 
-        return null; // No calculation for other types
+        return null;
     }
 
     private function generateHistoryEntry($oldTrade, $newData, $productChanges)
@@ -492,19 +477,16 @@ class TradeService
         $user = Auth::user();
         $description = '';
 
-        // Check client changes
         $clientChange = $this->getClientChangeDescription($oldTrade, $newData);
         if ($clientChange) {
             $description .= $clientChange;
         }
 
-        // Check date changes
         $dateChange = $this->getDateChangeDescription($oldTrade, $newData);
         if ($dateChange) {
             $description .= $dateChange;
         }
 
-        // Check product changes
         $productChangeDesc = $this->getProductChangesDescription($productChanges);
         if ($productChangeDesc) {
             $description .= $productChangeDesc;
@@ -522,7 +504,6 @@ class TradeService
         $oldClientId = $oldTrade->client_id;
         $newClientId = $newData['client_id'] ?? null;
 
-        // No changes
         if ($oldClientId == $newClientId) {
             return '';
         }
@@ -560,14 +541,12 @@ class TradeService
     {
         $description = '';
 
-        // Added products
         foreach ($productChanges['added'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name_uz', 'name_ru']);
             $productName = $productModel?->name_uz ?? 'Unknown';
             $description .= 'a@#'.$product['product_id'].'- '.$productName.': '.number_format(abs($product['count']), 0, '.', ' ').', '.number_format($product['price'], 0, '.', ' ').';';
         }
 
-        // Updated products
         foreach ($productChanges['updated'] as $change) {
             $productModel = $this->productRepository->getById($change['product_id'], ['name_uz', 'name_ru']);
             $productName = $productModel?->name_uz ?? 'Unknown';
@@ -576,7 +555,6 @@ class TradeService
                 number_format($change['old_price'], 0, '.', ' ').' → '.number_format($change['new_price'], 0, '.', ' ').';';
         }
 
-        // Removed products
         foreach ($productChanges['removed'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name_uz', 'name_ru']);
             $productName = $productModel?->name_uz ?? 'Unknown';
@@ -596,7 +574,6 @@ class TradeService
         $updated = [];
         $removed = [];
 
-        // Process current products
         foreach ($products as $product) {
             if ($product['action'] === 'add') {
                 $added[] = $product;
@@ -612,7 +589,6 @@ class TradeService
                     ];
                 }
             } elseif ($product['action'] === 'delete') {
-                // For delete action, we have trade_product ID, not product_id
                 $oldProduct = $oldProductsMapById->get($product['id']);
                 if ($oldProduct) {
                     $removed[] = [

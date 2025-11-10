@@ -25,4 +25,9 @@ class ProductAttributeRepository implements ProductAttributeInterface
 
         return $productAttribute;
     }
+
+    public function deleteByProductId(int $productId): bool
+    {
+        return $this->productAttribute->where('product_id', $productId)->delete();
+    }
 }

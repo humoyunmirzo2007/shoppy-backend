@@ -16,7 +16,7 @@ class MoneyInputRepository implements MoneyInputInterface
         $sort = $data['sort'] ?? ['id' => 'desc'];
 
         return $this->moneyOperation->query()
-            ->inputs() // faqat input operatsiyalar
+            ->inputs()
             ->with(['user:id,full_name', 'paymentType:id,name', 'client:id,name', 'supplier:id,name'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
@@ -71,7 +71,6 @@ class MoneyInputRepository implements MoneyInputInterface
         return $moneyOperation->delete();
     }
 
-    // Transfer specific methods
     public function getTransfers(array $data = [])
     {
         $search = $data['search'] ?? null;
@@ -119,7 +118,7 @@ class MoneyInputRepository implements MoneyInputInterface
 
     public function createTransfer(array $data): \App\Models\MoneyOperation
     {
-        $data['operation_type'] = 'transfer'; // Special type for transfers
+        $data['operation_type'] = 'transfer';
         $data['type'] = 'TRANSFER';
 
         return $this->moneyOperation->create($data);

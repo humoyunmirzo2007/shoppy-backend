@@ -51,7 +51,6 @@ class MoneyOutputService
     {
         try {
             $data['user_id'] = Auth::id();
-            // Check payment_type residue before creating cost
             $paymentType = PaymentType::find($data['payment_type_id']);
             if (! $paymentType) {
                 return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
@@ -66,14 +65,13 @@ class MoneyOutputService
 
             $moneyOutput = $this->moneyOutputRepository->createMoneyOutput($data);
 
-            // If OTHER_PAYMENT_OUTPUT, create other_calculation record
             if ($data['type'] === CostTypesEnum::OTHER_PAYMENT_OUTPUT->value) {
                 OtherCalculation::create([
                     'user_id' => $data['user_id'],
-                    'payment_id' => null, // OTHER_COST is not linked to payment
-                    'cost_id' => $moneyOutput->id, // Link to the money operation
+                    'payment_id' => null,
+                    'cost_id' => $moneyOutput->id,
                     'type' => OtherCalculationTypesEnum::OTHER_COST->value,
-                    'value' => -$data['amount'], // Negative because it's a cost
+                    'value' => -$data['amount'],
                     'date' => now()->toDateString(),
                 ]);
             }
@@ -96,24 +94,18 @@ class MoneyOutputService
                 return ['success' => false, 'message' => 'Chiqim operatsiya topilmadi'];
             }
 
-            // Check payment_type residue before updating cost
             $paymentType = PaymentType::find($data['payment_type_id']);
             if (! $paymentType) {
                 return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
             }
 
-            // Qoldiqni tekshirish - update qilishdan oldin
             $oldPaymentType = PaymentType::find($moneyOutput->payment_type_id);
 
-            // Agar summa o'zgarayotgan bo'lsa, qoldiqni tekshirish
             if (isset($data['amount']) && $data['amount'] != $moneyOutput->amount) {
                 $amountDifference = $data['amount'] - $moneyOutput->amount;
 
-                // Agar summa oshayotgan bo'lsa (amountDifference musbat), qoldiqni tekshirish
                 if ($amountDifference > 0) {
-                    // Agar to'lov turi o'zgarayotgan bo'lsa
                     if ($moneyOutput->payment_type_id != $data['payment_type_id'] && $oldPaymentType) {
-                        // Yangi to'lov turida yetarli qoldiq borligini tekshirish
                         if ($paymentType->residue < $amountDifference) {
                             return [
                                 'success' => false,
@@ -121,7 +113,6 @@ class MoneyOutputService
                             ];
                         }
                     } else {
-                        // Xuddi shu to'lov turida, eski summani qaytarib yangi summani olib ketish
                         $residueAfterRevert = $paymentType->residue + $moneyOutput->amount;
                         if ($residueAfterRevert < $data['amount']) {
                             return [
@@ -132,7 +123,6 @@ class MoneyOutputService
                     }
                 }
             } else {
-                // Agar faqat to'lov turi o'zgarayotgan bo'lsa
                 if ($moneyOutput->payment_type_id != $data['payment_type_id'] && $oldPaymentType) {
                     if ($paymentType->residue < $data['amount']) {
                         return [
@@ -145,16 +135,13 @@ class MoneyOutputService
 
             $updatedMoneyOutput = $this->moneyOutputRepository->updateMoneyOutput($id, $data);
 
-            // Handle other_calculation for OTHER_COST
             $existingOtherCalculation = OtherCalculation::where('cost_id', $moneyOutput->id)
                 ->where('type', OtherCalculationTypesEnum::OTHER_COST->value)
                 ->first();
 
-            // If new cost is OTHER_PAYMENT_OUTPUT
             if ($data['type'] === CostTypesEnum::OTHER_PAYMENT_OUTPUT->value) {
-                $calculationValue = -$data['amount']; // Negative because it's a cost
+                $calculationValue = -$data['amount'];
 
-                // Update existing other_calculation or create new one
                 if ($existingOtherCalculation) {
                     $existingOtherCalculation->update([
                         'user_id' => $data['user_id'],
@@ -173,7 +160,6 @@ class MoneyOutputService
                     ]);
                 }
             } else {
-                // If old cost was OTHER_PAYMENT_OUTPUT but new cost is not, delete the other_calculation
                 if ($moneyOutput->type === CostTypesEnum::OTHER_PAYMENT_OUTPUT->value && $existingOtherCalculation) {
                     $existingOtherCalculation->delete();
                 }
@@ -195,9 +181,6 @@ class MoneyOutputService
             if (! $moneyOutput) {
                 return ['success' => false, 'message' => 'Chiqim operatsiya topilmadi'];
             }
-
-            // If it's OTHER_COST, the related other_calculation will be deleted automatically via cascade delete
-            // No need to manually delete it since we have cascadeOnDelete() in the migration
 
             $deleted = $this->moneyOutputRepository->deleteMoneyOutput($id);
 

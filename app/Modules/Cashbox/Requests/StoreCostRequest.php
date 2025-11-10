@@ -31,18 +31,15 @@ class StoreCostRequest extends MainRequest
             $otherSourceId = $this->input('other_source_id');
             $costTypeId = $this->input('cost_type_id');
 
-            // Kamida bitta manba bo‘lishi kerak
             if (! $clientId && ! $supplierId && ! $otherSourceId && ! $costTypeId) {
                 $validator->errors()->add('client_id', 'Kamida mijoz, ta\'minotchi , xarajat turiyoki boshqa manba tanlanishi kerak');
             }
 
-            // Faqat bitta manba bo‘lishi kerak
             $selectedSources = array_filter([$clientId, $supplierId, $otherSourceId]);
             if (count($selectedSources) > 1) {
                 $validator->errors()->add('client_id', 'Faqat bitta manba tanlanishi mumkin');
             }
 
-            // Moslikni tekshirish
             if ($clientId && $type !== CostTypesEnum::CLIENT_PAYMENT_OUTPUT->value) {
                 $validator->errors()->add('type', 'Mijoz tanlansa, type faqat CLIENT_PAYMENT_OUTPUT bo‘lishi kerak');
             }
@@ -55,7 +52,6 @@ class StoreCostRequest extends MainRequest
                 $validator->errors()->add('type', 'Boshqa manba tanlansa, type faqat OTHER_PAYMENT_OUTPUT bo‘lishi kerak');
             }
 
-            // Boshqa manba bo‘lsa cost_type_id majburiy
             if ($costTypeId && $type !== CostTypesEnum::COST_PAYMENT_OUTPUT->value) {
                 $validator->errors()->add('type', 'Xarajat turi tanlansa, type faqat COST_PAYMENT_OUTPUT bo‘lishi kerak');
             }

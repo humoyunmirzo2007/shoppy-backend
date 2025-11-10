@@ -11,4 +11,6 @@ interface ProductAttributeInterface
     public function storeBulk(array $data): bool;
 
     public function update(ProductAttribute $productAttribute, array $data);
+
+    public function deleteByProductId(int $productId): bool;
 }

@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use App\Modules\Cashbox\Enums\CostTypesEnum;
 use App\Modules\Cashbox\Enums\OtherCalculationTypesEnum;
-use App\Modules\Cashbox\Enums\PaymentTypesEnum;
 use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,11 +13,6 @@ class MoneyOperation extends Model
     use HasFactory, Sortable;
 
     protected $guarded = [];
-
-    protected $casts = [
-        // Type can be either PaymentTypesEnum or CostTypesEnum values
-        // We'll handle casting manually in accessors/mutators if needed
-    ];
 
     public function user(): BelongsTo
     {
@@ -63,7 +56,6 @@ class MoneyOperation extends Model
             ->where('type', OtherCalculationTypesEnum::OTHER_COST->value);
     }
 
-    // Scope-lar
     public function scopeInputs($query)
     {
         return $query->where('operation_type', 'input');

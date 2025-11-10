@@ -38,17 +38,14 @@ class StoreInvoiceRequest extends MainRequest
                 $validator->errors()->add('supplier_id', 'Faqat ta\'minotchi yoki faqat boshqa manba tanlanishi mumkin');
             }
 
-            // Supplier bo'lsa, type SUPPLIER_ bo'lishi kerak
             if ($supplierId && ! str_starts_with($type, 'SUPPLIER_')) {
                 $validator->errors()->add('type', 'Ta\'minotchi tanlanganda faqat SUPPLIER_INPUT yoki SUPPLIER_OUTPUT turini tanlashingiz mumkin');
             }
 
-            // Other source bo'lsa, type OTHER_ bo'lishi kerak
             if ($otherSourceId && ! str_starts_with($type, 'OTHER_')) {
                 $validator->errors()->add('type', 'Boshqa manba tanlanganda faqat OTHER_INPUT yoki OTHER_OUTPUT turini tanlashingiz mumkin');
             }
 
-            // Mahsulotlar uchun price faqat SUPPLIER_INPUT yoki OTHER_INPUT bo'lganda required
             $products = $this->input('products', []);
             foreach ($products as $index => $product) {
                 if (isset($product['price']) && isset($product['input_price'])) {

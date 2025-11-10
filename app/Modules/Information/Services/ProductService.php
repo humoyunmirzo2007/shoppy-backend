@@ -155,7 +155,6 @@ class ProductService
                     $mainImage = $images[0];
                 }
 
-                // SKU yaratish
                 $sku = $this->generateSku($productGroupResult->name, $productData['attributes'] ?? []);
 
                 $productsToInsert[] = [
@@ -234,7 +233,129 @@ class ProductService
     public function update(Product $product, array $data): array
     {
         try {
-            $updatedProduct = $this->productRepository->update($product, $data);
+            DB::beginTransaction();
+
+            $request = request();
+            $updateData = [];
+
+            if (isset($data['name_uz'])) {
+                $updateData['name_uz'] = $data['name_uz'];
+            }
+            if (isset($data['name_ru'])) {
+                $updateData['name_ru'] = $data['name_ru'];
+            }
+            if (isset($data['description_uz'])) {
+                $updateData['description_uz'] = $data['description_uz'];
+            }
+            if (isset($data['description_ru'])) {
+                $updateData['description_ru'] = $data['description_ru'];
+            }
+            if (isset($data['category_id'])) {
+                $updateData['category_id'] = $data['category_id'];
+            }
+            if (isset($data['brand_id'])) {
+                $updateData['brand_id'] = $data['brand_id'];
+            }
+            if (isset($data['price'])) {
+                $updateData['price'] = $data['price'];
+            }
+            if (isset($data['wholesale_price'])) {
+                $updateData['wholesale_price'] = $data['wholesale_price'];
+            }
+
+            $images = [];
+            $mainImage = null;
+
+            if ($request->hasFile('images')) {
+                $productImages = $request->file('images');
+
+                if (is_array($productImages)) {
+                    foreach ($productImages as $image) {
+                        if ($image && $image->isValid()) {
+                            $imagePath = $image->store('products', 'public');
+                            $images[] = $imagePath;
+                        }
+                    }
+                } elseif ($productImages && $productImages->isValid()) {
+                    $imagePath = $productImages->store('products', 'public');
+                    $images[] = $imagePath;
+                }
+
+                $existingImages = $product->images ? json_decode($product->images, true) : [];
+                if (! empty($images)) {
+                    $allImages = array_merge($existingImages, $images);
+                    $allImages = array_slice($allImages, 0, 4);
+                    $updateData['images'] = json_encode($allImages);
+                }
+            }
+
+            if (isset($data['main_image']) && is_string($data['main_image'])) {
+                $allImages = $updateData['images'] ?? ($product->images ? json_decode($product->images, true) : []);
+                if (in_array($data['main_image'], $allImages)) {
+                    $mainImage = $data['main_image'];
+                } elseif (! empty($allImages)) {
+                    $mainImage = $allImages[0];
+                }
+            } elseif (! empty($images)) {
+                $allImages = $updateData['images'] ?? ($product->images ? json_decode($product->images, true) : []);
+                if (! empty($allImages)) {
+                    $mainImage = $allImages[0];
+                }
+            }
+
+            if ($mainImage) {
+                $updateData['main_image'] = json_encode($mainImage);
+            }
+
+            $shouldUpdateSku = false;
+            if (isset($data['attributes']) && is_array($data['attributes'])) {
+                $this->productAttributeRepository->deleteByProductId($product->id);
+
+                $productAttributesToInsert = [];
+                foreach ($data['attributes'] as $attribute) {
+                    if (isset($attribute['value_id'])) {
+                        $productAttributesToInsert[] = [
+                            'product_id' => $product->id,
+                            'attribute_value_id' => $attribute['value_id'],
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
+                }
+
+                if (! empty($productAttributesToInsert)) {
+                    $this->productAttributeRepository->storeBulk($productAttributesToInsert);
+                }
+
+                $shouldUpdateSku = true;
+            }
+
+            if ($shouldUpdateSku || isset($data['brand_id'])) {
+                $productGroup = $this->productGroupRepository->getById($product->product_group_id);
+                if ($productGroup) {
+                    if (isset($data['attributes']) && is_array($data['attributes'])) {
+                        $attributes = $data['attributes'];
+                    } else {
+                        $product->load('productAttributes');
+                        $attributes = [];
+                        foreach ($product->productAttributes as $productAttribute) {
+                            $attributes[] = ['value_id' => $productAttribute->attribute_value_id];
+                        }
+                    }
+                    $sku = $this->generateSku($productGroup->name, $attributes);
+                    $updateData['sku'] = $sku;
+                }
+            }
+
+            if (! empty($updateData)) {
+                $updatedProduct = $this->productRepository->update($product, $updateData);
+            } else {
+                $updatedProduct = $product->fresh();
+            }
+
+            DB::commit();
+
+            $updatedProduct = $this->productRepository->getById($updatedProduct->id, ['*']);
 
             return [
                 'success' => true,
@@ -242,6 +363,7 @@ class ProductService
                 'data' => $updatedProduct,
             ];
         } catch (\Exception $e) {
+            DB::rollBack();
             TelegramBot::sendError(request(), $e);
 
             return [
@@ -289,7 +411,6 @@ class ProductService
     public function downloadTemplate(): array
     {
         try {
-            // Bu metodni keyinroq to'liq implement qilamiz
             return [
                 'success' => true,
                 'data' => 'Template download functionality',
@@ -310,7 +431,6 @@ class ProductService
     public function import(): array
     {
         try {
-            // Bu metodni keyinroq to'liq implement qilamiz
             return [
                 'success' => true,
                 'data' => 'Import functionality',
@@ -332,10 +452,8 @@ class ProductService
      */
     private function generateSku(string $productGroupName, array $attributes): string
     {
-        // Product group nomidan qisqa kod yaratish
         $groupCode = $this->generateCodeFromName($productGroupName);
 
-        // Attribute valuelardan kodlar yaratish
         $attributeCodes = [];
         if (! empty($attributes)) {
             foreach ($attributes as $attribute) {
@@ -348,7 +466,6 @@ class ProductService
             }
         }
 
-        // SKU ni birlashtirish
         $skuParts = array_merge([$groupCode], $attributeCodes);
 
         return strtoupper(implode('-', $skuParts));
@@ -361,7 +478,6 @@ class ProductService
      */
     private function generateCodeFromName(string $name): string
     {
-        // Kirill harflarini o'zbek lotin harflariga o'girish
         $transliteration = [
             'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd',
             'е' => 'e', 'ё' => 'yo', 'ж' => 'j', 'з' => 'z', 'и' => 'i',
@@ -381,7 +497,6 @@ class ProductService
 
         $name = strtr($name, $transliteration);
 
-        // Maxsus so'zlar uchun qisqa kodlar (o'zbek lotin harflarida)
         $shortCodes = [
             'futbolka' => 'FUTBOLKA',
             'futbolki' => 'FUTBOLKA',
@@ -409,14 +524,10 @@ class ProductService
             }
         }
 
-        // Agar maxsus kod topilmasa, nomdan qisqa kod yaratish
-        // Faqat o'zbek lotin harflari, raqamlar va bo'shliqlarni qoldirish
         $code = preg_replace('/[^a-zA-Z0-9\s\'ўқғҳЎҚҒҲ]/u', '', $name);
 
-        // Bo'shliqlarni olib tashlash va katta harflarga o'girish
         $code = strtoupper(trim($code));
 
-        // Agar kod bo'sh bo'lsa yoki juda qisqa bo'lsa, boshqa usul
         if (empty($code) || mb_strlen($code) < 2) {
             $words = explode(' ', $name);
             $code = '';
@@ -431,7 +542,6 @@ class ProductService
             }
         }
 
-        // Kodni 15 ta belgidan oshmasligi uchun qisqartirish
         return mb_strtoupper(mb_substr($code, 0, 15));
     }
 }

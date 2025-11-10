@@ -60,7 +60,6 @@ class ProductController
     {
         $productGroupId = $request->validated()['product_group_id'];
 
-        // Yengil query - faqat kerakli fieldlar
         $fields = ['id', 'name', 'sku', 'price', 'wholesale_price', 'residue', 'is_active', 'images', 'main_image', 'category_id', 'brand_id', 'product_group_id', 'description'];
 
         $result = $this->productService->getByProductGroupId($productGroupId, $fields);
@@ -106,7 +105,10 @@ class ProductController
         $result = $this->productService->update($product, $data);
 
         if ($result['success']) {
-            return Response::success($result['data'], 'Mahsulot muvaffaqiyatli yangilandi');
+            return Response::success(
+                ProductResource::make($result['data']),
+                'Mahsulot muvaffaqiyatli yangilandi'
+            );
         }
 
         return Response::error($result['message'] ?? 'Mahsulotni yangilashda xatolik yuz berdi');

@@ -14,7 +14,6 @@ interface MoneyInputInterface
 
     public function deleteMoneyInput(int $id);
 
-    // Transfer methods
     public function getTransfers(array $data);
 
     public function getTransferById(int $id);

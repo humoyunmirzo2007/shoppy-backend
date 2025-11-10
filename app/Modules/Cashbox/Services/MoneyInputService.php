@@ -62,14 +62,12 @@ class MoneyInputService
             DB::beginTransaction();
             $data['user_id'] = Auth::id();
 
-            // Date formatini o'zgartirish (dd.mm.yyyy -> Y-m-d)
             if (isset($data['date'])) {
                 $data['date'] = Carbon::createFromFormat('d.m.Y', $data['date'])->format('Y-m-d');
             }
 
             $moneyInput = $this->moneyInputRepository->createMoneyInput($data);
 
-            // Create calculations based on payment type
             $this->createPaymentCalculation($moneyInput, $data);
 
             DB::commit();
@@ -93,17 +91,14 @@ class MoneyInputService
                 return ['success' => false, 'message' => 'Kirim operatsiya topilmadi'];
             }
 
-            // Qoldiqni tekshirish - update qilishdan oldin
             $paymentType = PaymentType::find($data['payment_type_id']);
             if (! $paymentType) {
                 return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
             }
 
-            // Agar summa o'zgarayotgan bo'lsa, qoldiqni tekshirish
             if (isset($data['amount']) && $data['amount'] != $moneyInput->amount) {
                 $amountDifference = $data['amount'] - $moneyInput->amount;
 
-                // Agar summa kamayayotgan bo'lsa (amountDifference manfiy), qoldiqni tekshirish
                 if ($amountDifference < 0) {
                     $requiredResidue = abs($amountDifference);
                     if ($paymentType->residue < $requiredResidue) {
@@ -117,14 +112,12 @@ class MoneyInputService
 
             DB::beginTransaction();
 
-            // Date formatini o'zgartirish (dd.mm.yyyy -> Y-m-d)
             if (isset($data['date'])) {
                 $data['date'] = Carbon::createFromFormat('d.m.Y', $data['date'])->format('Y-m-d');
             }
 
             $updatedMoneyInput = $this->moneyInputRepository->updateMoneyInput($id, $data);
 
-            // Update calculations based on payment type
             $this->updatePaymentCalculation($updatedMoneyInput, $data);
 
             DB::commit();
@@ -147,7 +140,6 @@ class MoneyInputService
                 return ['success' => false, 'message' => 'Kirim operatsiya topilmadi'];
             }
 
-            // Check payment_type residue before deletion
             $paymentType = PaymentType::find($moneyInput->payment_type_id);
             if (! $paymentType) {
                 return ['success' => false, 'message' => 'To\'lov turi topilmadi'];
@@ -162,7 +154,6 @@ class MoneyInputService
 
             DB::beginTransaction();
 
-            // Calculations will be deleted automatically via cascade delete
             $deleted = $this->moneyInputRepository->deleteMoneyInput($id);
 
             if ($deleted) {
@@ -185,7 +176,7 @@ class MoneyInputService
     private function createPaymentCalculation($moneyInput, $data)
     {
         if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && ! empty($data['supplier_id'])) {
-            $calculationValue = -$moneyInput->amount; // Negative value for supplier payment
+            $calculationValue = -$moneyInput->amount;
 
             $this->supplierCalculationRepository->create([
                 'supplier_id' => $data['supplier_id'],
@@ -196,7 +187,7 @@ class MoneyInputService
                 'date' => $moneyInput->date ?? now()->format('Y-m-d'),
             ]);
         } elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && ! empty($data['client_id'])) {
-            $calculationValue = -$moneyInput->amount; // Negative value for client payment
+            $calculationValue = -$moneyInput->amount;
 
             $this->clientCalculationRepository->create([
                 'client_id' => $data['client_id'],
@@ -207,7 +198,7 @@ class MoneyInputService
                 'date' => $moneyInput->date ?? now()->format('Y-m-d'),
             ]);
         } elseif ($moneyInput->type === PaymentTypesEnum::OTHER_PAYMENT_INPUT->value) {
-            $calculationValue = -$moneyInput->amount; // Negative value for other payment
+            $calculationValue = -$moneyInput->amount;
 
             $this->otherCalculationRepository->create([
                 'user_id' => $moneyInput->user_id,
@@ -221,16 +212,13 @@ class MoneyInputService
 
     private function updatePaymentCalculation($moneyInput, $data)
     {
-        // First, check for existing calculations of all types
         $existingSupplierCalculation = $this->supplierCalculationRepository->getByPaymentId($moneyInput->id);
         $existingClientCalculation = $this->clientCalculationRepository->getByPaymentId($moneyInput->id);
         $existingOtherCalculation = $this->otherCalculationRepository->getByPaymentId($moneyInput->id);
 
-        // Handle SUPPLIER_PAYMENT_INPUT
         if ($moneyInput->type === PaymentTypesEnum::SUPPLIER_PAYMENT_INPUT->value && ! empty($moneyInput->supplier_id)) {
-            $calculationValue = -$moneyInput->amount; // Negative value for supplier payment
+            $calculationValue = -$moneyInput->amount;
 
-            // Delete any existing client or other calculations (if payment type changed)
             if ($existingClientCalculation) {
                 $this->clientCalculationRepository->delete($existingClientCalculation->id);
             }
@@ -238,7 +226,6 @@ class MoneyInputService
                 $this->otherCalculationRepository->delete($existingOtherCalculation->id);
             }
 
-            // Update or create supplier calculation
             if ($existingSupplierCalculation) {
                 $this->supplierCalculationRepository->update($existingSupplierCalculation->id, [
                     'supplier_id' => $moneyInput->supplier_id,
@@ -257,12 +244,9 @@ class MoneyInputService
                     'date' => $moneyInput->date ?? now()->format('Y-m-d'),
                 ]);
             }
-        }
-        // Handle CLIENT_PAYMENT_INPUT
-        elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && ! empty($moneyInput->client_id)) {
-            $calculationValue = -$moneyInput->amount; // Negative value for client payment
+        } elseif ($moneyInput->type === PaymentTypesEnum::CLIENT_PAYMENT_INPUT->value && ! empty($moneyInput->client_id)) {
+            $calculationValue = -$moneyInput->amount;
 
-            // Delete any existing supplier or other calculations (if payment type changed)
             if ($existingSupplierCalculation) {
                 $this->supplierCalculationRepository->delete($existingSupplierCalculation->id);
             }
@@ -270,7 +254,6 @@ class MoneyInputService
                 $this->otherCalculationRepository->delete($existingOtherCalculation->id);
             }
 
-            // Update or create client calculation
             if ($existingClientCalculation) {
                 $this->clientCalculationRepository->update($existingClientCalculation->id, [
                     'client_id' => $moneyInput->client_id,
@@ -289,12 +272,9 @@ class MoneyInputService
                     'date' => $moneyInput->date ?? now()->format('Y-m-d'),
                 ]);
             }
-        }
-        // Handle OTHER_PAYMENT_INPUT
-        elseif ($moneyInput->type === PaymentTypesEnum::OTHER_PAYMENT_INPUT->value) {
-            $calculationValue = -$moneyInput->amount; // Negative value for other payment
+        } elseif ($moneyInput->type === PaymentTypesEnum::OTHER_PAYMENT_INPUT->value) {
+            $calculationValue = -$moneyInput->amount;
 
-            // Delete any existing supplier or client calculations (if payment type changed)
             if ($existingSupplierCalculation) {
                 $this->supplierCalculationRepository->delete($existingSupplierCalculation->id);
             }
@@ -302,7 +282,6 @@ class MoneyInputService
                 $this->clientCalculationRepository->delete($existingClientCalculation->id);
             }
 
-            // Update or create other calculation
             if ($existingOtherCalculation) {
                 $this->otherCalculationRepository->update($existingOtherCalculation->id, [
                     'user_id' => $moneyInput->user_id,

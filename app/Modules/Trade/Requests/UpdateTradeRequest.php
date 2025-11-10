@@ -27,7 +27,6 @@ class UpdateTradeRequest extends MainRequest
         $validator->after(function ($validator) {
             $products = $this->input('products', []);
 
-            // ID majburiy bo'lishi kerak, faqat action "add" bo'lsa ixtiyoriy
             foreach ($products as $index => $product) {
                 $action = $product['action'] ?? '';
                 $id = $product['id'] ?? null;

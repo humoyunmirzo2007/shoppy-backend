@@ -90,7 +90,6 @@ Route::group(['prefix' => 'categories', 'middleware' => ['auth:sanctum']], funct
     Route::put('/invert-active/{id}', [CategoryController::class, 'toggleActive']);
 });
 
-// Brands CRUD routes
 Route::group(['prefix' => 'brands', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [BrandController::class, 'index']);
     Route::get('/active', [BrandController::class, 'getAllActive']);

@@ -170,19 +170,16 @@ class InvoiceService
             $data['products_count'] = array_sum(array_column($products, 'count'));
             $data['total_price'] = $this->getTotalPrice($products);
 
-            // Date formatini o'zgartirish (dd.mm.yyyy -> Y-m-d)
             $data['date'] = Carbon::parse($data['date'])->format('Y-m-d');
 
             $invoice = $this->invoiceRepository->store($data);
 
             $this->invoiceProductRepository->store($this->cleanAndPrepareTradeProducts($products, $invoice->id));
 
-            // Create supplier calculation if supplier_id exists
             if (! empty($data['supplier_id'])) {
                 $this->createSupplierCalculation($invoice, $data);
             }
 
-            // Create other calculation if invoice type is OTHER_INPUT or OTHER_OUTPUT
             if ($invoice->type === InvoiceTypesEnum::OTHER_INPUT->value || $invoice->type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
                 $this->createOtherCalculation($invoice, $data);
             }
@@ -228,9 +225,7 @@ class InvoiceService
 
         $savableProducts = array_merge($normalProducts, $productsForInsert, $productsForUpdate);
 
-        // OUTPUT bo'lsa, count manfiy qilish kerak va qoldiq tekshirish
         if ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value || $type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
-            // Qoldiq tekshirish (update uchun maxsus hisoblash)
             if (count($productsForUpdate) > 0) {
                 $residueNotEnough = $this->checkProductResiduesForUpdate($invoice->id, $productsForUpdate);
                 if ($residueNotEnough) {
@@ -241,7 +236,6 @@ class InvoiceService
                 }
             }
 
-            // Yangi qo'shiladigan tovarlar uchun oddiy tekshirish
             if (count($productsForInsert) > 0) {
                 $residueNotEnough = $this->checkProductResidues($productsForInsert);
                 if ($residueNotEnough) {
@@ -282,11 +276,9 @@ class InvoiceService
         $data['products_count'] = array_sum(array_column($savableProducts, 'count'));
         $data['total_price'] = $this->getTotalPrice($savableProducts);
 
-        // Generate history entry before updating
         $productChanges = $this->getProductChanges($invoice->id, $products);
         $historyEntry = $this->generateHistoryEntry($invoice, $data, $productChanges);
 
-        // Get current history and add new entry only if there are changes
         $currentHistory = $invoice->history ?? [];
         if (! empty($historyEntry['description'])) {
             $currentHistory[] = $historyEntry;
@@ -328,19 +320,15 @@ class InvoiceService
                 $this->invoiceProductRepository->deleteByIds($productIdsForDelete);
             }
 
-            // Update supplier calculation if supplier_id exists
             if (! empty($data['supplier_id'])) {
                 $this->updateSupplierCalculation($updatedInvoice, $data);
             } else {
-                // Delete calculation if supplier_id is null
                 $this->deleteSupplierCalculation($updatedInvoice->id);
             }
 
-            // Update other calculation for OTHER_INPUT or OTHER_OUTPUT types
             if ($updatedInvoice->type === InvoiceTypesEnum::OTHER_INPUT->value || $updatedInvoice->type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
                 $this->updateOtherCalculation($updatedInvoice, $data);
             } else {
-                // Delete other calculation if type is not OTHER_INPUT or OTHER_OUTPUT
                 $this->deleteOtherCalculation($updatedInvoice->id);
             }
 
@@ -363,21 +351,18 @@ class InvoiceService
 
     private function checkProductResiduesForUpdate(int $invoiceId, array $products): ?string
     {
-        // Eski invoice_products ni olish
         $oldInvoiceProducts = $this->invoiceProductRepository->getByInvoiceId($invoiceId);
         $oldProductsMap = collect($oldInvoiceProducts)->keyBy('product_id');
 
-        // Hozirgi product qoldiqlarini olish
         $productIds = collect($products)->pluck('product_id')->toArray();
         $residues = $this->productRepository->getForCheckResidue($productIds);
 
         foreach ($products as $product) {
             $productId = $product['product_id'];
-            $newCount = abs($product['count']); // Yangi count (musbat)
-            $oldCount = abs($oldProductsMap->get($productId)->count ?? 0); // Eski count (musbat)
+            $newCount = abs($product['count']);
+            $oldCount = abs($oldProductsMap->get($productId)->count ?? 0);
             $currentResidue = $residues[$productId]->residue ?? 0;
 
-            // Qo'shimcha chiqariladigan miqdor
             $additionalCount = $newCount - $oldCount;
 
             if ($additionalCount > 0 && $additionalCount > $currentResidue) {
@@ -507,9 +492,9 @@ class InvoiceService
         if ($calculationValue !== null && $calculationType !== null) {
             $this->otherCalculationRepository->create([
                 'user_id' => $invoice->user_id,
-                'payment_id' => null, // Not linked to payment
-                'cost_id' => null, // Not linked to cost
-                'invoice_id' => $invoice->id, // Link to the invoice
+                'payment_id' => null,
+                'cost_id' => null,
+                'invoice_id' => $invoice->id,
                 'type' => $calculationType,
                 'value' => $calculationValue,
                 'date' => $invoice->date,
@@ -549,12 +534,12 @@ class InvoiceService
     private function getOtherCalculationValue($type, $totalPrice)
     {
         if ($type === InvoiceTypesEnum::OTHER_INPUT->value) {
-            return $totalPrice; // Positive for other input (kirim)
+            return $totalPrice;
         } elseif ($type === InvoiceTypesEnum::OTHER_OUTPUT->value) {
-            return -$totalPrice; // Negative for other output (chiqim)
+            return -$totalPrice;
         }
 
-        return null; // No calculation for other types
+        return null;
     }
 
     private function getOtherCalculationType($type)
@@ -571,12 +556,12 @@ class InvoiceService
     private function getSupplierCalculationValue($type, $totalPrice)
     {
         if ($type === InvoiceTypesEnum::SUPPLIER_INPUT->value) {
-            return -$totalPrice; // Negative for supplier input
+            return -$totalPrice;
         } elseif ($type === InvoiceTypesEnum::SUPPLIER_OUTPUT->value) {
-            return $totalPrice; // Positive for supplier output
+            return $totalPrice;
         }
 
-        return null; // No calculation for other types
+        return null;
     }
 
     private function generateHistoryEntry($oldInvoice, $newData, $productChanges)
@@ -584,19 +569,16 @@ class InvoiceService
         $user = Auth::user();
         $description = '';
 
-        // Check supplier/other_source changes
         $sourceChange = $this->getSourceChangeDescription($oldInvoice, $newData);
         if ($sourceChange) {
             $description .= $sourceChange;
         }
 
-        // Check date changes
         $dateChange = $this->getDateChangeDescription($oldInvoice, $newData);
         if ($dateChange) {
             $description .= $dateChange;
         }
 
-        // Check product changes
         $productChangeDesc = $this->getProductChangesDescription($productChanges);
         if ($productChangeDesc) {
             $description .= $productChangeDesc;
@@ -616,12 +598,10 @@ class InvoiceService
         $newSupplierId = $newData['supplier_id'] ?? null;
         $newOtherSourceId = $newData['other_source_id'] ?? null;
 
-        // No changes - check if both sources remain the same
         if ($oldSupplierId == $newSupplierId && $oldOtherSourceId == $newOtherSourceId) {
             return '';
         }
 
-        // Determine the prefix based on source types
         $prefix = $this->getSourceChangePrefix($oldSupplierId, $oldOtherSourceId, $newSupplierId, $newOtherSourceId);
 
         $oldSourceName = $this->getSourceNameOnly($oldSupplierId, $oldOtherSourceId);
@@ -642,31 +622,28 @@ class InvoiceService
             return 'o@'.($otherSource?->name ?? 'Unknown');
         }
 
-        // Handle null case (no source selected)
         return 'null';
     }
 
     private function getSourceChangePrefix($oldSupplierId, $oldOtherSourceId, $newSupplierId, $newOtherSourceId)
     {
-        // Determine old source type
         $oldIsSupplier = ! empty($oldSupplierId);
         $oldIsOther = ! empty($oldOtherSourceId);
 
-        // Determine new source type
         $newIsSupplier = ! empty($newSupplierId);
         $newIsOther = ! empty($newOtherSourceId);
 
         if ($oldIsSupplier && $newIsSupplier) {
-            return 's@'; // supplier to supplier
+            return 's@';
         } elseif ($oldIsSupplier && $newIsOther) {
-            return 'so@'; // supplier to other
+            return 'so@';
         } elseif ($oldIsOther && $newIsOther) {
-            return 'o@'; // other to other
+            return 'o@';
         } elseif ($oldIsOther && $newIsSupplier) {
-            return 'os@'; // other to supplier
+            return 'os@';
         }
 
-        return ''; // fallback
+        return '';
     }
 
     private function getSourceNameOnly($supplierId, $otherSourceId)
@@ -681,7 +658,6 @@ class InvoiceService
             return $otherSource?->name ?? 'Unknown';
         }
 
-        // Handle null case (no source selected)
         return 'null';
     }
 
@@ -701,14 +677,12 @@ class InvoiceService
     {
         $description = '';
 
-        // Added products
         foreach ($productChanges['added'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name_uz', 'name_ru']);
             $productName = $productModel?->name_uz ?? 'Unknown';
             $description .= 'a@#'.$product['product_id'].'- '.$productName.': '.number_format(abs($product['count']), 0, '.', ' ').', '.number_format($product['price'], 0, '.', ' ').';';
         }
 
-        // Updated products
         foreach ($productChanges['updated'] as $change) {
             $productModel = $this->productRepository->getById($change['product_id'], ['name_uz', 'name_ru']);
             $productName = $productModel?->name_uz ?? 'Unknown';
@@ -717,7 +691,6 @@ class InvoiceService
                 number_format($change['old_price'], 0, '.', ' ').' → '.number_format($change['new_price'], 0, '.', ' ').';';
         }
 
-        // Removed products
         foreach ($productChanges['removed'] as $product) {
             $productModel = $this->productRepository->getById($product['product_id'], ['name_uz', 'name_ru']);
             $productName = $productModel?->name_uz ?? 'Unknown';
@@ -737,7 +710,6 @@ class InvoiceService
         $updated = [];
         $removed = [];
 
-        // Process current products
         foreach ($products as $product) {
             if ($product['action'] === 'add') {
                 $added[] = $product;
@@ -753,7 +725,6 @@ class InvoiceService
                     ];
                 }
             } elseif ($product['action'] === 'delete') {
-                // For delete action, we have invoice_product ID, not product_id
                 $oldProduct = $oldProductsMapById->get($product['id']);
                 if ($oldProduct) {
                     $removed[] = [

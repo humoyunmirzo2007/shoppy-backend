@@ -41,17 +41,14 @@ class UpdateInvoiceRequest extends MainRequest
                 $validator->errors()->add('supplier_id', 'Faqat ta\'minotchi yoki faqat boshqa manba tanlanishi mumkin');
             }
 
-            // Supplier bo'lsa, type SUPPLIER_ bo'lishi kerak
             if ($supplierId && ! str_starts_with($type, 'SUPPLIER_')) {
                 $validator->errors()->add('type', 'Ta\'minotchi tanlanganda faqat SUPPLIER_INPUT yoki SUPPLIER_OUTPUT turini tanlashingiz mumkin');
             }
 
-            // Other source bo'lsa, type OTHER_ bo'lishi kerak
             if ($otherSourceId && ! str_starts_with($type, 'OTHER_')) {
                 $validator->errors()->add('type', 'Boshqa manba tanlanganda faqat OTHER_INPUT yoki OTHER_OUTPUT turini tanlashingiz mumkin');
             }
 
-            // ID majburiy bo'lishi kerak, faqat action "add" bo'lsa ixtiyoriy
             foreach ($products as $index => $product) {
                 $action = $product['action'] ?? '';
                 $id = $product['id'] ?? null;
@@ -61,9 +58,7 @@ class UpdateInvoiceRequest extends MainRequest
                 }
             }
 
-            // Mahsulotlar uchun price faqat SUPPLIER_INPUT yoki OTHER_INPUT bo'lganda required
             foreach ($products as $index => $product) {
-                // Mahsulotlar uchun price input_price dan kichik bo'lishi mumkin emas
                 if (isset($product['price']) && isset($product['input_price'])) {
                     if ($product['price'] < $product['input_price']) {
                         $validator->errors()->add("products.{$index}.price", 'Mahsulot sotish narxi kirim narxidan kichik bo\'lishi mumkin emas');

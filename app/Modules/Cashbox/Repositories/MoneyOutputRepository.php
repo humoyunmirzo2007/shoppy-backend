@@ -16,7 +16,7 @@ class MoneyOutputRepository implements MoneyOutputInterface
         $sort = $data['sort'] ?? ['id' => 'desc'];
 
         return $this->moneyOperation->query()
-            ->outputs() // faqat output operatsiyalar
+            ->outputs()
             ->with(['user:id,full_name', 'paymentType:id,name', 'costType:id,name', 'client:id,name', 'supplier:id,name'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {

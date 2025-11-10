@@ -42,11 +42,9 @@ class TelegramBot
     public static function sendError(Request $request, \Exception $e)
     {
         try {
-            // Vaqt ma'lumotlari
             $currentTime = now()->format('Y-m-d H:i:s');
             $timezone = config('app.timezone', 'UTC');
 
-            // Request ma'lumotlari
             $requestMethod = $request->method();
             $requestUrl = $request->fullUrl();
             $requestIp = $request->ip();
@@ -56,7 +54,6 @@ class TelegramBot
             $requestRoute = $request->route() ? $request->route()->getName() : 'N/A';
             $requestController = $request->route() && $request->route()->getActionName() ? $request->route()->getActionName() : 'N/A';
 
-            // Exception ma'lumotlari
             $exceptionMessage = $e->getMessage();
             $exceptionFile = $e->getFile();
             $exceptionLine = $e->getLine();
@@ -64,10 +61,8 @@ class TelegramBot
             $exceptionClass = get_class($e);
             $exceptionTrace = $e->getTraceAsString();
 
-            // Fayl nomini to'liq yo'ldan ajratib olish
             $filePath = str_replace(base_path(), '', $exceptionFile);
 
-            // Xabar formatlash
             $message = '';
 
             $message .= "📍 <b>Xato Ma'lumotlari</b>\n";

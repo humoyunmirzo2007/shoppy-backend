@@ -52,7 +52,6 @@ class TransferService
         try {
             DB::beginTransaction();
 
-            // Validate that both payment types exist and are different
             if ($data['payment_type_id'] === $data['other_payment_type_id']) {
                 return ['success' => false, 'message' => 'Bir xil to\'lov turidan o\'tkazma qilib bo\'lmaydi'];
             }
@@ -64,12 +63,10 @@ class TransferService
                 return ['success' => false, 'message' => 'To\'lov turlari topilmadi'];
             }
 
-            // Check if source payment type has enough balance
             if ($fromPaymentType->residue < $data['amount']) {
                 return ['success' => false, 'message' => 'Yetarli qoldiq mavjud emas. Mavjud qoldiq: '.$fromPaymentType->residue];
             }
 
-            // Create transfer payment record
             $transferData = [
                 'user_id' => Auth::id(),
                 'payment_type_id' => $data['payment_type_id'],
@@ -82,7 +79,6 @@ class TransferService
 
             $transfer = $this->moneyInputRepository->createTransfer($transferData);
 
-            // Load relationships for response
             $transfer->load(['user:id,full_name', 'paymentType:id,name', 'otherPaymentType:id,name']);
 
             DB::commit();
@@ -107,7 +103,6 @@ class TransferService
 
             DB::beginTransaction();
 
-            // Check if destination payment type has enough balance to reverse the transfer
             $destinationPaymentType = $this->paymentTypeRepository->getById($transfer->other_payment_type_id);
 
             if (! $destinationPaymentType) {

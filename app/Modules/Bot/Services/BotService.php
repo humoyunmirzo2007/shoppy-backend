@@ -2,7 +2,6 @@
 
 namespace App\Modules\Bot\Services;
 
-use App\Helpers\TelegramBot;
 use App\Modules\Information\Services\ClientService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -13,9 +12,6 @@ class BotService
         protected ClientService $clientService
     ) {}
 
-    /**
-     * Bot start komandasi uchun handler
-     */
     public function handleStartCommand(array $telegramData)
     {
         try {
@@ -28,7 +24,6 @@ class BotService
                 ];
             }
 
-            // Telegram API ga xabar yuborish
             $telegramToken = config('services.telegram.shoppy_uz_bot_token');
             $telegramApiUrl = "https://api.telegram.org/bot{$telegramToken}/sendMessage";
 
@@ -87,9 +82,6 @@ class BotService
         }
     }
 
-    /**
-     * Telefon raqam qabul qilinganda handler
-     */
     public function handleContactReceived(array $telegramData)
     {
         try {
@@ -117,14 +109,11 @@ class BotService
                 'is_active' => true,
             ];
 
-            // Avval client mavjudligini tekshirish
             $existingClientResult = $this->clientService->getByChatId($chatId);
 
             if ($existingClientResult['status'] === 'success') {
-                // Mavjud clientni yangilash
                 $clientResult = $this->clientService->update($existingClientResult['data']->id, $clientData);
             } else {
-                // Yangi client yaratish
                 $clientResult = $this->clientService->store($clientData);
             }
 
@@ -137,11 +126,9 @@ class BotService
 
             $client = $clientResult['data'];
 
-            // Telegram API ga javob xabar yuborish
             $telegramToken = config('services.telegram.shoppy_uz_bot_token');
             $telegramApiUrl = "https://api.telegram.org/bot{$telegramToken}/sendMessage";
 
-            // Xabar matnini mavjud clientga qarab belgilash
             $messageText = $existingClientResult['status'] === 'success'
                 ? '🔄 <b>Ma\'lumotlar yangilandi!</b>'."\n\n".
                   '📱 <b>Telefon raqam:</b> '.$phoneNumber."\n".
@@ -190,9 +177,6 @@ class BotService
         }
     }
 
-    /**
-     * /start komandasi bilan contact yuborilganda handler
-     */
     public function handleStartWithContact(array $telegramData)
     {
         try {
@@ -211,7 +195,6 @@ class BotService
             $lastName = $contact['last_name'] ?? null;
             $username = $telegramData['message']['chat']['username'] ?? null;
 
-            // Client ma'lumotlarini yangilash
             $clientData = [
                 'first_name' => $firstName,
                 'last_name' => $lastName,
@@ -221,14 +204,11 @@ class BotService
                 'is_active' => true,
             ];
 
-            // Avval client mavjudligini tekshirish
             $existingClientResult = $this->clientService->getByChatId($chatId);
 
             if ($existingClientResult['status'] === 'success') {
-                // Mavjud clientni yangilash
                 $clientResult = $this->clientService->update($existingClientResult['data']->id, $clientData);
             } else {
-                // Yangi client yaratish
                 $clientResult = $this->clientService->store($clientData);
             }
 
@@ -241,7 +221,6 @@ class BotService
 
             $client = $clientResult['data'];
 
-            // Telegram API ga javob xabar yuborish
             $telegramToken = config('services.telegram.shoppy_uz_bot_token');
             $telegramApiUrl = "https://api.telegram.org/bot{$telegramToken}/sendMessage";
 
@@ -282,38 +261,30 @@ class BotService
         }
     }
 
-    /**
-     * Telegram webhook uchun umumiy handler
-     */
     public function handleWebhook(array $telegramData)
     {
         try {
-            // Telegram ma'lumotlarini logga yozish
             Log::info('Telegram webhook ma\'lumotlari:', $telegramData);
 
-            // Agar /start komandasi kelsa
             if (isset($telegramData['message']['text']) &&
                 str_starts_with($telegramData['message']['text'], '/start')) {
                 return $this->handleStartCommand($telegramData);
             }
 
-            // Agar telefon raqam yuborilgan bo'lsa
             if (isset($telegramData['message']['contact'])) {
                 return $this->handleContactReceived($telegramData);
             }
 
-            // Agar /start komandasi va contact birga kelsa
             if (isset($telegramData['message']['text']) &&
                 str_starts_with($telegramData['message']['text'], '/start') &&
                 isset($telegramData['message']['contact'])) {
                 return $this->handleStartWithContact($telegramData);
             }
 
-            // Boshqa holatda faqat tezkor javob qaytarish
             return [
                 'status' => 'success',
                 'message' => 'Webhook muvaffaqiyatli qabul qilindi',
-                'debug_data' => $telegramData, // Debug uchun ma'lumotlarni qaytarish
+                'debug_data' => $telegramData,
             ];
 
         } catch (\Throwable $e) {

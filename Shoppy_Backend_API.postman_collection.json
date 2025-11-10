@@ -1074,7 +1074,7 @@
                     }
                 },
                 {
-                    "name": "Mahsulot ma'lumotlarini yangilash",
+                    "name": "🔄 Mahsulot ma'lumotlarini yangilash",
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -1082,16 +1082,84 @@
                                 "key": "Accept",
                                 "value": "application/json",
                                 "type": "text"
-                            },
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json",
-                                "type": "text"
                             }
                         ],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"name_uz\": \"Yangilangan Mahsulot\",\n    \"name_ru\": \"Обновленный Продукт\",\n    \"description_uz\": \"Yangilangan ma'lumot\",\n    \"description_ru\": \"Обновленная информация\",\n    \"category_id\": 1,\n    \"brand_id\": 1\n}"
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name_uz",
+                                    "value": "Yangilangan Mahsulot",
+                                    "type": "text",
+                                    "description": "Mahsulot nomi (o'zbek) (majburiy, maksimal 255 belgi)"
+                                },
+                                {
+                                    "key": "name_ru",
+                                    "value": "Обновленный Продукт",
+                                    "type": "text",
+                                    "description": "Mahsulot nomi (rus) (majburiy, maksimal 255 belgi)"
+                                },
+                                {
+                                    "key": "description_uz",
+                                    "value": "Yangilangan ma'lumot",
+                                    "type": "text",
+                                    "description": "Mahsulot tavsifi (o'zbek) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "description_ru",
+                                    "value": "Обновленная информация",
+                                    "type": "text",
+                                    "description": "Mahsulot tavsifi (rus) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "category_id",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Kategoriya ID (majburiy, categories jadvalidan mavjud bo'lishi kerak)"
+                                },
+                                {
+                                    "key": "brand_id",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Brend ID (majburiy, brands jadvalidan mavjud bo'lishi kerak)"
+                                },
+                                {
+                                    "key": "price",
+                                    "value": "150000",
+                                    "type": "text",
+                                    "description": "Narx (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "wholesale_price",
+                                    "value": "130000",
+                                    "type": "text",
+                                    "description": "Ulgurji narx (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "main_image",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Asosiy rasm URL (ixtiyoriy, images massividan biriga mos kelishi kerak)"
+                                },
+                                {
+                                    "key": "images[]",
+                                    "type": "file",
+                                    "src": [],
+                                    "description": "Rasmlar (ixtiyoriy, maksimal 4 ta, jpeg/jpg/png/webp, maksimal 5MB)"
+                                },
+                                {
+                                    "key": "attributes[0][value_id]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Birinchi atribut qiymati ID (ixtiyoriy, attribute_values jadvalidan mavjud bo'lishi kerak)"
+                                },
+                                {
+                                    "key": "attributes[1][value_id]",
+                                    "value": "4",
+                                    "type": "text",
+                                    "description": "Ikkinchi atribut qiymati ID (ixtiyoriy, attribute_values jadvalidan mavjud bo'lishi kerak)"
+                                }
+                            ]
                         },
                         "url": {
                             "raw": "{{base_url}}/products/1",
