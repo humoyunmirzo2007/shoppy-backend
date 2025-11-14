@@ -1074,9 +1074,199 @@
                     }
                 },
                 {
+                    "name": "➕ Mavjud guruhga mahsulotlar qo'shish",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "product_group_id",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Mahsulot guruhi ID (majburiy, mavjud product_groups jadvalidan)"
+                                },
+                                {
+                                    "key": "category_id",
+                                    "value": "2",
+                                    "type": "text",
+                                    "description": "Kategoriya ID (majburiy)"
+                                },
+                                {
+                                    "key": "brand_id",
+                                    "value": "3",
+                                    "type": "text",
+                                    "description": "Brend ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][name_uz]",
+                                    "value": "Erkaklar futbolkasi - Qora, M",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti nomi (o'zbek) (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][name_ru]",
+                                    "value": "Мужская футболка - Черный, M",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti nomi (rus) (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][price]",
+                                    "value": "120000",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti narxi (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "products[0][wholesale_price]",
+                                    "value": "100000",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti ulgurji narxi (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "products[0][description_uz]",
+                                    "value": "Qora rang, M o'lcham",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti tavsifi (o'zbek) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "products[0][description_ru]",
+                                    "value": "Черный цвет, размер M",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti tavsifi (rus) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "products[0][main_image]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti asosiy rasm URL (ixtiyoriy)"
+                                },
+                                {
+                                    "key": "products[0][images][]",
+                                    "type": "file",
+                                    "src": [],
+                                    "description": "Birinchi mahsulot varianti rasmlari (ixtiyoriy, maksimal 4 ta, jpeg/jpg/png/webp, maksimal 5MB)"
+                                },
+                                {
+                                    "key": "products[0][attributes][0][attribute_id]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti birinchi atribut ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][attributes][0][value_id]",
+                                    "value": "2",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti birinchi atribut qiymati ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][attributes][1][attribute_id]",
+                                    "value": "2",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti ikkinchi atribut ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[0][attributes][1][value_id]",
+                                    "value": "3",
+                                    "type": "text",
+                                    "description": "Birinchi mahsulot varianti ikkinchi atribut qiymati ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][name_uz]",
+                                    "value": "Erkaklar futbolkasi - Qora, L",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti nomi (o'zbek) (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][name_ru]",
+                                    "value": "Мужская футболка - Черный, L",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti nomi (rus) (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][price]",
+                                    "value": "120000",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti narxi (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "products[1][wholesale_price]",
+                                    "value": "100000",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti ulgurji narxi (majburiy, 0 yoki undan katta)"
+                                },
+                                {
+                                    "key": "products[1][description_uz]",
+                                    "value": "Qora rang, L o'lcham",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti tavsifi (o'zbek) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "products[1][description_ru]",
+                                    "value": "Черный цвет, размер L",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti tavsifi (rus) (ixtiyoriy, maksimal 1000 belgi)"
+                                },
+                                {
+                                    "key": "products[1][main_image]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti asosiy rasm URL (ixtiyoriy)"
+                                },
+                                {
+                                    "key": "products[1][images][]",
+                                    "type": "file",
+                                    "src": [],
+                                    "description": "Ikkinchi mahsulot varianti rasmlari (ixtiyoriy, maksimal 4 ta, jpeg/jpg/png/webp, maksimal 5MB)"
+                                },
+                                {
+                                    "key": "products[1][attributes][0][attribute_id]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti birinchi atribut ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][attributes][0][value_id]",
+                                    "value": "2",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti birinchi atribut qiymati ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][attributes][1][attribute_id]",
+                                    "value": "2",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti ikkinchi atribut ID (majburiy)"
+                                },
+                                {
+                                    "key": "products[1][attributes][1][value_id]",
+                                    "value": "4",
+                                    "type": "text",
+                                    "description": "Ikkinchi mahsulot varianti ikkinchi atribut qiymati ID (majburiy)"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/products/to-existing-group",
+                            "host": ["{{base_url}}"],
+                            "path": ["products", "to-existing-group"]
+                        }
+                    }
+                },
+                {
                     "name": "🔄 Mahsulot ma'lumotlarini yangilash",
                     "request": {
-                        "method": "PUT",
+                        "method": "POST",
                         "header": [
                             {
                                 "key": "Accept",
@@ -1824,7 +2014,7 @@
             "name": "🔧 Atributlar",
             "item": [
                 {
-                    "name": "Atributlar ro'yxati",
+                    "name": "📋 Atributlar ro'yxati",
                     "request": {
                         "method": "GET",
                         "header": [
@@ -1835,14 +2025,46 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{base_url}}/attributes",
+                            "raw": "{{base_url}}/attributes?search=&limit=100&sort[id]=desc&filters[is_active]=&filters[code]=",
                             "host": ["{{base_url}}"],
-                            "path": ["attributes"]
+                            "path": ["attributes"],
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "description": "Qidiruv so'zi (ID, nom o'zbek, nom rus, kod bo'yicha)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "100",
+                                    "description": "Sahifadagi elementlar soni",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort[id]",
+                                    "value": "desc",
+                                    "description": "Tartiblash (id, name_uz, name_ru, code, is_active, created_at, updated_at)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "filters[is_active]",
+                                    "value": "",
+                                    "description": "Faollik holati filtri (true/false)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "filters[code]",
+                                    "value": "",
+                                    "description": "Atribut kodi bo'yicha filtrlash",
+                                    "disabled": true
+                                }
+                            ]
                         }
                     }
                 },
                 {
-                    "name": "Atribut ma'lumotlari",
+                    "name": "👁️ Atribut ma'lumotlari",
                     "request": {
                         "method": "GET",
                         "header": [
@@ -1860,7 +2082,7 @@
                     }
                 },
                 {
-                    "name": "Yangi atribut qo'shish",
+                    "name": "➕ Yangi atribut qo'shish",
                     "request": {
                         "method": "POST",
                         "header": [
@@ -1877,7 +2099,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name_uz\": \"Yangi Atribut\",\n    \"name_ru\": \"Новый Атрибут\",\n    \"type\": \"text\"\n}"
+                            "raw": "{\n    \"name_uz\": \"Rang\",\n    \"name_ru\": \"Цвет\",\n    \"code\": \"color\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attributes",
@@ -1887,7 +2109,7 @@
                     }
                 },
                 {
-                    "name": "Atribut ma'lumotlarini yangilash",
+                    "name": "✏️ Atribut ma'lumotlarini yangilash",
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -1904,7 +2126,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name_uz\": \"Yangilangan Atribut\",\n    \"name_ru\": \"Обновленный Атрибут\",\n    \"type\": \"select\"\n}"
+                            "raw": "{\n    \"name_uz\": \"Rang\",\n    \"name_ru\": \"Цвет\",\n    \"code\": \"color\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attributes/1",
@@ -1914,7 +2136,7 @@
                     }
                 },
                 {
-                    "name": "Atribut holatini o'zgartirish",
+                    "name": "🔄 Atribut holatini o'zgartirish",
                     "request": {
                         "method": "PATCH",
                         "header": [

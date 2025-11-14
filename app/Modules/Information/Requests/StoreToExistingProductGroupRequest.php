@@ -4,7 +4,7 @@ namespace App\Modules\Information\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProductRequest extends FormRequest
+class StoreToExistingProductGroupRequest extends FormRequest
 {
     /**
      * Request ni tasdiqlash huquqini tekshirish
@@ -15,20 +15,57 @@ class StoreProductRequest extends FormRequest
     }
 
     /**
+     * Validation xatolarini qayta ishlash
+     */
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        $errors = $validator->errors();
+
+        // Fayl yuklash xatolarini olib tashlash
+        $filteredErrors = [];
+        foreach ($errors->messages() as $key => $messages) {
+            // Agar "failed to upload" xatosi bo'lsa, uni o'tkazib yuborish
+            $hasUploadError = false;
+            foreach ($messages as $message) {
+                if (stripos($message, 'failed to upload') !== false) {
+                    $hasUploadError = true;
+                    break;
+                }
+            }
+
+            if (! $hasUploadError) {
+                $filteredErrors[$key] = $messages;
+            }
+        }
+
+        // Agar boshqa xatolar bo'lsa, ularni qaytarish
+        if (! empty($filteredErrors)) {
+            // Xatoliklarni tozalash va qayta qo'shish
+            foreach ($errors->keys() as $key) {
+                $errors->forget($key);
+            }
+            foreach ($filteredErrors as $key => $messages) {
+                foreach ($messages as $message) {
+                    $errors->add($key, $message);
+                }
+            }
+            parent::failedValidation($validator);
+        }
+
+        // Agar faqat fayl yuklash xatolari bo'lsa, validation o'tkazish
+        // (chunki rasmlar ixtiyoriy)
+    }
+
+    /**
      * Validation qoidalari
      */
     public function rules(): array
     {
         return [
-            'name' => [
+            'product_group_id' => [
                 'required',
-                'string',
-                'unique:product_groups,name',
-            ],
-            'description' => [
-                'nullable',
-                'string',
-                'max:1000',
+                'integer',
+                'exists:product_groups,id',
             ],
             'category_id' => [
                 'required',
@@ -70,6 +107,7 @@ class StoreProductRequest extends FormRequest
             ],
             'products.*.images.*' => [
                 'nullable',
+                'sometimes',
                 'file',
                 'image',
                 'mimes:jpeg,jpg,png,webp',
@@ -113,11 +151,9 @@ class StoreProductRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Mahsulot guruhi nomi majburiy',
-            'name.string' => 'Mahsulot guruhi nomi matn ko\'rinishida bo\'lishi kerak',
-            'name.unique' => 'Bu mahsulot guruhi nomi allaqachon mavjud',
-            'description.string' => 'Mahsulot tavsifi matn ko\'rinishida bo\'lishi kerak',
-            'description.max' => 'Mahsulot tavsifi maksimal 1000 ta belgi bo\'lishi kerak',
+            'product_group_id.required' => 'Mahsulot guruhi ID majburiy',
+            'product_group_id.integer' => 'Mahsulot guruhi ID son bo\'lishi kerak',
+            'product_group_id.exists' => 'Tanlangan mahsulot guruhi mavjud emas',
             'category_id.required' => 'Kategoriya majburiy',
             'category_id.integer' => 'Kategoriya ID si son bo\'lishi kerak',
             'category_id.exists' => 'Tanlangan kategoriya mavjud emas',

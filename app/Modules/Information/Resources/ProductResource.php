@@ -40,6 +40,25 @@ class ProductResource extends JsonResource
             })->values()->all();
         }, []);
 
+        // Images va main_image uchun to'liq URL yaratish
+        $images = null;
+        if ($this->images) {
+            $decodedImages = json_decode($this->images, true);
+            if (is_array($decodedImages)) {
+                $images = array_map(function ($image) {
+                    return asset('storage/'.$image);
+                }, $decodedImages);
+            }
+        }
+
+        $mainImage = null;
+        if ($this->main_image) {
+            $decodedMainImage = json_decode($this->main_image, true);
+            if (is_string($decodedMainImage)) {
+                $mainImage = asset('storage/'.$decodedMainImage);
+            }
+        }
+
         return [
             'id' => $this->id,
             'name_uz' => $this->name_uz,
@@ -53,8 +72,8 @@ class ProductResource extends JsonResource
             'markup' => (float) $this->markup,
             'residue' => (float) $this->residue,
             'is_active' => (bool) $this->is_active,
-            'images' => $this->images ? json_decode($this->images, true) : null,
-            'main_image' => $this->main_image ? json_decode($this->main_image, true) : null,
+            'images' => $images,
+            'main_image' => $mainImage,
             'category' => $this->whenLoaded('category', function () {
                 return $this->category ? [
                     'id' => $this->category->id,

@@ -21,55 +21,46 @@ class UpdateProductRequest extends FormRequest
     {
         return [
             'name_uz' => [
-                'sometimes',
                 'required',
                 'string',
                 'max:255',
             ],
             'name_ru' => [
-                'sometimes',
                 'required',
                 'string',
                 'max:255',
             ],
             'description_uz' => [
-                'sometimes',
                 'nullable',
                 'string',
                 'max:1000',
             ],
             'description_ru' => [
-                'sometimes',
                 'nullable',
                 'string',
                 'max:1000',
             ],
             'category_id' => [
-                'sometimes',
                 'required',
                 'integer',
                 'exists:categories,id',
             ],
             'brand_id' => [
-                'sometimes',
                 'required',
                 'integer',
                 'exists:brands,id',
             ],
             'price' => [
-                'sometimes',
                 'required',
                 'numeric',
                 'min:0',
             ],
             'wholesale_price' => [
-                'sometimes',
                 'required',
                 'numeric',
                 'min:0',
             ],
             'images' => [
-                'sometimes',
                 'nullable',
                 'array',
                 'max:4',
@@ -79,15 +70,13 @@ class UpdateProductRequest extends FormRequest
                 'file',
                 'image',
                 'mimes:jpeg,jpg,png,webp',
-                'max:5120',
+                'max:2048',
             ],
             'main_image' => [
-                'sometimes',
                 'nullable',
                 'string',
             ],
             'attributes' => [
-                'sometimes',
                 'nullable',
                 'array',
             ],
@@ -132,7 +121,7 @@ class UpdateProductRequest extends FormRequest
             'images.*.file' => 'Rasm fayl bo\'lishi kerak',
             'images.*.image' => 'Rasm fayl formati to\'g\'ri emas',
             'images.*.mimes' => 'Rasm jpeg, jpg, png yoki webp formatida bo\'lishi kerak',
-            'images.*.max' => 'Rasm hajmi maksimal 5MB bo\'lishi kerak',
+            'images.*.max' => 'Rasm hajmi maksimal 2MB bo\'lishi kerak',
             'attributes.array' => 'Atributlar massiv ko\'rinishida bo\'lishi kerak',
             'attributes.*.value_id.required' => 'Atribut qiymati ID si majburiy',
             'attributes.*.value_id.integer' => 'Atribut qiymati ID si son bo\'lishi kerak',

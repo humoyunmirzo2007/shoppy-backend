@@ -25,14 +25,14 @@ class AttributeRepository implements AttributeInterface
                     }
                     $query->orWhere('name_uz', 'ilike', "%$search%")
                         ->orWhere('name_ru', 'ilike', "%$search%")
-                        ->orWhere('type', 'ilike', "%$search%");
+                        ->orWhere('code', 'ilike', "%$search%");
                 });
             })
             ->when(! empty($filters['is_active']), function ($query) use ($filters) {
                 $query->where('is_active', $filters['is_active']);
             })
-            ->when(! empty($filters['type']), function ($query) use ($filters) {
-                $query->where('type', $filters['type']);
+            ->when(! empty($filters['code']), function ($query) use ($filters) {
+                $query->where('code', $filters['code']);
             })
             ->sortable($sort)
             ->paginate($limit);

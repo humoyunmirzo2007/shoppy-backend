@@ -3,11 +3,11 @@
 namespace App\Modules\Information\Controllers;
 
 use App\Helpers\Response;
-use App\Http\Resources\DefaultResource;
 use App\Modules\Information\Requests\GetProductByIdRequest;
 use App\Modules\Information\Requests\GetProductsByGroupIdRequest;
 use App\Modules\Information\Requests\GetProductsRequest;
 use App\Modules\Information\Requests\StoreProductRequest;
+use App\Modules\Information\Requests\StoreToExistingProductGroupRequest;
 use App\Modules\Information\Requests\UpdateProductRequest;
 use App\Modules\Information\Resources\ProductResource;
 use App\Modules\Information\Services\ProductService;
@@ -28,7 +28,7 @@ class ProductController
 
         if ($result['success']) {
             return Response::success(
-                DefaultResource::collection($result['data']),
+                ProductResource::collection($result['data']),
                 'Mahsulotlar muvaffaqiyatli olindi'
             );
         }
@@ -83,10 +83,35 @@ class ProductController
         $result = $this->productService->store($data);
 
         if ($result['success']) {
-            return Response::success($result['data'], 'Mahsulot muvaffaqiyatli yaratildi', 201);
+            $responseData = [
+                'product_group' => $result['data']['product_group'],
+                'products' => ProductResource::collection($result['data']['products']),
+            ];
+
+            return Response::success($responseData, 'Mahsulot muvaffaqiyatli yaratildi', 201);
         }
 
         return Response::error($result['message'] ?? 'Mahsulot yaratishda xatolik yuz berdi');
+    }
+
+    /**
+     * Mavjud mahsulot guruhiga yangi mahsulotlar qo'shish
+     */
+    public function storeToExistingProductGroup(StoreToExistingProductGroupRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $result = $this->productService->storeToExistingProductGroup($data);
+
+        if ($result['success']) {
+            $responseData = [
+                'product_group' => $result['data']['product_group'],
+                'products' => ProductResource::collection($result['data']['products']),
+            ];
+
+            return Response::success($responseData, 'Mahsulotlar muvaffaqiyatli qo\'shildi', 201);
+        }
+
+        return Response::error($result['message'] ?? 'Mahsulotlarni qo\'shishda xatolik yuz berdi');
     }
 
     /**
@@ -94,15 +119,8 @@ class ProductController
      */
     public function update(UpdateProductRequest $request, int $id): JsonResponse
     {
-        $result = $this->productService->getById($id, ['*']);
-
-        if (! $result['success'] || ! $result['data']) {
-            return Response::error($result['message'] ?? 'Mahsulot topilmadi', 404);
-        }
-
-        $product = $result['data'];
         $data = $request->validated();
-        $result = $this->productService->update($product, $data);
+        $result = $this->productService->update($data, $id);
 
         if ($result['success']) {
             return Response::success(
@@ -111,7 +129,9 @@ class ProductController
             );
         }
 
-        return Response::error($result['message'] ?? 'Mahsulotni yangilashda xatolik yuz berdi');
+        $statusCode = ($result['message'] === 'Mahsulot topilmadi') ? 404 : 400;
+
+        return Response::error($result['message'] ?? 'Mahsulotni yangilashda xatolik yuz berdi', $statusCode);
     }
 
     /**

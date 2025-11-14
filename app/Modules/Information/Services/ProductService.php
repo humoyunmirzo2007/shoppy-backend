@@ -228,48 +228,40 @@ class ProductService
     }
 
     /**
-     * Mahsulotni yangilash
+     * Mavjud mahsulot guruhiga yangi mahsulotlar qo'shish
      */
-    public function update(Product $product, array $data): array
+    public function storeToExistingProductGroup(array $data): array
     {
         try {
             DB::beginTransaction();
 
+            $productGroupId = $data['product_group_id'];
+            $productGroup = $this->productGroupRepository->getById($productGroupId);
+
+            if (! $productGroup) {
+                DB::rollBack();
+
+                return [
+                    'success' => false,
+                    'message' => 'Mahsulot guruhi topilmadi',
+                ];
+            }
+
+            $products = $data['products'] ?? [];
+
             $request = request();
-            $updateData = [];
+            $productIndex = 0;
+            $productsToInsert = [];
+            $productAttributesToInsert = [];
+            $productIndexToAttributesMap = [];
 
-            if (isset($data['name_uz'])) {
-                $updateData['name_uz'] = $data['name_uz'];
-            }
-            if (isset($data['name_ru'])) {
-                $updateData['name_ru'] = $data['name_ru'];
-            }
-            if (isset($data['description_uz'])) {
-                $updateData['description_uz'] = $data['description_uz'];
-            }
-            if (isset($data['description_ru'])) {
-                $updateData['description_ru'] = $data['description_ru'];
-            }
-            if (isset($data['category_id'])) {
-                $updateData['category_id'] = $data['category_id'];
-            }
-            if (isset($data['brand_id'])) {
-                $updateData['brand_id'] = $data['brand_id'];
-            }
-            if (isset($data['price'])) {
-                $updateData['price'] = $data['price'];
-            }
-            if (isset($data['wholesale_price'])) {
-                $updateData['wholesale_price'] = $data['wholesale_price'];
-            }
+            foreach ($products as $productData) {
+                $images = [];
+                $mainImage = null;
 
-            $images = [];
-            $mainImage = null;
+                $productImages = $request->file("products.{$productIndex}.images");
 
-            if ($request->hasFile('images')) {
-                $productImages = $request->file('images');
-
-                if (is_array($productImages)) {
+                if ($productImages && is_array($productImages)) {
                     foreach ($productImages as $image) {
                         if ($image && $image->isValid()) {
                             $imagePath = $image->store('products', 'public');
@@ -281,39 +273,53 @@ class ProductService
                     $images[] = $imagePath;
                 }
 
-                $existingImages = $product->images ? json_decode($product->images, true) : [];
-                if (! empty($images)) {
-                    $allImages = array_merge($existingImages, $images);
-                    $allImages = array_slice($allImages, 0, 4);
-                    $updateData['images'] = json_encode($allImages);
+                if (isset($productData['main_image']) && is_string($productData['main_image']) && ! empty($images)) {
+                    if (in_array($productData['main_image'], $images)) {
+                        $mainImage = $productData['main_image'];
+                    } else {
+                        $mainImage = $images[0];
+                    }
+                } elseif (! empty($images)) {
+                    $mainImage = $images[0];
                 }
+
+                $sku = $this->generateSku($productGroup->name, $productData['attributes'] ?? []);
+
+                $productsToInsert[] = [
+                    'name_uz' => $productData['name_uz'],
+                    'name_ru' => $productData['name_ru'],
+                    'category_id' => $data['category_id'],
+                    'product_group_id' => $productGroupId,
+                    'brand_id' => $data['brand_id'],
+                    'sku' => $sku,
+                    'price' => $productData['price'],
+                    'wholesale_price' => $productData['wholesale_price'],
+                    'description_uz' => $productData['description_uz'] ?? null,
+                    'description_ru' => $productData['description_ru'] ?? null,
+                    'images' => ! empty($images) ? json_encode($images) : null,
+                    'main_image' => $mainImage ? json_encode($mainImage) : null,
+                    'unit' => 'dona',
+                    'is_active' => true,
+                    'residue' => 0,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+                if (isset($productData['attributes']) && is_array($productData['attributes'])) {
+                    $productIndexToAttributesMap[$productIndex] = $productData['attributes'];
+                }
+
+                $productIndex++;
             }
 
-            if (isset($data['main_image']) && is_string($data['main_image'])) {
-                $allImages = $updateData['images'] ?? ($product->images ? json_decode($product->images, true) : []);
-                if (in_array($data['main_image'], $allImages)) {
-                    $mainImage = $data['main_image'];
-                } elseif (! empty($allImages)) {
-                    $mainImage = $allImages[0];
-                }
-            } elseif (! empty($images)) {
-                $allImages = $updateData['images'] ?? ($product->images ? json_decode($product->images, true) : []);
-                if (! empty($allImages)) {
-                    $mainImage = $allImages[0];
-                }
+            $createdProducts = [];
+            if (! empty($productsToInsert)) {
+                $createdProducts = $this->productRepository->storeBulk($productsToInsert);
             }
 
-            if ($mainImage) {
-                $updateData['main_image'] = json_encode($mainImage);
-            }
-
-            $shouldUpdateSku = false;
-            if (isset($data['attributes']) && is_array($data['attributes'])) {
-                $this->productAttributeRepository->deleteByProductId($product->id);
-
-                $productAttributesToInsert = [];
-                foreach ($data['attributes'] as $attribute) {
-                    if (isset($attribute['value_id'])) {
+            foreach ($createdProducts as $index => $product) {
+                if (isset($productIndexToAttributesMap[$index]) && is_array($productIndexToAttributesMap[$index])) {
+                    foreach ($productIndexToAttributesMap[$index] as $attribute) {
                         $productAttributesToInsert[] = [
                             'product_id' => $product->id,
                             'attribute_value_id' => $attribute['value_id'],
@@ -322,9 +328,102 @@ class ProductService
                         ];
                     }
                 }
+            }
 
-                if (! empty($productAttributesToInsert)) {
-                    $this->productAttributeRepository->storeBulk($productAttributesToInsert);
+            if (! empty($productAttributesToInsert)) {
+                $this->productAttributeRepository->storeBulk($productAttributesToInsert);
+            }
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => 'Mahsulotlar muvaffaqiyatli qo\'shildi',
+                'data' => [
+                    'product_group' => $productGroup,
+                    'products' => $createdProducts,
+                ],
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            TelegramBot::sendError(request(), $e);
+
+            return [
+                'success' => false,
+                'message' => 'Mahsulotlarni qo\'shishda xatolik yuz berdi',
+            ];
+        }
+    }
+
+    public function update(array $data, $id): array
+    {
+        DB::beginTransaction();
+
+        try {
+            $request = request();
+            $product = $this->productRepository->getById($id);
+
+            if (! $product) {
+                return [
+                    'success' => false,
+                    'message' => 'Mahsulot topilmadi',
+                ];
+            }
+
+            $fillableKeys = [
+                'name_uz', 'name_ru', 'description_uz', 'description_ru',
+                'category_id', 'brand_id', 'price', 'wholesale_price',
+            ];
+
+            $updateData = [];
+            foreach ($fillableKeys as $key) {
+                if (array_key_exists($key, $data)) {
+                    $updateData[$key] = $data[$key];
+                }
+            }
+
+            $newImages = [];
+            if ($request->hasFile('images')) {
+                foreach ((array) $request->file('images') as $image) {
+                    if ($image?->isValid()) {
+                        $newImages[] = $image->store('products', 'public');
+                    }
+                }
+
+                if (! empty($newImages)) {
+                    $existing = json_decode($product->images ?? '[]', true) ?? [];
+                    $merged = array_slice(array_merge($existing, $newImages), 0, 4);
+                    $updateData['images'] = json_encode($merged);
+                }
+            }
+
+            $allImages = isset($updateData['images'])
+                ? json_decode($updateData['images'], true) ?? []
+                : (json_decode($product->images ?? '[]', true) ?? []);
+
+            $mainImage = $this->resolveMainImage($data, $allImages, $newImages);
+            if ($mainImage !== null) {
+                $updateData['main_image'] = json_encode($mainImage);
+            } elseif (array_key_exists('main_image', $data) && empty($data['main_image'])) {
+                $updateData['main_image'] = null;
+            }
+
+            $shouldUpdateSku = false;
+
+            if (isset($data['attributes']) && is_array($data['attributes'])) {
+                $this->productAttributeRepository->deleteByProductId($product->id);
+
+                $insertData = collect($data['attributes'])
+                    ->whereNotNull('value_id')
+                    ->map(fn ($a) => [
+                        'product_id' => $product->id,
+                        'attribute_value_id' => $a['value_id'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ])->toArray();
+
+                if (! empty($insertData)) {
+                    $this->productAttributeRepository->storeBulk($insertData);
                 }
 
                 $shouldUpdateSku = true;
@@ -332,36 +431,37 @@ class ProductService
 
             if ($shouldUpdateSku || isset($data['brand_id'])) {
                 $productGroup = $this->productGroupRepository->getById($product->product_group_id);
+
                 if ($productGroup) {
-                    if (isset($data['attributes']) && is_array($data['attributes'])) {
-                        $attributes = $data['attributes'];
-                    } else {
+                    $attributes = $data['attributes'] ?? null;
+
+                    if ($attributes === null) {
                         $product->load('productAttributes');
-                        $attributes = [];
-                        foreach ($product->productAttributes as $productAttribute) {
-                            $attributes[] = ['value_id' => $productAttribute->attribute_value_id];
-                        }
+                        $attributes = $product->productAttributes->map(fn ($pa) => [
+                            'value_id' => $pa->attribute_value_id,
+                        ])->toArray();
                     }
-                    $sku = $this->generateSku($productGroup->name, $attributes);
-                    $updateData['sku'] = $sku;
+
+                    $updateData['sku'] = $this->generateSku($productGroup->name, $attributes);
                 }
             }
 
             if (! empty($updateData)) {
-                $updatedProduct = $this->productRepository->update($product, $updateData);
+                $this->productRepository->update($product, $updateData);
             } else {
-                $updatedProduct = $product->fresh();
+                $product->touch();
             }
 
             DB::commit();
 
-            $updatedProduct = $this->productRepository->getById($updatedProduct->id, ['*']);
+            $updatedProduct = $this->productRepository->getById($product->id);
 
             return [
                 'success' => true,
                 'message' => 'Mahsulot muvaffaqiyatli yangilandi',
                 'data' => $updatedProduct,
             ];
+
         } catch (\Exception $e) {
             DB::rollBack();
             TelegramBot::sendError(request(), $e);
@@ -373,9 +473,37 @@ class ProductService
         }
     }
 
-    /**
-     * Mahsulot holatini o'zgartirish
-     */
+    private function resolveMainImage(array $data, array $allImages, array $newImages): ?string
+    {
+        if (array_key_exists('main_image', $data)) {
+            if (empty($data['main_image'])) {
+                return null;
+            }
+
+            $main = $data['main_image'];
+
+            if (str_contains($main, '/storage/')) {
+                $main = explode('/storage/', $main)[1] ?? $main;
+            }
+
+            if (in_array($main, $allImages)) {
+                return $main;
+            }
+
+            if (! empty($allImages)) {
+                return $allImages[0];
+            }
+
+            return null;
+        }
+
+        if (! empty($newImages)) {
+            return $newImages[0];
+        }
+
+        return null;
+    }
+
     public function toggleActive(int $id): array
     {
         try {
@@ -405,9 +533,6 @@ class ProductService
         }
     }
 
-    /**
-     * Mahsulotlar shablonini yuklab olish
-     */
     public function downloadTemplate(): array
     {
         try {
@@ -425,9 +550,6 @@ class ProductService
         }
     }
 
-    /**
-     * Mahsulotlarni import qilish
-     */
     public function import(): array
     {
         try {
@@ -445,11 +567,6 @@ class ProductService
         }
     }
 
-    /**
-     * SKU kodini yaratish
-     * Format: PRODUCTGROUP-ATTRIBUTE1-ATTRIBUTE2
-     * Masalan: TSHIRT-RED-M
-     */
     private function generateSku(string $productGroupName, array $attributes): string
     {
         $groupCode = $this->generateCodeFromName($productGroupName);
@@ -471,11 +588,6 @@ class ProductService
         return strtoupper(implode('-', $skuParts));
     }
 
-    /**
-     * Nomdan qisqa kod yaratish (o'zbek lotin harflarida)
-     * Masalan: "Erkaklar futbolkasi" -> "ERKAKLAR-FUTBOLKASI" yoki "ERK-FUT"
-     * "Qizil" -> "QIZIL" yoki "QIZ"
-     */
     private function generateCodeFromName(string $name): string
     {
         $transliteration = [

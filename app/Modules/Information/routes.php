@@ -121,7 +121,8 @@ Route::group(['prefix' => 'products', 'middleware' => ['auth:sanctum']], functio
     Route::get('/by-group-id', [ProductController::class, 'getByProductGroupId']);
     Route::get('/{id}', [ProductController::class, 'show']);
     Route::post('/', [ProductController::class, 'store']);
-    Route::put('/{id}', [ProductController::class, 'update']);
+    Route::post('/to-existing-group', [ProductController::class, 'storeToExistingProductGroup']);
+    Route::post('/{id}', [ProductController::class, 'update']);
     Route::patch('/{id}/invert-active', [ProductController::class, 'invertActive']);
     Route::get('/download-template', [ProductController::class, 'downloadTemplate']);
     Route::post('/import', [ProductController::class, 'import']);
