@@ -94,17 +94,6 @@ class ProductRepository implements ProductInterface
         return $this->product->create($data);
     }
 
-    public function storeBulk(array $data): array
-    {
-        $createdProductIds = [];
-        foreach ($data as $productData) {
-            $product = $this->product->create($productData);
-            $createdProductIds[] = $product->id;
-        }
-
-        return $this->getByIds($createdProductIds)->all();
-    }
-
     public function update(Product $product, array $data): Product
     {
         $product->update($data);
@@ -123,5 +112,10 @@ class ProductRepository implements ProductInterface
         $product->save();
 
         return $product;
+    }
+
+    public function insert(array $data): bool
+    {
+        return $this->product->insert($data);
     }
 }
