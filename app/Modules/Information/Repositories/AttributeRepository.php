@@ -59,4 +59,9 @@ class AttributeRepository implements AttributeInterface
 
         return $attribute;
     }
+
+    public function allActive()
+    {
+        return $this->attribute->where('is_active', true)->get();
+    }
 }

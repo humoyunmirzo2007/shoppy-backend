@@ -83,4 +83,15 @@ class AttributeController extends Controller
 
         return Response::success($result['message'], DefaultResource::make($result['data'])->resolve());
     }
+
+    public function allActive()
+    {
+        $result = $this->attributeService->allActive();
+
+        if (! $result['success']) {
+            return Response::error($result['message']);
+        }
+
+        return DefaultResource::collection($result['data']);
+    }
 }

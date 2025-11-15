@@ -127,4 +127,24 @@ class AttributeService
             ];
         }
     }
+
+    public function allActive(): array
+    {
+        try {
+            $attributes = $this->attributeRepository->allActive();
+
+            return [
+                'success' => true,
+                'message' => 'Faol atributlar muvaffaqiyatli olindi',
+                'data' => $attributes,
+            ];
+        } catch (\Exception $e) {
+            TelegramBot::sendError(request(), $e);
+
+            return [
+                'success' => false,
+                'message' => 'Faol atributlarni olishda xatolik yuz berdi',
+            ];
+        }
+    }
 }

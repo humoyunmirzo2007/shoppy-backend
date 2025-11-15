@@ -2058,6 +2058,24 @@
                     }
                 },
                 {
+                    "name": "✅ Faol atributlar",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/attributes/all-active",
+                            "host": ["{{base_url}}"],
+                            "path": ["attributes", "all-active"]
+                        }
+                    }
+                },
+                {
                     "name": "👁️ Atribut ma'lumotlari",
                     "request": {
                         "method": "GET",

@@ -15,4 +15,6 @@ interface AttributeInterface
     public function update(Attribute $attribute, array $data);
 
     public function invertActive(Attribute $attribute);
+
+    public function allActive();
 }
