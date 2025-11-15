@@ -12,20 +12,11 @@ class BrandService
     public function getAll(array $data)
     {
         try {
-            $result = $this->brandRepository->getAll($data);
-
-            return [
-                'success' => true,
-                'message' => 'Brendlar muvaffaqiyatli olindi',
-                'data' => $result,
-            ];
+            return $this->brandRepository->getAll($data);
         } catch (\Exception $e) {
             TelegramBot::sendError(request(), $e);
 
-            return [
-                'success' => false,
-                'message' => 'Brendlarni olishda xatolik yuz berdi',
-            ];
+            return null;
         }
     }
 
@@ -134,20 +125,12 @@ class BrandService
     public function allActive()
     {
         try {
-            $result = $this->brandRepository->allActive();
+            return $this->brandRepository->allActive();
 
-            return [
-                'success' => true,
-                'message' => 'Faol brendlar muvaffaqiyatli olindi',
-                'data' => $result,
-            ];
         } catch (\Exception $e) {
             TelegramBot::sendError(request(), $e);
 
-            return [
-                'success' => false,
-                'message' => 'Faol brendlarni olishda xatolik yuz berdi',
-            ];
+            return null;
         }
     }
 }

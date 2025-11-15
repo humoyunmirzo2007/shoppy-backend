@@ -92,7 +92,7 @@ Route::group(['prefix' => 'categories', 'middleware' => ['auth:sanctum']], funct
 
 Route::group(['prefix' => 'brands', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [BrandController::class, 'index']);
-    Route::get('/active', [BrandController::class, 'getAllActive']);
+    Route::get('/all-active', [BrandController::class, 'allActive'])->middleware('reject_request');
     Route::get('/{id}', [BrandController::class, 'show']);
     Route::post('/create', [BrandController::class, 'store']);
     Route::put('/update/{id}', [BrandController::class, 'update']);

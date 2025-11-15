@@ -5,34 +5,25 @@ namespace App\Modules\Information\Controllers;
 use App\Helpers\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DefaultResource;
+use App\Modules\Information\Requests\GetBrandByIdRequest;
+use App\Modules\Information\Requests\GetBrandsRequest;
 use App\Modules\Information\Requests\StoreBrandRequest;
 use App\Modules\Information\Requests\UpdateBrandRequest;
 use App\Modules\Information\Services\BrandService;
-use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
     public function __construct(private BrandService $brandService) {}
 
-    public function index(Request $request)
+    public function index(GetBrandsRequest $request)
     {
-        $data = [
-            'search' => $request->get('search'),
-            'limit' => $request->get('limit', 100),
-            'sort' => $request->get('sort', ['id' => 'desc']),
-            'filters' => $request->get('filters', []),
-        ];
 
-        $result = $this->brandService->getAll($data);
+        $result = $this->brandService->getAll($request->validated());
 
-        if (! $result['success']) {
-            return Response::error($result['message']);
-        }
-
-        return DefaultResource::collection($result['data']);
+        return DefaultResource::collection($result);
     }
 
-    public function show(int $id)
+    public function show(GetBrandByIdRequest $request, int $id)
     {
         $result = $this->brandService->getById($id);
 
@@ -80,10 +71,6 @@ class BrandController extends Controller
     {
         $result = $this->brandService->allActive();
 
-        if (! $result['success']) {
-            return Response::error($result['message']);
-        }
-
-        return DefaultResource::collection($result['data']);
+        return DefaultResource::collection($result);
     }
 }
