@@ -107,16 +107,16 @@ class DatabaseSeeder extends Seeder
 
         // ==================== ATTRIBUTES ====================
         $attributes = [
-            ['Rang', 'Цвет', 'color'],
-            ['O\'lcham', 'Размер', 'size'],
-            ['Material', 'Материал', 'material'],
-            ['Jinsi', 'Пол', 'gender'],
-            ['Xotira', 'Память', 'memory'],
-            ['Ekran o\'lchami', 'Размер экрана', 'screen_size'],
-            ['Protsessor', 'Процессор', 'processor'],
-            ['Kamera', 'Камера', 'camera'],
-            ['Batareya', 'Батарея', 'battery'],
-            ['Operatsion sistema', 'Операционная система', 'os'],
+            ['Rang', 'Цвет'],
+            ['O\'lcham', 'Размер'],
+            ['Material', 'Материал'],
+            ['Jinsi', 'Пол'],
+            ['Xotira', 'Память'],
+            ['Ekran o\'lchami', 'Размер экрана'],
+            ['Protsessor', 'Процессор'],
+            ['Kamera', 'Камера'],
+            ['Batareya', 'Батарея'],
+            ['Operatsion sistema', 'Операционная система'],
         ];
 
         $attributeInserts = [];
@@ -124,7 +124,6 @@ class DatabaseSeeder extends Seeder
             $attributeInserts[] = [
                 'name_uz' => $attr[0],
                 'name_ru' => $attr[1],
-                'code' => $attr[2],
                 'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -186,6 +185,7 @@ class DatabaseSeeder extends Seeder
                     'attribute_id' => $attrId,
                     'value_uz' => $val[0],
                     'value_ru' => $val[1],
+                    'code' => null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

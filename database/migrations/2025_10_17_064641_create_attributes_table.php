@@ -15,13 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name_uz')->comment('Atribut nomi (o\'zbek)');
             $table->string('name_ru')->comment('Atribut nomi (rus)');
-            $table->string('code')->nullable()->comment('Atribut kodi');
             $table->boolean('is_active')->default(true)->comment('Atribut holati');
             $table->timestamps();
 
             $table->index('name_uz');
             $table->index('name_ru');
-            $table->index('code');
             $table->index('is_active');
         });
     }

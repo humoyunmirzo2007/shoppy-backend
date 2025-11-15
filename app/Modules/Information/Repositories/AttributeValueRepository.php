@@ -27,6 +27,7 @@ class AttributeValueRepository implements AttributeValueInterface
                     }
                     $query->orWhere('value_uz', 'ilike', "%$search%")
                         ->orWhere('value_ru', 'ilike', "%$search%")
+                        ->orWhere('code', 'ilike', "%$search%")
                         ->orWhereHas('attribute', function ($q) use ($search) {
                             $q->where('name_uz', 'ilike', "%$search%")
                                 ->orWhere('name_ru', 'ilike', "%$search%");
@@ -35,6 +36,9 @@ class AttributeValueRepository implements AttributeValueInterface
             })
             ->when(! empty($filters['attribute_id']), function ($query) use ($filters) {
                 $query->where('attribute_id', $filters['attribute_id']);
+            })
+            ->when(! empty($filters['code']), function ($query) use ($filters) {
+                $query->where('code', $filters['code']);
             })
             ->sortable($sort)
             ->paginate($limit);

@@ -16,7 +16,6 @@ class StoreAttributeRequest extends FormRequest
         return [
             'name_uz' => ['required', 'string', 'max:255', 'unique:attributes,name_uz'],
             'name_ru' => ['required', 'string', 'max:255', 'unique:attributes,name_ru'],
-            'code' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -31,8 +30,6 @@ class StoreAttributeRequest extends FormRequest
             'name_ru.string' => 'Atribut nomi (rus) matn ko\'rinishida bo\'lishi kerak',
             'name_ru.max' => 'Atribut nomi (rus) maksimal 255 belgidan oshmasligi kerak',
             'name_ru.unique' => 'Bu atribut nomi (rus) allaqachon mavjud',
-            'code.string' => 'Atribut kodi matn ko\'rinishida bo\'lishi kerak',
-            'code.max' => 'Atribut kodi maksimal 255 belgidan oshmasligi kerak',
         ];
     }
 }

@@ -2025,14 +2025,14 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{base_url}}/attributes?search=&limit=100&sort[id]=desc&filters[is_active]=&filters[code]=",
+                            "raw": "{{base_url}}/attributes?search=&limit=100&sort[id]=desc&filters[is_active]=",
                             "host": ["{{base_url}}"],
                             "path": ["attributes"],
                             "query": [
                                 {
                                     "key": "search",
                                     "value": "",
-                                    "description": "Qidiruv so'zi (ID, nom o'zbek, nom rus, kod bo'yicha)",
+                                    "description": "Qidiruv so'zi (ID, nom o'zbek, nom rus bo'yicha)",
                                     "disabled": true
                                 },
                                 {
@@ -2044,19 +2044,13 @@
                                 {
                                     "key": "sort[id]",
                                     "value": "desc",
-                                    "description": "Tartiblash (id, name_uz, name_ru, code, is_active, created_at, updated_at)",
+                                    "description": "Tartiblash (id, name_uz, name_ru, is_active, created_at, updated_at)",
                                     "disabled": true
                                 },
                                 {
                                     "key": "filters[is_active]",
                                     "value": "",
                                     "description": "Faollik holati filtri (true/false)",
-                                    "disabled": true
-                                },
-                                {
-                                    "key": "filters[code]",
-                                    "value": "",
-                                    "description": "Atribut kodi bo'yicha filtrlash",
                                     "disabled": true
                                 }
                             ]
@@ -2099,7 +2093,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name_uz\": \"Rang\",\n    \"name_ru\": \"Цвет\",\n    \"code\": \"color\"\n}"
+                            "raw": "{\n    \"name_uz\": \"Rang\",\n    \"name_ru\": \"Цвет\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attributes",
@@ -2126,7 +2120,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name_uz\": \"Rang\",\n    \"name_ru\": \"Цвет\",\n    \"code\": \"color\"\n}"
+                            "raw": "{\n    \"name_uz\": \"Rang\",\n    \"name_ru\": \"Цвет\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attributes/1",
@@ -2320,7 +2314,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"attribute_id\": 1,\n    \"value_uz\": \"Yangi Qiymat\",\n    \"value_ru\": \"Новое Значение\"\n}"
+                            "raw": "{\n    \"attribute_id\": 1,\n    \"value_uz\": \"Yangi Qiymat\",\n    \"value_ru\": \"Новое Значение\",\n    \"code\": \"new_value_code\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attribute-values",
@@ -2347,7 +2341,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"attribute_id\": 1,\n    \"value_uz\": \"Yangilangan Qiymat\",\n    \"value_ru\": \"Обновленное Значение\"\n}"
+                            "raw": "{\n    \"attribute_id\": 1,\n    \"value_uz\": \"Yangilangan Qiymat\",\n    \"value_ru\": \"Обновленное Значение\",\n    \"code\": \"updated_value_code\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/attribute-values/1",

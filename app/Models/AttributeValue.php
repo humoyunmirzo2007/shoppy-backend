@@ -14,6 +14,7 @@ class AttributeValue extends Model
         'attribute_id',
         'value_uz',
         'value_ru',
+        'code',
     ];
 
     public function attribute(): BelongsTo
@@ -21,5 +22,5 @@ class AttributeValue extends Model
         return $this->belongsTo(Attribute::class);
     }
 
-    protected $sortable = ['id', 'attribute_id', 'value_uz', 'value_ru', 'created_at', 'updated_at'];
+    protected $sortable = ['id', 'attribute_id', 'value_uz', 'value_ru', 'code', 'created_at', 'updated_at'];
 }

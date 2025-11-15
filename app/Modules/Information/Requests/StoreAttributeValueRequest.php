@@ -17,6 +17,7 @@ class StoreAttributeValueRequest extends FormRequest
             'attribute_id' => ['required', 'integer', 'exists:attributes,id'],
             'value_uz' => ['required', 'string', 'max:255'],
             'value_ru' => ['required', 'string', 'max:255'],
+            'code' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -32,6 +33,8 @@ class StoreAttributeValueRequest extends FormRequest
             'value_ru.required' => 'Atribut qiymati (rus) kiritilishi shart',
             'value_ru.string' => 'Atribut qiymati (rus) matn ko\'rinishida bo\'lishi kerak',
             'value_ru.max' => 'Atribut qiymati (rus) maksimal 255 belgidan oshmasligi kerak',
+            'code.string' => 'Atribut qiymati kodi matn ko\'rinishida bo\'lishi kerak',
+            'code.max' => 'Atribut qiymati kodi maksimal 255 belgidan oshmasligi kerak',
         ];
     }
 }

@@ -16,10 +16,12 @@ return new class extends Migration
             $table->foreignId('attribute_id')->constrained('attributes')->onDelete('cascade')->index();
             $table->string('value_uz')->comment('Atribut qiymati (o\'zbek)');
             $table->string('value_ru')->comment('Atribut qiymati (rus)');
+            $table->string('code')->nullable()->comment('Atribut qiymati kodi');
             $table->timestamps();
 
             $table->index('value_uz');
             $table->index('value_ru');
+            $table->index('code');
         });
     }
 
